@@ -235,3 +235,26 @@ table tr:hover {
     background-color: #f2dede;
     border-color: #ebccd1;
 }
+
+/* Estilo para el contenedor del botón Agregar Cabaña */
+.add-cabin-container {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+/* Estilo para el botón Agregar Cabaña */
+.btn-add {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-add:hover {
+    background-color: #45a049;
+}

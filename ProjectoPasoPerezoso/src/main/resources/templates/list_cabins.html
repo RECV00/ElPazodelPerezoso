@@ -18,7 +18,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="content">
         <h1 th:text="${titulo}">Listado de Cabañas</h1>
 
-         <!-- Contenedor para el formulario de búsqueda y el botón "Ver Todo" -->
+        <!-- Botón "Agregar Cabaña" -->
+        <div class="add-cabin-container">
+            <a th:href="@{/cabins/addForm}" class="btn-add">Agregar Cabaña</a>
+        </div>
+
+        <!-- Contenedor para el formulario de búsqueda y el botón "Ver Todo" -->
         <div class="search-container">
             <!-- Formulario de búsqueda -->
             <form action="#" th:action="@{/cabins/List}" method="get" class="search-form">
@@ -35,18 +40,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             </form>
         </div>
         
-  <!-- Mensaje de error -->
-<div th:if="${errorMessage}" class="alert alert-danger">
-    <p th:text="${errorMessage}"></p>
-</div>
+        <!-- Mensaje de error -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
   
-<!-- Mensaje de éxito -->
+        <!-- Mensaje de éxito -->
         <div th:if="${deleteSuccess}" class="alert alert-success">
             <p>Cabaña eliminada correctamente.</p>
         </div>
 
-         <!-- Tabla de cabañas -->
-        <!--<h3>Lista de Cabañas:</h3>-->
+        <!-- Tabla de cabañas -->
         <table border="1">
             <thead>
                 <tr>
@@ -62,7 +66,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </tr>
             </thead>
             
-            
             <tbody>
                 <tr th:each="tempCabin : ${cabins}">
                     <td th:text="${tempCabin.cabinID}"></td>
@@ -72,7 +75,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <td th:text="${tempCabin.pricePerNight}"></td>
                     <td th:text="${tempCabin.location}"></td>
                     <td th:text="${tempCabin.includedServices}"></td>
-                        <!--muestra la imagen-->
+                    <!--muestra la imagen-->
                     <td>
                         <img th:src="@{'/'+ ${tempCabin.image}}" alt="Imagen de la cabaña" style="width: 100px; height: auto;">
                     </td>
