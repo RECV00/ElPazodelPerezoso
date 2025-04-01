@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agregar Cabaña</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/stylesAdd_cabin.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!-- Incluir la barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="content">
+        <h1>Agregar una Nueva Cabaña</h1>
+        <form method="post" th:action="@{/cabins/add}" enctype="multipart/form-data" onsubmit="return confirmAdd()" >
+            <!-- Campos del formulario -->
+            <div class="form-group">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="capacity">Capacidad:</label>
+                <input type="number" id="capacity" name="capacity" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="pricePerNight">Precio por Noche:</label>
+                <input type="number" id="pricePerNight" name="pricePerNight" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="location">Ubicación:</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Imagen:</label>
+                <input type="file" id="image" name="image" accept= "image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="includedServices">Servicios Incluidos:</label>
+                <input type="text" id="includedServices" name="includedServices" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Guardar Cabaña" class="btn-submit">
+            </div>
+        </form>
+    </div>
+     <script>
+        function confirmAdd() {
+            return confirm("¿Estás seguro de que deseas agregar esta cabaña?");
+        }
+    </script>
+</body>
+</html>

@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package cr.ac.una.ProjectSlothsStep.controller;
+package cr.ac.una.perezoso.controller;
 import java.sql.SQLException;
-import cr.ac.una.ProjectSlothsStep.data.DataTour;
-import cr.ac.una.ProjectSlothsStep.data.FileUploadUtil;
-import cr.ac.una.ProjectSlothsStep.domain.Tour;
+import cr.ac.una.perezoso.data.DataTour;
+import cr.ac.una.perezoso.data.FileUploadUtil;
+import cr.ac.una.perezoso.domain.Tour;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;

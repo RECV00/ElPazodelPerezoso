@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Bienvenido a El Paso del Perezoso</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Vincular el archivo CSS -->
+        <link th:href="@{/css/styles_index.css}" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <!-- Barra de navegación -->
+        <nav>
+            <div class="logo">
+               <a href="/">El Paso del Perezoso</a>
+            </div>
+            <ul class="nav-links">
+            <li><a th:href="@{/cabins/List}">Listado de Cabañas</a></li>
+            <li><a th:href="@{/cabins/addForm}">Agregar Cabaña</a></li>
+            <li><a th:href="@{/tours/listadoTours}">Listado de tours</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenido principal -->
+       <div class="content">
+        <h1>Bienvenido a la Gestión de Cabañas</h1>
+        <p>Explora nuestras opciones y gestiona tus cabañas de manera eficiente.</p>
+<!--        <img src="/img/imagen.jpg"  style="width: 500px; height: auto; margin-bottom: 20px;">  se ajusta la ruta y el tamaño -->
+        </div>
+    </body>
+</html>

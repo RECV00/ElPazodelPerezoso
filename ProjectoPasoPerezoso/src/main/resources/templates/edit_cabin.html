@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Cabaña</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/stylesEdit_cabin.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!-- Incluir la barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="content">
+        <h1>Editar Cabaña</h1>
+       <form method="post" th:action="@{/cabins/update}" enctype="multipart/form-data" onsubmit="return confirmEdit()">
+            <!-- Campo oculto para el ID de la cabaña -->
+            <input type="hidden" name="cabinID" th:value="${cabin.cabinID}">
+
+            <!-- Campos del formulario -->
+            <div class="form-group">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" th:value="${cabin.name}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" rows="4" required th:text="${cabin.description}"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="capacity">Capacidad:</label>
+                <input type="number" id="capacity" name="capacity" min="1" th:value="${cabin.capacity}" required>
+            </div>
+            <div class="form-group">
+                <label for="pricePerNight">Precio por Noche:</label>
+                <input type="number" id="pricePerNight" name="pricePerNight" step="0.01" min="0" th:value="${cabin.pricePerNight}" required>
+            </div>
+            <div class="form-group">
+                <label for="location">Ubicación:</label>
+                <input type="text" id="location" name="location" th:value="${cabin.location}" required>
+            </div>
+            <div class="form-group">
+            <label for="image">Imagen:</label>
+                <input type="file" id="image" name="image" accept="image/*">
+                <!-- Mostrar la imagen actual si existe -->
+                <div th:if="${cabin.image != null}">
+                <img th:src="@{'/'+ ${cabin.image}}" alt="Imagen actual" style="width: 100px; height: auto;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="includedServices">Servicios Incluidos:</label>
+                <input type="text" id="includedServices" name="includedServices" th:value="${cabin.includedServices}" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Actualizar Cabaña" class="btn-submit">
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        function confirmEdit() {
+            return confirm("¿Estás seguro de que deseas editar esta cabaña?");
+        }
+    </script>
+</body>
+</html>

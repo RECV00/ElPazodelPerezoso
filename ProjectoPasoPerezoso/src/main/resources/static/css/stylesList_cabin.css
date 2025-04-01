@@ -1,0 +1,237 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('/img/inicio.jpg'); /* Ruta de la imagen de fondo */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-color: #f4f4f4; 
+    
+}
+
+/* Barra de navegación */
+nav {
+    background-color: rgba(174, 182, 191, 0.7); /* Color original con 70% de opacidad */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px); /* Efecto de desenfoque para mejorar la transparencia */
+}
+
+nav .logo a {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 20px;
+}
+
+nav .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+nav .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo semi-transparente al pasar el mouse */
+}
+
+/* Contenido principal */
+.content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    
+}
+
+.content h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.content h2 {
+    color: #555;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #6f7e14 ;
+    color: white;
+    font-weight: bold;
+}
+
+table tr:hover {
+    background-color: #aeb3ba ;
+}
+
+/* Estilos para los botones de acción */
+.btn-edit, .btn-delete {
+    padding: 5px 10px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9em;
+    margin: 2px;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-edit {
+    background-color: #28a745; /* Verde */
+}
+
+.btn-delete {
+    background-color: #dc3545; /* Rojo */
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    opacity: 0.8; /* Efecto de opacidad al pasar el mouse */
+}
+
+/*lista*/
+.confirmation-message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.confirmation-message button {
+    margin: 0 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirmation-message .btn-cancel {
+    color: #333;
+    text-decoration: none;
+}
+
+.confirmation-message .btn-cancel:hover {
+    text-decoration: underline;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+
+/* Estilos para el contenedor de búsqueda y botón "Ver Todo" */
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Estilos para el formulario de búsqueda */
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-form label {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.search-form input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-form button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para el botón "Ver Todo" */
+.view-all-form button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.view-all-form button:hover {
+    background-color: #218838;
+}
+
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}

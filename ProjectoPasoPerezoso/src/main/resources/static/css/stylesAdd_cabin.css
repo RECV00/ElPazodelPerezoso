@@ -1,0 +1,133 @@
+
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('/img/inicio.jpg'); /* Ruta de la imagen de fondo */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: white; /* Texto en blanco para contrastar con el fondo oscuro */
+}
+
+/* Barra de navegación */
+nav {
+    background-color: rgba(174, 182, 191, 0.7); /* Color original con 70% de opacidad */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px); /* Efecto de desenfoque para mejorar la transparencia */
+}
+
+nav .logo a {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 20px;
+}
+
+nav .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+nav .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo semi-transparente al pasar el mouse */
+}
+
+/* Contenido principal */
+.content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    color: white; /* Texto en blanco */
+}
+
+.content h1 {
+    color: white; /* Texto en blanco */
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.content h2 {
+    color: rgba(255, 255, 255, 0.8); /* Texto en blanco con ligera transparencia */
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+/* Estilos para los grupos de formulario */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white; /* Texto en blanco */
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group textarea {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid black; /* Borde negro */
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto en negro */
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="url"]:focus,
+.form-group textarea:focus {
+    border-color: #82750b; /* Color dorado al enfocar */
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Estilos para el botón de envío */
+.btn-submit {
+    background-color: #578dcb; /* Color celeste */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #387dca; /* Color azul más oscuro al pasar el ratón */
+}

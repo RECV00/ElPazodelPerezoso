@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package cr.ac.una.ProjectSlothsStep.data;
+package cr.ac.una.perezoso.data;
 
 /**
  *
  * @author corra
  */
-import cr.ac.una.ProjectSlothsStep.domain.Tour;
+import cr.ac.una.perezoso.domain.Tour;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class DataTour {
     public static void createTour(Tour tour) {
         String sql = "INSERT INTO tb_tour (nameTour, description, price, date, startTime, duration, startingPoint, multimedia) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = ConectarBD.conectar();
+        try (Connection conn = ConectarBD.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, tour.getNameTour());
             pstmt.setString(2, tour.getDescription());
@@ -42,7 +42,7 @@ public class DataTour {
     public static List<Tour> getTours() {
         List<Tour> tours = new ArrayList<>();
         String sql = "SELECT * FROM tb_tour";
-        try (Connection conn = ConectarBD.conectar();
+        try (Connection conn = ConectarBD.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -70,7 +70,7 @@ public class DataTour {
     public static void updateTour(Tour tour) {
         String sql = "UPDATE tb_tour SET nameTour = ?, description = ?, price = ?, date = ?, startTime = ?, " +
                      "duration = ?, startingPoint = ?, multimedia = ? WHERE id_Tour = ?";
-        try (Connection conn = ConectarBD.conectar();
+        try (Connection conn = ConectarBD.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, tour.getNameTour());
             pstmt.setString(2, tour.getDescription());
@@ -91,7 +91,7 @@ public class DataTour {
     // Método para eliminar un tour (Delete)
     public static void deleteTour(int idTour) {
         String sql = "DELETE FROM tb_tour WHERE id_Tour = ?";
-        try (Connection conn = ConectarBD.conectar();
+        try (Connection conn = ConectarBD.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idTour);
             pstmt.executeUpdate();
@@ -106,7 +106,7 @@ public static List<Tour> searchToursByName(String nameTour) throws SQLException,
 
     // Consulta SQL para buscar tours por nombre
     String sql = "SELECT * FROM tb_tour WHERE nameTour LIKE ?";
-    try (Connection conn = ConectarBD.conectar();
+    try (Connection conn = ConectarBD.connect();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setString(1, "%" + nameTour + "%"); // Usar LIKE para búsqueda parcial
         try (ResultSet rs = pstmt.executeQuery()) {
@@ -132,7 +132,7 @@ public static List<Tour> searchToursByName(String nameTour) throws SQLException,
 public static Tour getTourById(int idTour) throws SQLException, ClassNotFoundException {
     Tour tour = null;
     String sql = "SELECT * FROM tb_tour WHERE id_Tour = ?";
-    try (Connection conn = ConectarBD.conectar();
+    try (Connection conn = ConectarBD.connect();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setInt(1, idTour);
         try (ResultSet rs = pstmt.executeQuery()) {

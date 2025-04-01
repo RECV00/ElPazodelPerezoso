@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package cr.ac.una.ProjectSlothsStep.data;
+package cr.ac.una.perezoso.data;
 
 /**
  *
@@ -27,7 +27,7 @@ public class ConectarBD {
     private ConectarBD() {}
 
     // Método para obtener la conexión (Singleton)
-    public static Connection conectar() throws SQLException, ClassNotFoundException {
+    public static Connection connect() throws SQLException, ClassNotFoundException {
         if (conexion == null || conexion.isClosed()) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver"); // Cargar el driver
@@ -45,7 +45,7 @@ public class ConectarBD {
     }
 
     // Método para cerrar la conexión
-public static void cerrarConexion() {
+public static void disconnect() {
    if (conexion != null) {
         try {
              conexion.close();
