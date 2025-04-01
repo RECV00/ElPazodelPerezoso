@@ -1,0 +1,150 @@
+/*base fondo decorativa*/
+body {
+    background-image: url('/img/fondo.jpg'); /* Ruta de la imagen */
+    background-size: cover; /* Ajusta la imagen para cubrir todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-attachment: fixed; /* Fija la imagen para que no se desplace con el scroll */
+    font-family: Arial, sans-serif; /* Fuente principal */
+    color: white; /* Color del texto */
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4; /* Color de fondo */
+}
+
+.container {
+    background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
+    padding: 20px;
+    border-radius: 10px; /* Bordes redondeados */
+    margin: 20px auto; /* Centrar el contenedor */
+    max-width: 1200px; /* Ancho máximo */
+}
+
+h1 {
+    text-align: center;
+    color: white; /* Color del título */
+    margin-bottom: 20px;
+}
+form {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+button[type="submit"] {
+    padding: 8px 15px;
+    background-color: #6f7e14; /* VERDE OSCURO BOTON FILTRO Color de fondo del botón */
+    color: white; /* Color del texto */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #a2a26e; /* BOTON FILTRO VERDE CLAROCambia el color al pasar el mouse */
+}
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #a2a26e; /* VERDE CLARO Color de fondo */
+    color: white; /* Color del texto */
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.button:hover {
+    background-color: #6f7e14; /* VERDE OSCURO BONTON DE AGREGAR Y MOSTARR Cambia el color al pasar el mouse */
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #6f7e14; /* VERDE OSCURO Color de fondo del encabezado */
+    color: white; /* Color del texto */
+}
+
+table tr:hover {
+    background-color: #f5f5f5; /* Cambia el color al pasar el mouse */
+    color: black; /* Color del texto */
+}
+
+table td a {
+    color: #a2a26e ; /* VERDE CLARO Color de los enlaces */
+    text-decoration: none;
+    margin-right: 10px;
+    color: white; /* Color del texto */
+}
+
+table td a:hover {
+    text-decoration: underline; /* Subraya el enlace al pasar el mouse */
+}
+.button.edit {
+    background-color: #e1b822 ; /* AMARILLO Color de fondo para editar */
+}
+
+.button.edit:hover {
+    background-color: #f39c12; /* Cambia el color al pasar el mouse */
+}
+
+.button.delete {
+    background-color: #e74c3c; /* Color de fondo para eliminar */
+}
+
+.button.delete:hover {
+    background-color: #c0392b; /* Cambia el color al pasar el mouse */
+}
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        margin-bottom: 10px;
+    }
+
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    td:before {
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label); /* Muestra el nombre de la columna */
+        font-weight: bold;
+    }
+}

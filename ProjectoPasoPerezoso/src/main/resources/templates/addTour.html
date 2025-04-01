@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Tour</title>
+    <link th:href="@{/css/stylesAddTour.css}" rel="stylesheet" type="text/css">
+    <script>
+        // Función para establecer la fecha mínima como la fecha actual
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').setAttribute('min', today);
+        }
+
+        // Función para confirmar la anadicion
+        function confirmAdd() {
+            return confirm("¿Estás seguro de que deseas editar?");
+        }
+
+        // Ejecuta la función cuando la página se cargue
+        window.onload = setMinDate;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar Nuevo Tour</h1>
+        <form action="/tours/add" method="post" enctype="multipart/form-data" onsubmit="return confirmAdd()">
+            <div class="form-group">
+                Nombre: <input type="text" id="nameTour" name="nameTour" required><br>
+                Descripción: <input type="text" id="description" name="description" required><br>
+                Precio: <input type="number" step="0.01" id="price" name="price" required><br>
+                Fecha: <input type="date" id="date" name="date" required><br>
+                Hora de Inicio: <input type="time" id="startTime" name="startTime" required><br>
+                Duración: <input type="time" id="duration" name="duration" required><br>
+                Punto de Partida: <input type="text" id="startingPoint" name="startingPoint" required><br>
+                Imagen: <input type="file" id="multimedia" name="multimedia" th:value="${tour.multimedia}"><br>
+                <!-- Mostrar la imagen actual si existe -->
+                <div th:if="${tour.multimedia != null}">
+                    <img th:src="@{'/img/' + ${tour.multimedia}}" alt="Imagen actual" style="width: 100px; height: auto;">
+                </div>
+            </div>
+            <button type="submit">Agregar</button>
+        </form>
+        <a th:href="@{/tours/}" class="button">Volver a la lista</a>
+    </div>
+</body>
+</html>
