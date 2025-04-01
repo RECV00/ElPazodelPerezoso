@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TourController {
 
     // Mostrar todos los tours
-    @GetMapping("/")
+    @GetMapping("/listTours")
     public String showTours(Model model) {
         List<Tour> tours = DataTour.getTours(); // Obtener todos los tours
         model.addAttribute("tours", tours); // Pasar la lista a la vista
@@ -75,7 +75,7 @@ public String addTour(
              DataTour.createTour(tour);         
              // Redirigir con un mensaje de éxito
          redirectAttributes.addFlashAttribute("successMessage", "Tour agregada correctamente.");
-     return "redirect:/tours/"; // Redirigir a la lista de tours
+     return "redirect:/tours/listTours"; // Redirigir a la lista de tours
 }
 
 
@@ -129,7 +129,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
     DataTour.updateTour(tour);
     // Redirigir con un mensaje de éxito
     redirectAttributes.addFlashAttribute("successMessage", "Tour actualizada correctamente.");
-    return "redirect:/tours/"; // Redirigir a la lista de tours
+    return "redirect:/tours/listTours"; // Redirigir a la lista de tours
 }
     
 //------------------------------------------ELIMINAR-------------------------------------------------------------------------------
@@ -137,6 +137,6 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
     @GetMapping("/delete/{id}")
     public String deleteTour(@PathVariable int id) {
         DataTour.deleteTour(id);
-        return "redirect:/tours/"; // Redirigir a la lista de tours
+        return "redirect:/tours/listTours"; // Redirigir a la lista de tours
     }
 }
