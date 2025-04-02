@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -21,6 +25,9 @@
     </script>
 </head>
 <body>
+    <!-- Incluir la barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
     <div class="container">
         <h1>Agregar Nuevo Tour</h1>
         <form action="/tours/add" method="post" enctype="multipart/form-data" onsubmit="return confirmAdd()">

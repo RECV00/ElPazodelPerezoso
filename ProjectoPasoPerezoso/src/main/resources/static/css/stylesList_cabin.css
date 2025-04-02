@@ -1,13 +1,14 @@
 /* Estilos generales */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     background-image: url('/img/inicio.jpg'); /* Ruta de la imagen de fondo */
     background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-position: center;
+    font-family: Arial, sans-serif;
+    color: white; /* Color del texto */
+    margin: 0;
+    padding: 0;
     background-color: #f4f4f4; 
     
 }
@@ -59,20 +60,21 @@ nav .nav-links a:hover {
     padding: 20px;
     max-width: 1200px;
     margin: 20px auto;
-    background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+    background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
     border-radius: 10px; /* Bordes redondeados */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
     
 }
 
 .content h1 {
-    color: #333;
+    color: white;  /* Cambiado a blanco */
     font-size: 2.5em;
     margin-bottom: 10px;
+    text-align: center
 }
 
 .content h2 {
-    color: #555;
+    color: white; /* También cambié el h2 a blanco para consistencia */
     font-size: 1.8em;
     margin-bottom: 20px;
 }
@@ -82,8 +84,6 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 table th, table td {
@@ -99,7 +99,8 @@ table th {
 }
 
 table tr:hover {
-    background-color: #aeb3ba ;
+     background-color: #f5f5f5; /* Cambia el color al pasar el mouse */
+    color: black; /* Color del texto */
 }
 
 /* Estilos para los botones de acción */
@@ -115,11 +116,11 @@ table tr:hover {
 }
 
 .btn-edit {
-    background-color: #28a745; /* Verde */
+    background-color: #e1b822; /* Verde */
 }
 
 .btn-delete {
-    background-color: #dc3545; /* Rojo */
+    background-color: #e74c3c; /* Rojo */
 }
 
 .btn-edit:hover, .btn-delete:hover {
@@ -190,8 +191,8 @@ table tr:hover {
 }
 
 .search-form button {
-    padding: 5px 10px;
-    background-color: #007bff;
+    padding: 8px 15px;
+    background-color: #6f7e14;
     color: white;
     border: none;
     border-radius: 4px;
@@ -199,13 +200,13 @@ table tr:hover {
 }
 
 .search-form button:hover {
-    background-color: #0056b3;
+    background-color: #a2a26e;
 }
 
 /* Estilos para el botón "Ver Todo" */
 .view-all-form button {
     padding: 5px 10px;
-    background-color: #28a745;
+    background-color: #a2a26e;
     color: white;
     border: none;
     border-radius: 4px;
@@ -213,7 +214,7 @@ table tr:hover {
 }
 
 .view-all-form button:hover {
-    background-color: #218838;
+    background-color: #6f7e14;
 }
 
 
@@ -246,7 +247,7 @@ table tr:hover {
 .btn-add {
     display: inline-block;
     padding: 8px 16px;
-    background-color: #4CAF50;
+    background-color: #6f7e14;
     color: white;
     text-decoration: none;
     border-radius: 4px;
@@ -256,5 +257,5 @@ table tr:hover {
 }
 
 .btn-add:hover {
-    background-color: #45a049;
+    background-color: #a2a26e;
 }

@@ -7,16 +7,63 @@ body {
     font-family: Arial, sans-serif; /* Fuente principal */
     color: white; /* Color del texto */
     margin: 0;
-    padding: 20px;
+    padding: 0;
     display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
     min-height: 100vh; /* Ocupa toda la altura de la pantalla */
 }
+/* Barra de navegación */
+nav {
+    background-color: rgba(174, 182, 191, 0.7); /* Color original con 70% de opacidad */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px); /* Efecto de desenfoque para mejorar la transparencia */
+    position: fixed;  /* Hace que la barra sea fija */
+    top: 0;          /* La pega al borde superior */
+    left: 0;         /* La pega al borde izquierdo */
+    right: 0;        /* La extiende hasta el borde derecho */
+    z-index: 1000;   /* Asegura que esté por encima de otros elementos */
+}
+
+nav .logo a {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 20px;
+}
+
+nav .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+nav .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo semi-transparente al pasar el mouse */
+}
 
 .container {
    
     background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
+    margin: 80px auto;
     padding: 20px;
     border-radius: 10px; /* Bordes redondeados */
     max-width: 768px; /* Ancho máximo del contenedor */

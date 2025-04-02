@@ -21,6 +21,11 @@ nav {
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px); /* Efecto de desenfoque para mejorar la transparencia */
+    position: fixed;  /* Hace que la barra sea fija */
+    top: 0;          /* La pega al borde superior */
+    left: 0;         /* La pega al borde izquierdo */
+    right: 0;        /* La extiende hasta el borde derecho */
+    z-index: 1000;   /* Asegura que esté por encima de otros elementos */
 }
 
 nav .logo a {
@@ -57,11 +62,12 @@ nav .nav-links a:hover {
 /* Contenido principal */
 .content {
     padding: 20px;
-    max-width: 1200px;
-    margin: 20px auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    max-width: 768px;
+    margin: 80px auto;
+    background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
     border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    width: 98%; /* Ocupa  del ancho disponible */
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); /* Sombra suave */
     color: white; /* Texto en blanco */
 }
 
@@ -69,6 +75,7 @@ nav .nav-links a:hover {
     color: white; /* Texto en blanco */
     font-size: 2.5em;
     margin-bottom: 10px;
+    margin: 20px auto;
 }
 
 .content h2 {
@@ -118,16 +125,16 @@ nav .nav-links a:hover {
 
 /* Estilos para el botón de envío */
 .btn-submit {
-    background-color: #578dcb; /* Color celeste */
+    background-color: #a2a26e; /* Color celeste */
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .btn-submit:hover {
-    background-color: #387dca; /* Color azul más oscuro al pasar el ratón */
+    background-color: #6f7e14; /* Color azul más oscuro al pasar el ratón */
 }

@@ -21,6 +21,9 @@
     </script>
 </head>
 <body>
+    <!-- Incluir la barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
     <div class="container">
         <h1>Editar Tour</h1>
         <form th:action="@{/tours/edit/{id}(id=${tour.id_Tour})}" method="post" enctype="multipart/form-data" onsubmit="return confirmEdit()">

@@ -56,11 +56,12 @@ nav .nav-links a:hover {
 /* Contenido principal */
 .content {
     padding: 20px;
-    max-width: 1200px;
+    max-width: 768px;
     margin: 20px auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
     border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    width: 98%; /* Ocupa  del ancho disponible */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); /* Sombra suave */
     color: white; /* Texto en blanco */
 }
 
@@ -68,6 +69,7 @@ nav .nav-links a:hover {
     color: white; /* Texto en blanco */
     font-size: 2.5em;
     margin-bottom: 10px;
+    margin: 20px auto;
 }
 
 .content h2 {
@@ -117,18 +119,18 @@ nav .nav-links a:hover {
 
 /* Estilos para el botón de envío */
 .btn-submit {
-    background-color: #578dcb;
+    background-color: #a2a26e; /* VERDE CLARO VOLVE A LA LISTA Color de fondo del botón */
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 3px;
-    font-size: 1em;
+    border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .btn-submit:hover {
-    background-color: #387dca;
+    background-color: #6f7e14; /* VERDE OSCURO VOLVER A LA LISTA Cambia el color al pasar el mouse */
 }
 
 
