@@ -15,7 +15,7 @@ body {
 /* Barra de navegación */
 nav {
     background-color: rgba(174, 182, 191, 0.7); /* Color original con 70% de opacidad */
-    padding: 10px 20px;
+    padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;

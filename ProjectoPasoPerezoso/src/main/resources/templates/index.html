@@ -5,29 +5,45 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 -->
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Bienvenido a El Paso del Perezoso</title>
+         <title>Panel Administrativo - El Paso del Perezoso</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Vincular el archivo CSS -->
         <link th:href="@{/css/styles_index.css}" rel="stylesheet" type="text/css">
     </head>
     <body>
-        <!-- Barra de navegación -->
-        <nav>
+<!--          Barra de navegación administrativa 
+        <nav class="admin-nav">
             <div class="logo">
-               <a href="/">El Paso del Perezoso</a>
+               <a href="/">Panel Administrativo</a>
             </div>
             <ul class="nav-links">
-            <li><a th:href="@{/cabins/List}">Cabañas</a></li>
-            <li><a th:href="@{/tours/listTours}">Tours</a></li>
+                <li><a th:href="@{/cabins/List}">Gestión de Cabañas</a></li>
+                <li><a th:href="@{/tours/listTours}">Gestión de Tours</a></li>
             </ul>
-        </nav>
+        </nav>-->
 
-        <!-- Contenido principal -->
-       <div class="content">
-        <h1>Bienvenido a la Gestión de Cabañas</h1>
-        <p>Explora nuestras opciones y gestiona tus cabañas de manera eficiente.</p>
-<!--        <img src="/img/imagen.jpg"  style="width: 500px; height: auto; margin-bottom: 20px;">  se ajusta la ruta y el tamaño -->
+         <!-- Contenido principal administrativo -->
+        <div class="admin-content">
+            <h1>Panel de Control Administrativo</h1>
+            <div class="admin-welcome">
+                <h2>Bienvenido, Administrador</h2>
+                <p>Desde aquí puede gestionar todos los aspectos del sistema:</p>
+                
+                <div class="admin-options">
+                    <div class="admin-card">
+                        <h3><a th:href="@{/cabins/List}">Cabañas</a></h3>
+                        <p>Administre el inventario de cabañas, precios y disponibilidad.</p>
+                    </div>
+                    
+                    <div class="admin-card">
+                        <h3><a th:href="@{/tours/listTours}">Tours</a></h3>
+                        <p>Gestione las experiencias y actividades turísticas.</p>
+                    </div>
+                    
+                   
+                </div>
+            </div>
         </div>
     </body>
 </html>
