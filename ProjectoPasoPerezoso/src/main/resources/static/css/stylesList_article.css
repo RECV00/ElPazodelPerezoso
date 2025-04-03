@@ -1,0 +1,60 @@
+body {
+            font-family: Arial, sans-serif;
+            background: url('/fondo.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.7); /* Fondo oscuro traslúcido */
+            color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid white;
+        }
+
+        th {
+            background-color: rgba(0, 123, 255, 0.8);
+        }
+
+        td {
+            background-color: rgba(52, 58, 64, 0.8);
+        }
+
+        /* Estilo responsivo */
+        @media (max-width: 768px) {
+            table {
+                width: 95%;
+            }
+
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(52, 58, 64, 0.8);
+        }
+
+        /* Color de fondo de la pestaña */
+        meta[name="theme-color"] {
+            content: "#e1b822";
+        }

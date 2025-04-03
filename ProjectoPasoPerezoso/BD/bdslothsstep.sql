@@ -81,6 +81,47 @@ INSERT INTO `tb_tour` (`id_Tour`, `nameTour`, `description`, `price`, `date`, `s
 (19, 'Vacas', 'Ordeño', 6754.00, '2025-03-29', '02:22:00', '03:24:00', 'Corral', 'img/a0bf_vaca perfil.jpeg');
 
 --
+-- Estructura de tabla para la tabla `tb_article`
+--
+
+CREATE TABLE `tb_article` (
+  `id_article` int(11) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `product_quantity` int(11) NOT NULL,
+  `unit_of_measurement` varchar(50) NOT NULL,
+  `expiration_date` date DEFAULT NULL,
+  `supplier` varchar(255) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_article`
+--
+
+INSERT INTO `tb_article` (`id_article`, `product_name`, `description`, `product_quantity`, `unit_of_measurement`, `expiration_date`, `supplier`, `unit_price`) VALUES
+(2001, 'Leña seca', 'Paquete de leña de roble, 10 kg', 15, 'paquetes', NULL, 'Maderera del Norte', 12500.00),
+(2002, 'Gas propano', 'Tanque de gas 20 lb', 8, 'unidades', NULL, 'GasExpress', 18500.00),
+(2003, 'Linterna recargable', 'Linterna LED 1000 lúmenes', 5, 'unidades', NULL, 'TodoCamping', 22400.00),
+(2004, 'Botiquín primeros auxilios', 'Kit básico con vendas y medicamentos', 3, 'unidades', '2025-12-31', 'Farmacia Rural', 18750.00),
+(2005, 'Saco de dormir -5°C', 'Saco térmico para clima frío', 4, 'unidades', NULL, 'Aventura Outdoor', 45600.00),
+(2006, 'Agua embotellada', 'Botella 1 litro, paquete de 12', 10, 'paquetes', '2024-06-30', 'Agua Pura', 5600.00),
+(2007, 'Repelente de insectos', 'Spray 200 ml', 12, 'unidades', '2024-08-15', 'Farmacia Rural', 3250.00),
+(2008, 'Carbón para asar', 'Bolsa 5 kg', 7, 'bolsas', NULL, 'SuperSuministros', 8500.00),
+(2009, 'Cuerda resistente', 'Cuerda nylon 10m x 8mm', 6, 'unidades', NULL, 'TodoCamping', 11200.00),
+(2010, 'Baterías AA', 'Paquete de 4 unidades', 20, 'paquetes', '2026-03-31', 'ElectroTodo', 4900.00),
+(2011, 'Cerradura para cabaña', 'Juego de cerradura con 2 llaves', 3, 'juegos', NULL, 'Seguridad Total', 18700.00),
+(2012, 'Manta térmica', 'Manta de emergencia 2x1.5m', 8, 'unidades', NULL, 'Aventura Outdoor', 8500.00),
+(2013, 'Kit de herramientas básico', 'Incluye martillo, destornilladores y alicate', 2, 'kits', NULL, 'Ferretería del Campo', 32400.00),
+(2014, 'Hielo en bolsa', 'Bolsa 5 kg', 5, 'bolsas', NULL, 'SuperSuministros', 4500.00),
+(2015, 'Extintor ABC', 'Extintor 2.5 kg', 3, 'unidades', '2025-09-30', 'Seguridad Total', 38500.00);
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -97,6 +138,12 @@ ALTER TABLE `tb_tour`
   ADD PRIMARY KEY (`id_Tour`);
 
 --
+-- Indices de la tabla `tb_article`
+--
+ALTER TABLE `tb_article`
+  ADD PRIMARY KEY (`id_article`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -111,6 +158,13 @@ ALTER TABLE `tb_cabin`
 --
 ALTER TABLE `tb_tour`
   MODIFY `id_Tour` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+COMMIT;
+
+--
+-- AUTO_INCREMENT de la tabla `tb_article`
+--
+ALTER TABLE `tb_article`
+  MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2016;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Artículos</title>
+    <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet" type="text/css">
+    <meta name="theme-color" content="#e1b822">
+    <script>
+        function confirmDelete() {
+            return confirm("¿Estás seguro de que deseas eliminar este artículo?");
+        }
+    </script>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Lista de Artículos</h1>
+        
+        <!-- Sistema de filtrado -->
+        <div class="filter-section">
+            <!-- Filtro por ID -->
+            <form action="/Article/searchById" method="post" class="filter-form">
+                <label for="id_article">Buscar por ID:</label>
+                <input type="number" id="id_article" name="id_article" required>
+                <button type="submit" class="button">Buscar</button>
+            </form>
+            
+            <!-- Filtro por proveedor -->
+            <form action="/Article/searchBySupplier" method="post" class="filter-form">
+                <label for="supplier">Buscar por Proveedor:</label>
+                <input type="text" id="supplier" name="supplier" required>
+                <button type="submit" class="button">Buscar</button>
+            </form>
+            
+            <!-- Mensajes -->
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+            <div th:if="${message}" class="success-message" th:text="${message}"></div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <a href="/Article/form" class="button">
+                <i class="fas fa-plus"></i> Nuevo Artículo
+            </a>
+            <a href="/Article/list" class="button secondary">
+                <i class="fas fa-list"></i> Mostrar Todos
+            </a>
+            <a href="/Article/formUpdate" class="button">
+                <i class="fas fa-edit"></i> Editar Artículo
+            </a>
+            <a href="/Article/formRemove" class="button delete">
+                <i class="fas fa-trash-alt"></i> Eliminar Artículo
+            </a>
+        </div>
+        
+        <!-- Tabla de artículos -->
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Vencimiento</th>
+                        <th>Proveedor</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Listado completo -->
+                    <tr th:each="article : ${articles}">
+                        <td th:text="${article.id_article}"></td>
+                        <td th:text="${article.productName}"></td>
+                        <td th:text="${article.description}"></td>
+                        <td th:text="${article.productQuantity}"></td>
+                        <td th:text="${article.unitOfMeasurement}"></td>
+                        <td th:text="${article.expirationDate != null} ? ${#temporals.format(article.expirationDate, 'dd/MM/yyyy')} : 'N/A'"></td>
+                        <td th:text="${article.supplier}"></td>
+                        <td th:text="${'₡' + #numbers.formatDecimal(article.unitPrice, 1, 2, 'COMMA')}"></td>
+                        <td class="actions">
+                            <a th:href="@{/Article/formUpdate?id_article=${article.id_article}}" class="button edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/Article/removeData?id_article=${article.id_article}}" 
+                               class="button delete" onclick="return confirmDelete()">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    
+                    <!-- Resultado de búsqueda individual -->
+                    <tr th:if="${article}">
+                        <td th:text="${article.id_article}"></td>
+                        <td th:text="${article.productName}"></td>
+                        <td th:text="${article.description}"></td>
+                        <td th:text="${article.productQuantity}"></td>
+                        <td th:text="${article.unitOfMeasurement}"></td>
+                        <td th:text="${#temporals.format(article.expirationDate, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${article.supplier}"></td>
+                        <td th:text="${'₡' + #numbers.formatDecimal(article.unitPrice, 1, 2, 'COMMA')}"></td>
+                        <td class="actions">
+                            <a th:href="@{/Article/formUpdate?id_article=${article.id_article}}" class="button edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/Article/removeData?id_article=${article.id_article}}" 
+                               class="button delete" onclick="return confirmDelete()">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mensaje cuando no hay resultados -->
+        <div th:if="${articles != null and articles.empty}" class="no-results">
+            <p>No se encontraron artículos</p>
+        </div>
+    </div>
+    
+</body>
+</html>
