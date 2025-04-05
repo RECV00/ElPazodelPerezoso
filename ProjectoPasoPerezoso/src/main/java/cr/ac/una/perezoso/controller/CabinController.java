@@ -72,13 +72,13 @@ public class CabinController {
     model.addAttribute("titulo", "Listado de Cabañas");
     model.addAttribute("cantidad", cabins.size());
     model.addAttribute("cabins", cabins);
-    return "list_cabins";
+    return "cabin/list_cabins";
     }
     
     @GetMapping("/addForm")
     public String addCabinForm(Model model) {
     model.addAttribute("cabin", new Cabin()); // Pasar un objeto Cabin vacío al formulario
-    return "add_cabin"; // Redirigir al formulario de agregar
+    return "cabin/add_cabin"; // Redirigir al formulario de agregar
 }
      @PostMapping("/add")
     public String addCabin(@RequestParam("name") String name,
@@ -113,7 +113,7 @@ public class CabinController {
     } else {
         return "redirect:/cabins/List?error=Cabaña no encontrada";
     }
-    return "edit_cabin"; // Redirigir al formulario de edición
+    return "cabin/edit_cabin"; // Redirigir al formulario de edición
 }
     
 @PostMapping("/update")
@@ -155,7 +155,7 @@ public String updateCabin(@RequestParam("cabinID") int cabinID,
     public String confirmDelete(@RequestParam("cabinID") int cabinID, Model model) {
         model.addAttribute("cabinIDToDelete", cabinID); // Pasar el ID de la cabaña a eliminar
         model.addAttribute("showConfirmation", true); // Mostrar el mensaje de confirmación
-        return "list_cabins"; // Volver a la misma página
+        return "cabin/list_cabins"; // Volver a la misma página
     }
     
    @PostMapping("/delete")

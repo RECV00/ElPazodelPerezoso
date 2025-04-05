@@ -182,6 +182,7 @@ table tr:hover {
 .search-form label {
     margin-right: 5px;
     font-weight: bold;
+    font-size: 14px;
 }
 
 .search-form input {
@@ -205,6 +206,7 @@ table tr:hover {
 
 /* Estilos para el botón "Ver Todo" */
 .view-all-form button {
+    display: inline-block;
     padding: 5px 10px;
     background-color: #a2a26e;
     color: white;

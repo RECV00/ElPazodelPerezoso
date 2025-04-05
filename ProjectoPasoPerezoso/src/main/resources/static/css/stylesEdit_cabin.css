@@ -9,6 +9,10 @@ body {
     background-attachment: fixed;
     background-position: center;
     color: white; /* Texto en blanco para contrastar con el fondo oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 /* Barra de navegación */
@@ -20,6 +24,11 @@ nav {
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px); /* Efecto de desenfoque para mejorar la transparencia */
+     position: fixed;  /* Hace que la barra sea fija */
+    top: 0;          /* La pega al borde superior */
+    left: 0;         /* La pega al borde izquierdo */
+    right: 0;        /* La extiende hasta el borde derecho */
+    z-index: 1000;   /* Asegura que esté por encima de otros elementos */
 }
 
 nav .logo a {

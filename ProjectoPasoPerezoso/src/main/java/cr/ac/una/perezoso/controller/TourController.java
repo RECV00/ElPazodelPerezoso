@@ -26,7 +26,7 @@ public class TourController {
     public String showTours(Model model) {
         List<Tour> tours = DataTour.getTours(); // Obtener todos los tours
         model.addAttribute("tours", tours); // Pasar la lista a la vista
-        return "listadoTours"; // Renderiza la vista tours.html
+        return "tour/listadoTours"; // Renderiza la vista tours.html
     }
 
     // Método para filtrar tours por nombre
@@ -45,14 +45,14 @@ public class TourController {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return "listadoTours"; // Renderiza la vista tours.html
+        return "tour/listadoTours"; // Renderiza la vista tours.html
     }
 //------------------------------------------ANADIRNUEVO----------------------------------------------------------------------------------
     // Mostrar formulario para agregar un nuevo tour
     @GetMapping("/add")
     public String showAddTourForm(Model model) {
         model.addAttribute("tour", new Tour());
-        return "addTour"; // Nombre de la vista HTML (addTour.html)
+        return "tour/addTour"; // Nombre de la vista HTML (addTour.html)
     }
 
     // Procesar el formulario para agregar un nuevo tour
@@ -91,7 +91,7 @@ public String addTour(
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return "editTour"; 
+        return "tour/editTour"; 
     }
 
     // Procesar el formulario para actualizar un tour

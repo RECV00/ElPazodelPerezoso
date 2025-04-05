@@ -84,7 +84,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <!-- Mostrar la imagen actual si existe -->
                 <div class="current-image" th:if="${dish.imageUrl != null}">
                     <p>Imagen actual:</p>
-                    <img th:src="@{'/' + ${dish.imageUrl}}" alt="Imagen actual del plato">
+                    <img th:src="@{'/' + ${dish.imageUrl}}" alt="Imagen actual del plato" style="width: 200px; height: auto;">
                 </div>
             </div>
             
