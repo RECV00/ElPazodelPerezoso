@@ -120,11 +120,73 @@ INSERT INTO `tb_article` (`id_article`, `product_name`, `description`, `product_
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
+--
+-- Estructura de tabla para la tabla tb_dishe
+--
+
+CREATE TABLE tb_dishe (
+  disheID int(11) NOT NULL,
+  name varchar(100) NOT NULL,
+  description text DEFAULT NULL,
+  price decimal(10,2) NOT NULL,
+  category varchar(50) NOT NULL,
+  available tinyint(1) DEFAULT 1,
+  image_url varchar(255) DEFAULT NULL,
+  preparation_time time DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Índices para tablas volcadas
+-- Volcado de datos para la tabla tb_dishe
 --
 
+INSERT INTO tb_dishe (disheID, name, description, price, category, available, image_url, preparation_time) VALUES
+(1, 'Pasta Carbonara', 'Deliciosa pasta con salsa cremosa de huevo, queso parmesano, panceta y pimienta negra.', 1100.00, 'Pastas', 1, 'img/carbonara.jpg', '00:25:00'),
+(2, 'Ensalada César', 'Ensalada fresca con lechuga romana, croutones, queso parmesano y aderezo césar clásico.', 8.50, 'Ensaladas', 1, 'img/cesar.jpg', '00:10:00'),
+(3, 'Hamburguesa Clásica', 'Jugosa hamburguesa de carne 100% res con queso, lechuga, tomate y salsa especial.', 9.75, 'Carnes', 1, 'img/burger.jpg', '00:15:00'),
+(4, 'Sushi Variado', 'Combinación de 12 piezas de sushi incluyendo salmón, atún y camarón.', 18.99, 'Japonés', 1, 'img/sushi.jpg', '00:20:00'),
+(5, 'Tacos al Pastor', 'Tortillas de maíz con carne marinada, piña, cebolla y cilantro.', 7.25, 'Mexicano', 1, 'img/tacos.jpg', '00:12:00'),
+(6, 'Tiramisú', 'Postre italiano con capas de bizcocho empapado en café y crema de mascarpone.', 6.50, 'Postres', 1, 'img/tiramisu.jpg', '00:00:00');
+--
+-- Índices para tablas transporte
+--
+CREATE TABLE `tb_vehicle` (
+  `id` int(11) NOT NULL,
+  `id_vehicle` varchar(500) NOT NULL,
+  `driver` varchar(500) NOT NULL,
+  `dataTimeService` datetime NOT NULL,
+  `initialLocation` varchar(500) NOT NULL,
+  `finalLocation` varchar(500) NOT NULL,
+  `serviceStatus` varchar(500) NOT NULL,
+  `serviceDuration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Vehículo 1: Servicio programado de transporte de mercancías
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (1, 'ABC123', 'Juan Pérez', '2023-11-15 08:00:00', 'Almacén Central, Calle 10 #20-30', 'Centro Comercial Plaza Mayor', 'Programado', 45);
+
+-- Vehículo 2: Servicio en curso de pasajeros
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (2, 'XYZ789', 'María Gómez', '2023-11-14 14:30:00', 'Terminal Norte', 'Aeropuerto Internacional', 'En curso', 60);
+
+-- Vehículo 3: Servicio completado de mudanza
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (3, 'DEF456', 'Carlos Rodríguez', '2023-11-13 10:00:00', 'Carrera 45 #12-34, Apartamento 302', 'Calle 80 #23-45, Casa 12', 'Completado', 120);
+
+-- Vehículo 4: Servicio cancelado
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (4, 'GHI789', 'Ana López', '2023-11-16 09:15:00', 'Oficinas Principal, Avenida 30', 'Sede Industrial Zona Franca', 'Cancelado', 90);
+
+-- Vehículo 5: Transporte de materiales de construcción
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (5, 'JKL012', 'Pedro Martínez', '2023-11-17 07:00:00', 'Depósito de Materiales, Kilómetro 5', 'Obra Nueva Torre Verde', 'Programado', 75);
+
+-- Vehículo 6: Transporte ejecutivo
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (6, 'MNO345', 'Luisa Fernández', '2023-11-15 16:45:00', 'Hotel Dann Carlton', 'Centro de Convenciones', 'Programado', 30);
+
+-- Vehículo 7: Servicio nocturno
+INSERT INTO `tb_vehicle` (`id`, `id_vehicle`, `driver`, `dataTimeService`, `initialLocation`, `finalLocation`, `serviceStatus`, `serviceDuration`) 
+VALUES (7, 'PQR678', 'Jorge Ramírez', '2023-11-14 22:00:00', 'Discoteca La 70', 'Barrio El Poblado, Carrera 43', 'Completado', 40);
 --
 -- Indices de la tabla `tb_cabin`
 --
@@ -144,9 +206,20 @@ ALTER TABLE `tb_article`
   ADD PRIMARY KEY (`id_article`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT de las tablas dishes
 --
+--
+-- Indices de la tabla tb_dishe
+--
+ALTER TABLE tb_dishe
+  ADD PRIMARY KEY (disheID);
 
+--
+-- AUTO_INCREMENT de la tabla tb_dishe
+--
+ALTER TABLE tb_dishe
+  MODIFY disheID int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+COMMIT;
 --
 -- AUTO_INCREMENT de la tabla `tb_cabin`
 --
@@ -167,6 +240,10 @@ ALTER TABLE `tb_article`
   MODIFY `id_article` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2016;
 COMMIT;
 
+-- AUTO_INCREMENT de la tabla `tb_vehicle`
+--
+ALTER TABLE `tb_vehicle`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

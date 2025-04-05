@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Transporte</title>
+    <link th:href="@{/css/stylesAddTransportation.css}" rel="stylesheet" type="text/css">
+    <script>
+        // Función para establecer la fecha/hora mínima como la actual
+        function setMinDateTime() {
+            const now = new Date();
+            // Ajustar a formato YYYY-MM-DDTHH:MM
+            const today = now.toISOString().slice(0, 16);
+            document.getElementById('dataTimeService').setAttribute('min', today);
+        }
+
+        // Función para confirmar la adición
+        function confirmAdd() {
+            return confirm("¿Estás seguro de que deseas agregar este transporte?");
+        }
+
+        // Ejecuta la función cuando la página se cargue
+        window.onload = setMinDateTime;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar Nuevo Transporte</h1>
+        
+        <form action="/transportations/add" method="post" onsubmit="return confirmAdd()">
+            <div class="form-group">
+                <label for="idVehicle">Placa del Vehículo:</label>
+                <input type="text" id="idVehicle" name="idVehicle" required 
+                       placeholder="Ej: ABC123" pattern="[A-Za-z0-9]{3,10}" 
+                       title="Formato de placa inválido (3-10 caracteres alfanuméricos)">
+                
+                <label for="driver">Conductor:</label>
+                <input type="text" id="driver" name="driver" required 
+                       placeholder="Nombre completo del conductor">
+                
+                <label for="dataTimeService">Fecha y Hora del Servicio:</label>
+                <input type="datetime-local" id="dataTimeService" name="dataTimeService" required>
+                
+                <label for="initialLocation">Ubicación Inicial:</label>
+                <input type="text" id="initialLocation" name="initialLocation" required 
+                       placeholder="Lugar de partida">
+                
+                <label for="finalLocation">Ubicación Final:</label>
+                <input type="text" id="finalLocation" name="finalLocation" required 
+                       placeholder="Lugar de destino">
+                
+                <label for="serviceStatus">Estado del Servicio:</label>
+                <select id="serviceStatus" name="serviceStatus" required>
+                    <option value="">Seleccione un estado</option>
+                    <option value="Programado">Programado</option>
+                    <option value="En curso">En curso</option>
+                    <option value="Completado">Completado</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+                
+                <label for="serviceDuration">Duración Estimada (minutos):</label>
+                <input type="number" id="serviceDuration" name="serviceDuration" 
+                       min="1" max="600" required placeholder="Ej: 60">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Guardar Transporte</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
