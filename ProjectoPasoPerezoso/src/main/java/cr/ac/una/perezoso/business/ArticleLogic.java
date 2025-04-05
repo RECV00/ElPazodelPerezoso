@@ -42,7 +42,7 @@ public class ArticleLogic {
     }
     
     public boolean validateLocalDate(LocalDate date) {
-    if (date == null) {
+    if (date == null || !date.isBefore(LocalDate.of(1900, 1, 1))) {
         System.out.println("La fecha no puede estar vacía.");
         return false;
     }

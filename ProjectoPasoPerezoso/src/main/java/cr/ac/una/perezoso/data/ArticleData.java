@@ -71,27 +71,31 @@ public class ArticleData {
     
     // Método para guardar un nuevo artículo
     public static void saveArticle(Article article) throws SQLException, ClassNotFoundException {
-        String sql = "INSERT INTO tb_article (product_name, description, product_quantity, unit_of_measurement, NULLIF(expiration_date, '0000-00-00'), supplier, unit_price) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO tb_article (product_name, description, product_quantity, " +
+                 "unit_of_measurement, expiration_date, supplier, unit_price) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
+    try (Connection conn = ConectarBD.connect();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
-        try (Connection conn = ConectarBD.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, article.getProductName());
-            pstmt.setString(2, article.getDescription());
-            pstmt.setInt(3, article.getProductQuantity());
-            pstmt.setString(4, article.getUnitOfMeasurement());
+        pstmt.setString(1, article.getProductName());
+        pstmt.setString(2, article.getDescription());
+        pstmt.setInt(3, article.getProductQuantity());
+        pstmt.setString(4, article.getUnitOfMeasurement());
+        
+        // Manejo de fecha nula
+        if (article.getExpirationDate() != null) {
             pstmt.setDate(5, Date.valueOf(article.getExpirationDate()));
-            pstmt.setString(6, article.getSupplier());
-            pstmt.setInt(7, article.getUnitPrice());
-            
-            pstmt.executeUpdate();
-        }catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        ConectarBD.disconnect();
+        } else {
+            pstmt.setNull(5, java.sql.Types.DATE);
+        }
+        
+        pstmt.setString(6, article.getSupplier());
+        pstmt.setInt(7, article.getUnitPrice());
+        
+        pstmt.executeUpdate();
     }
-    }
+}
     
     // Método para eliminar un artículo
     public static void removeArticle(int id) throws SQLException, ClassNotFoundException {
@@ -106,53 +110,64 @@ public class ArticleData {
     }
     
     // Método para actualizar un artículo
-    public static void updateArticle(Article article) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE tb_article SET product_name = ?, description = ?, product_quantity = ?, " +
-                     "unit_of_measurement = ?, expiration_date = ?, supplier = ?, unit_price = ? " +
-                     "WHERE id_article = ?";
+   public static void updateArticle(Article article) throws SQLException, ClassNotFoundException {
+    String sql = "UPDATE tb_article SET product_name = ?, description = ?, product_quantity = ?, " +
+                 "unit_of_measurement = ?, expiration_date = ?, supplier = ?, unit_price = ? " +
+                 "WHERE id_article = ?";
+    
+    try (Connection conn = ConectarBD.connect();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
-        try (Connection conn = ConectarBD.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, article.getProductName());
-            pstmt.setString(2, article.getDescription());
-            pstmt.setInt(3, article.getProductQuantity());
-            pstmt.setString(4, article.getUnitOfMeasurement());
+        pstmt.setString(1, article.getProductName());
+        pstmt.setString(2, article.getDescription());
+        pstmt.setInt(3, article.getProductQuantity());
+        pstmt.setString(4, article.getUnitOfMeasurement());
+        
+        // Manejo de fecha nula
+        if (article.getExpirationDate() != null) {
             pstmt.setDate(5, Date.valueOf(article.getExpirationDate()));
-            pstmt.setString(6, article.getSupplier());
-            pstmt.setInt(7, article.getUnitPrice());
-            pstmt.setInt(8, article.getId_article());
-            
-            pstmt.executeUpdate();
+        } else {
+            pstmt.setNull(5, java.sql.Types.DATE);
         }
+        
+        pstmt.setString(6, article.getSupplier());
+        pstmt.setInt(7, article.getUnitPrice());
+        pstmt.setInt(8, article.getId_article());
+        
+        pstmt.executeUpdate();
     }
+}
     
     // Método para obtener un artículo por ID
     public static Article getArticleById(int id_article) throws SQLException, ClassNotFoundException {
-        Article article = null;
-        String sql = "SELECT id_article, product_name, description, product_quantity, unit_of_measurement, " +
-                     "expiration_date, supplier, unit_price FROM tb_article WHERE id_article = ?";
+    Article article = null;
+    String sql = "SELECT id_article, product_name, description, product_quantity, unit_of_measurement, " +
+                 "expiration_date, supplier, unit_price FROM tb_article WHERE id_article = ?";
+    
+    try (Connection conn = ConectarBD.connect();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
-        try (Connection conn = ConectarBD.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setInt(1, id_article);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    article = new Article();
-                    article.setId_article(rs.getInt("id"));
-                    article.setProductName(rs.getString("product_name"));
-                    article.setDescription(rs.getString("description"));
-                    article.setProductQuantity(rs.getInt("product_quantity"));
-                    article.setUnitOfMeasurement(rs.getString("unit_of_measurement"));
-                    article.setExpirationDate(rs.getDate("expiration_date").toLocalDate());
-                    article.setSupplier(rs.getString("supplier"));
-                    article.setUnitPrice(rs.getInt("unit_price"));
-                }
+        pstmt.setInt(1, id_article);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                article = new Article();
+                article.setId_article(rs.getInt("id_article"));
+                article.setProductName(rs.getString("product_name"));
+                article.setDescription(rs.getString("description"));
+                article.setProductQuantity(rs.getInt("product_quantity"));
+                article.setUnitOfMeasurement(rs.getString("unit_of_measurement"));
+                
+                // Manejo seguro de fecha nula
+                java.sql.Date sqlDate = rs.getDate("expiration_date");
+                article.setExpirationDate(sqlDate != null ? sqlDate.toLocalDate() : null);
+                
+                article.setSupplier(rs.getString("supplier"));
+                article.setUnitPrice(rs.getInt("unit_price"));
             }
         }
-        return article;
     }
+    return article;
+}
     
     // Método para obtener artículos por proveedor
     public static LinkedList<Article> getArticlesBySupplier(String supplier) throws SQLException, ClassNotFoundException {

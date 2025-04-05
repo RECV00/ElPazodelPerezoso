@@ -34,6 +34,17 @@ public class Article {
         this.unitPrice = unitPrice;
     }
 
+    public Article(String productName, String description, int productQuantity, String unitOfMeasurement, LocalDate expirationDate, String supplier, int unitPrice) {
+        this.productName = productName;
+        this.description = description;
+        this.productQuantity = productQuantity;
+        this.unitOfMeasurement = unitOfMeasurement;
+        this.expirationDate = expirationDate;
+        this.supplier = supplier;
+        this.unitPrice = unitPrice;
+    }
+
+    
     public int getId_article() {
         return id_article;
     }

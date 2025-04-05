@@ -33,43 +33,38 @@ public class ArticleController {
         logic = new ArticleLogic();
     }
     
-     @GetMapping({"/formulario", "/form", "/create"})
-    public String formulario() {
-        return "form_article";  
+  @GetMapping({"/addForm"})
+    public String addArticle(Model model) {
+        model.addAttribute("article",new Article());             
+        return "article/add_article";  
     }
-   //"/Article"/form""
+     //"/Article"/form""
  @PostMapping("/saveArticle")
 public String saveArticles(
-    @RequestParam("id_article") int id_article,
     @RequestParam("productName") String productName,
     @RequestParam("description") String description,
     @RequestParam("productQuantity") int productQuantity,
     @RequestParam("unitOfMeasurement") String unitOfMeasurement,
-    @RequestParam("expirationDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
+    @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
     @RequestParam("supplier") String supplier,
     @RequestParam("unitPrice") int unitPrice,
     Model model) throws SQLException, ClassNotFoundException {
-
     
-    if (!logic.validateNumbers(id_article) || !logic.validateWord(productName) || !logic.checkStrings(description) || 
+    // Validación modificada para fecha opcional
+    if (!logic.validateWord(productName) || !logic.checkStrings(description) || 
         !logic.validateNumbers(productQuantity) || !logic.validateWord(unitOfMeasurement) || 
-        !logic.validateWord(supplier) || !logic.validateNumbers(unitPrice) || !logic.validateLocalDate(expirationDate)) {
-
+        !logic.validateWord(supplier) || !logic.validateNumbers(unitPrice) ||
+        (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
+        
         model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
-        return "form_article"; 
+        return "article/add_article"; 
     }
-
     
-    Article article = new Article(id_article, productName, description, productQuantity, unitOfMeasurement,
-        expirationDate, supplier, unitPrice);
-
-    
+    Article article = new Article(productName, description, productQuantity, 
+                                unitOfMeasurement, expirationDate, supplier, unitPrice);
     ArticleData.saveArticle(article);
-
     
-    model.addAttribute("message", "El producto se guardó correctamente.");
-
-    return "form_article";  
+    return "redirect:/Article/list?success=Artículo creado correctamente";
 }
 
         //Listar articulos  
@@ -95,37 +90,56 @@ public String saveArticles(
     public String removeArticles(@RequestParam("id_article") int id_article) throws SQLException, ClassNotFoundException{
         ArticleData.removeArticle(id_article);
     
-        return "remove";
+        return "redirect:/Article/list";
     }
-     @GetMapping({"/formUpdate", "/createUpdate"})
-    public String formUpdate() {
-        return "update";  
+  
+
+     @GetMapping("/formUpdate")
+    public String formUpdate(@RequestParam("id_article") int id_article, Model model)  throws SQLException, ClassNotFoundException{
+        if (id_article <= 0) {
+            return "redirect:/Article/list?error=Articulo no encontrado";
+        }
+    // Obtener el articulo existente por su ID
+    Article article = ArticleData.getArticleById(id_article);
+    if (article != null) {
+        model.addAttribute("article", article);
+    } else {
+        return "redirect:/Article/list?error=Articulo no encontrado";
     }
+    return "article/edit_article";  
+    }   
+        
     //Editar Articulos 
     //"/Article/Updates"
     @PostMapping("/Updates")
     public String UpdateArticles(
-        @RequestParam("id_article") int id_article,
-        @RequestParam("productName") String productName,
-        @RequestParam("description") String description,
-        @RequestParam("productQuantity") int productQuantity,
-        @RequestParam("unitOfMeasurement") String unitOfMeasurement,
-        @RequestParam("expirationDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
-        @RequestParam("supplier") String supplier,
-        @RequestParam("unitPrice") int unitPrice) throws SQLException, ClassNotFoundException{
+    @RequestParam("id_article") int id_article,
+    @RequestParam("productName") String productName,
+    @RequestParam("description") String description,
+    @RequestParam("productQuantity") int productQuantity,
+    @RequestParam("unitOfMeasurement") String unitOfMeasurement,
+    @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
+    @RequestParam("supplier") String supplier,
+    @RequestParam("unitPrice") int unitPrice) throws SQLException, ClassNotFoundException {
+    
+    // Validación modificada para fecha opcional
+    if (!logic.validateNumbers(id_article) || !logic.validateWord(productName) || 
+        !logic.checkStrings(description) || !logic.validateNumbers(productQuantity) || 
+        !logic.validateWord(unitOfMeasurement) || !logic.validateWord(supplier) || 
+        !logic.validateNumbers(unitPrice) || 
+        (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
+        
+        return "redirect:/Article/list?error=Datos inválidos";
+    }
+    
+    Article article = new Article(id_article, productName, description, productQuantity,
+                                unitOfMeasurement, expirationDate, supplier, unitPrice);
+    ArticleData.updateArticle(article);
+    
+    return "redirect:/Article/list?success=Artículo actualizado correctamente";
+}
+    
    
-     if (logic.validateNumbers(id_article)&& logic.validateWord(productName)&& logic.checkStrings(description)&& logic.validateNumbers(productQuantity) 
-        && logic.validateWord(unitOfMeasurement)&& logic.validateWord(supplier)&& logic.validateNumbers(unitPrice) 
-        && logic.validateLocalDate(expirationDate)) {
-     
-         Article article = new Article(id_article, productName, description, productQuantity,unitOfMeasurement,
-         expirationDate, supplier, unitPrice);
-         ArticleData.updateArticle(article);
-     
-     
-     }
-     return "update";
-   }
      @GetMapping({"/formSearch", "/createSearch"})
     public String formSearch() {
         return "searchResult";  
@@ -156,7 +170,7 @@ public String saveArticles(
         } else {
             model.addAttribute("articles", articles);
         }
-        return "searchSupplier"; 
+        return "article/list"; 
     }
 
 }
