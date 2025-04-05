@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Listado de Platos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Incluir Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet" type="text/css">
+    
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <h1 th:text="${titulo}">Listado de Platos</h1>
+
+        <!-- Contenedor de búsqueda -->
+        <div class="search-container">
+            <form action="#" th:action="@{/dishes/ListFood}" method="get" class="search-form">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" placeholder="Buscar por nombre">
+                
+                <label for="disheID">ID:</label>
+                <input type="number" id="disheID" name="disheID" placeholder="Buscar por ID">
+                
+                
+                <button type="submit">Buscar</button>
+            </form>
+
+            <form action="#" th:action="@{/dishes/ListFood}" method="get" class="view-all-form">
+                <button type="submit"><i class="fas fa-list"></i> Mostrar Todo</button>
+            </form>
+        </div>
+        
+        <!-- Botón para agregar nuevo plato -->
+        <div class="add-dish-container">
+            <a th:href="@{/dishes/addForm}" class="btn-add">
+                <i class="fas fa-plus-circle"></i> Agregar Plato
+            </a>
+        </div>
+        
+        <!-- Mensajes -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
+        
+         <div th:if="${deleteSuccess}" class="alert alert-success">
+            <p><i class="fas fa-check-circle"></i> Plato eliminado correctamente.</p>
+        </div>
+        
+        <div th:if="${successMessage}" class="alert alert-success">
+            <p><i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span></p>
+        </div>
+
+        <!-- Tabla de platos -->
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                    <th>Disponible</th>
+                    <th>Tiempo Preparación</th>
+                    <th>Imagen</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr th:each="dish : ${dishes}">
+                    <td th:text="${dish.disheID}"></td>
+                    <td th:text="${dish.name}"></td>
+                    <td th:text="${dish.description}"></td>
+                    <td th:text="${'$' + #numbers.formatDecimal(dish.price, 1, 2)}"></td>
+                    <td th:text="${dish.category}"></td>
+                    <td>
+                        <span th:if="${dish.available}" class="available">Sí</span>
+                        <span th:unless="${dish.available}" class="not-available">No</span>
+                    </td>
+                    <td th:text="${dish.preparationTime}"></td>
+                    <td>
+                        <img th:if="${dish.imageUrl}" th:src="@{'/' + ${dish.imageUrl}}" 
+                             alt="Imagen del plato" style="width: 100px; height: auto;">
+                        <span th:unless="${dish.imageUrl}">Sin imagen</span>
+                    </td>
+                     <td class="actions">
+                        <a th:href="@{/dishes/updateForm(disheID=${dish.disheID})}" 
+                           class="btn-edit">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <form th:action="@{/dishes/delete(disheID=${dish.disheID})}" 
+                              method="post" style="display: inline;">
+                            <button type="submit" class="btn-delete" 
+                                    onclick="return confirmDelete();">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+         <h2 th:text="'Total de Platos: ' + ${count}"><i class="fas fa-list-ol"></i> Total de Platos: 0</h2>
+    </div>
+    
+    <script>
+        function confirmDelete() {
+            return confirm('¿Estás seguro de que deseas eliminar este plato?');
+        }
+    </script>
+</body>
+</html>
+

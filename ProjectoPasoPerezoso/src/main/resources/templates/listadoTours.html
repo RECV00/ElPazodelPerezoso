@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Tours</title>
+    <!-- Incluir Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet" type="text/css">
     <script>
         // Función para confirmar la eliminación
@@ -26,8 +28,12 @@
         </form>
 
         <!-- Botones para agregar un nuevo tour y mostrar todos -->
-        <button onclick="window.location.href='/tours/add'" class="button">Agregar Nuevo Tour</button>
-        <button onclick="window.location.href='/tours/'" class="button">Mostrar Todos</button>
+        <button onclick="window.location.href='/tours/add'" class="button">
+           <i class="fas fa-plus-circle"></i> Agregar Nuevo Tour
+        </button>
+        <button onclick="window.location.href='/tours/'" class="button">
+            <i class="fas fa-list"></i> Mostrar Todos
+        </button>
         
         <!-- Tabla para mostrar los tours -->
         <table>
@@ -62,10 +68,16 @@
                     </td>
                     <td>
                         <!-- Botón para editar un tour -->
-                        <a th:href="@{/tours/edit/{id}(id=${tour.id_Tour})}" class="button edit">Editar</a>
+                        <a th:href="@{/tours/edit/{id}(id=${tour.id_Tour})}" 
+                           class="button edit">
+                           <i class="fas fa-edit"></i> Editar 
+                        </a>
 
                         <!-- Botón para eliminar un tour -->
-                        <a th:href="@{/tours/delete/{id}(id=${tour.id_Tour})}" class="button delete" onclick="return confirmDelete()">Eliminar</a>
+                        <a th:href="@{/tours/delete/{id}(id=${tour.id_Tour})}" 
+                           class="button delete" onclick="return confirmDelete()">
+                            <i class="fas fa-trash-alt"></i> Eliminar 
+                        </a>
                     </td>
                 </tr>
             </tbody>

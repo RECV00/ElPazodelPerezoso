@@ -8,6 +8,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <title>Listado de Cabañas</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- Incluir Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -20,7 +22,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
         <!-- Botón "Agregar Cabaña" -->
         <div class="add-cabin-container">
-            <a th:href="@{/cabins/addForm}" class="btn-add">Agregar nueva Cabaña</a>
+            <a th:href="@{/cabins/addForm}" class="btn-add">
+                <i class="fas fa-plus-circle"></i>Agregar nueva Cabaña
+            </a>
         </div>
 
         <!-- Contenedor para el formulario de búsqueda y el botón "Ver Todo" -->
@@ -36,7 +40,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             <!-- Botón "Ver Todo" -->
             <form action="#" th:action="@{/cabins/List}" method="get" class="view-all-form">
-                <button type="submit">Ver Todo</button>
+                <button type="submit"><i class="fas fa-list"></i> Mostrar Todo</button>
             </form>
         </div>
         
@@ -47,7 +51,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
   
         <!-- Mensaje de éxito -->
         <div th:if="${deleteSuccess}" class="alert alert-success">
-            <p>Cabaña eliminada correctamente.</p>
+            <p><i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span></p>
         </div>
 
         <!-- Tabla de cabañas -->
@@ -81,15 +85,22 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     </td>
                     <!--para los botones de editar y eliminar-->
                     <td>
-                        <a th:href="@{/cabins/updateForm(cabinID=${tempCabin.cabinID})}" class="btn-edit">Editar</a>
-                        <form th:action="@{/cabins/delete(cabinID=${tempCabin.cabinID})}" method="post" style="display: inline;">
-                         <button type="submit" class="btn-delete" onclick="return confirmDelete();">Eliminar</button>
+                        <a th:href="@{/cabins/updateForm(cabinID=${tempCabin.cabinID})}" 
+                            class="btn-edit">
+                            <i class="fas fa-edit"></i> Editar 
+                        </a>
+                        <form th:action="@{/cabins/delete(cabinID=${tempCabin.cabinID})}" 
+                              method="post" style="display: inline;">
+                         <button type="submit" class="btn-delete" 
+                             onclick="return confirmDelete();">
+                             <i class="fas fa-trash-alt"></i> Eliminar        
+                         </button>
                         </form>
                     </td>
                 </tr>
             </tbody>
         </table>
-         <h2 th:text="'Total de Cabañas: ' + ${cantidad}"></h2>
+         <h2 th:text="'Total de Cabañas: ' + ${cantidad}"><i class="fas fa-list-ol"></i> Total de Cabañas: 0</h2>
     </div>
      <script>
         function confirmDelete() {
@@ -97,7 +108,5 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         }
     </script>
     
-     <!-- Incluir Font Awesome para iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </body>
 </html>

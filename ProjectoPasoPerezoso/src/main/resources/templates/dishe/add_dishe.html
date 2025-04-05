@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agregar Plato</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/stylesAdd_cabin.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <h1>Agregar Nuevo Plato</h1>
+        <form method="post" th:action="@{/dishes/add}" enctype="multipart/form-data" onsubmit="return confirmAdd()">
+            
+            <!-- Nombre del plato -->
+            <div class="form-group">
+                <label for="name">Nombre del Plato:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <!-- Descripción -->
+            <div class="form-group">
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            
+            <!-- Precio -->
+            <div class="form-group">
+                <label for="price">Precio ($):</label>
+                <input type="number" id="price" name="price" step="0.01" min="0" required>
+            </div>
+            
+            <!-- Categoría -->
+            <div class="form-group">
+                <label for="category">Categoría:</label>
+                <select id="category" name="category" required>
+                    <option value="">Seleccione una categoría</option>
+                    <option value="Entrada">Entrada</option>
+                    <option value="Plato Principal">Plato Principal</option>
+                    <option value="Postre">Postre</option>
+                    <option value="Bebida">Bebida</option>
+                    <option value="Especial">Especial del Chef</option>
+                </select>
+            </div>
+            
+            <!-- Disponibilidad -->
+            <div class="form-group">
+                <label>Disponibilidad:</label>
+                <div class="availability-options">
+                    <div class="radio-option">
+                        <input type="radio" id="available_true" name="available" value="true" checked>
+                        <label for="available_true">Disponible</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="available_false" name="available" value="false">
+                        <label for="available_false">No Disponible</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tiempo de preparación -->
+            <div class="form-group">
+                <label for="preparationTime">Tiempo de Preparación (HH:MM):</label>
+                <input type="time" id="preparationTime" name="preparationTime" 
+                       min="00:05" max="03:00" step="300" required> <!-- 5 min - 3 horas, saltos de 5 min -->
+            </div>
+            
+            <!-- Imagen -->
+            <div class="form-group">
+                <label for="image">Imagen del Plato:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+                <small>Formatos aceptados: JPG, PNG, GIF</small>
+            </div>
+            
+            <!-- Botón de envío -->
+            <div class="form-group">
+                <input type="submit" value="Guardar Plato" class="btn-submit">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function confirmAdd() {
+            return confirm("¿Estás seguro de que deseas agregar este plato?");
+        }
+        
+        // Validación adicional para el tiempo de preparación
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const timeInput = document.getElementById('preparationTime');
+            if(timeInput.value === '00:00') {
+                alert('Por favor ingrese un tiempo de preparación válido');
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
