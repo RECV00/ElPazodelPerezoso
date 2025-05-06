@@ -4,7 +4,7 @@
  */
 package cr.ac.una.perezoso.controller;
 import java.sql.SQLException;
-import cr.ac.una.perezoso.data.DataTour;
+import cr.ac.una.perezoso.data.TourData;
 import cr.ac.una.perezoso.data.FileUploadUtil;
 import cr.ac.una.perezoso.domain.Tour;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class TourController {
     // Mostrar todos los tours
     @GetMapping("/listTours")
     public String showTours(Model model) {
-        List<Tour> tours = DataTour.getTours(); // Obtener todos los tours
+        List<Tour> tours = TourData.getTours(); // Obtener todos los tours
         model.addAttribute("tours", tours); // Pasar la lista a la vista
         return "tour/listadoTours"; // Renderiza la vista tours.html
     }
@@ -36,10 +36,10 @@ public class TourController {
             List<Tour> tours;
             if (nameTour != null && !nameTour.isEmpty()) {
                 // Filtrar tours por nombre si se proporciona un valor
-                tours = DataTour.searchToursByName(nameTour);
+                tours = TourData.searchToursByName(nameTour);
             } else {
                 // Mostrar todos los tours si no se proporciona un valor
-                tours = DataTour.getTours();
+                tours = TourData.getTours();
             }
             model.addAttribute("tours", tours); // Pasar la lista filtrada a la vista
         } catch (SQLException | ClassNotFoundException e) {
@@ -72,7 +72,7 @@ public String addTour(
          String imagePath = FileUploadUtil.saveFile(multimediaFile);   
   
              Tour tour = new Tour(nameTour, description, price, date, startTime, duration, startingPoint,imagePath);
-             DataTour.createTour(tour);         
+             TourData.createTour(tour);         
              // Redirigir con un mensaje de éxito
          redirectAttributes.addFlashAttribute("successMessage", "Tour agregada correctamente.");
      return "redirect:/tours/listTours"; // Redirigir a la lista de tours
@@ -86,7 +86,7 @@ public String addTour(
     @GetMapping("/edit/{id}")
     public String showEditTourForm(@PathVariable int id, Model model) {
         try {
-            Tour tour = DataTour.getTourById(id);
+            Tour tour = TourData.getTourById(id);
             model.addAttribute("tour", tour);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -110,7 +110,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
    
  
 
-    Tour tour = DataTour.getTourById(id_Tour);
+    Tour tour = TourData.getTourById(id_Tour);
     // Si se subió una nueva imagen, guardarla y actualizar la ruta
     if (!imageFile.isEmpty()) {
         String imagePath = FileUploadUtil.saveFile(imageFile);
@@ -126,7 +126,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
     tour.setStartingPoint(startingPoint);
     
     // Guardar los cambios en la base de datos
-    DataTour.updateTour(tour);
+    TourData.updateTour(tour);
     // Redirigir con un mensaje de éxito
     redirectAttributes.addFlashAttribute("successMessage", "Tour actualizada correctamente.");
     return "redirect:/tours/listTours"; // Redirigir a la lista de tours
@@ -136,7 +136,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
     // Eliminar un tour
     @GetMapping("/delete/{id}")
     public String deleteTour(@PathVariable int id) {
-        DataTour.deleteTour(id);
+        TourData.deleteTour(id);
         return "redirect:/tours/listTours"; // Redirigir a la lista de tours
     }
 }
