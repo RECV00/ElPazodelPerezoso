@@ -5,6 +5,12 @@
  */
 package cr.ac.una.perezoso.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -12,17 +18,38 @@ import java.time.LocalTime;
  *
  * @author corra
  */
+@Entity
+@Table(name = "tb_tour")
 public class Tour {
     
-    private int id_Tour;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_tour")
+    private Integer id_Tour;
+    
+    @Column(name = "name_tour", nullable = false, length = 100)
     private String nameTour;
+    
+    @Column(name = "description", length = 500)
     private String description;
-    private double price;
+    
+    @Column(name = "price", nullable = false)
+    private Double price;
+    
+    @Column(name = "tour_date")
     private LocalDate date;
+    
+    @Column(name = "start_time")
     private LocalTime startTime;
+    
+    @Column(name = "duration")
     private LocalTime duration;
+    
+    @Column(name = "starting_point", length = 200)
     private String startingPoint;
-    private String multimedia; 
+    
+    @Column(name = "multimedia", length = 255)
+    private String multimedia;
 
     public Tour() {
     } 

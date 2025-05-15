@@ -4,26 +4,53 @@
  */
 package cr.ac.una.perezoso.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
  *
  * @author keyna
  */
+@Entity
+@Table(name = "tb_cabin")
 public class Cabin {
     
-    private int cabinID;//para la base de datos 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cabinID") 
+    private Integer cabinID;
     
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
+   
+    @Column(name = "description", nullable = false, length = 500)
     private String description;
-    private int capacity;
-    private double pricePerNight;
+    
+    @Column(name = "capacity", nullable = false)
+    private Integer capacity;
+   
+    @Column(name = "price_per_night", nullable = false)
+     private Double pricePerNight;
+  
+    @Column(name = "location", nullable = false, length = 200)
     private String location;
+    
+    @Column(name = "image", length = 255)
     private String image;
+    
+    @Column(name = "included_services", length = 500)
     private String includedServices;
 
     public Cabin() {
     }
 
-    public Cabin(int cabinID, String name, String description, int capacity, double pricePerNight, String location, String image, String includedServices) {
+    public Cabin(Integer cabinID, String name, String description, Integer capacity, 
+               double pricePerNight, String location, String image, 
+               String includedServices) {
         this.cabinID = cabinID;
         this.name = name;
         this.description = description;
@@ -34,7 +61,9 @@ public class Cabin {
         this.includedServices = includedServices;
     }
 
-    public Cabin(String name, String description, int capacity, double pricePerNight, String location, String image, String includedServices) {
+    public Cabin(String name, String description, Integer capacity, 
+                double pricePerNight, String location, String image, 
+                String includedServices) {
         this.name = name;
         this.description = description;
         this.capacity = capacity;
@@ -44,12 +73,12 @@ public class Cabin {
         this.includedServices = includedServices;
     }
 
-    
-    public int getCabinID() {
+    // Getters y Setters
+    public Integer getCabinID() {
         return cabinID;
     }
 
-    public void setCabinID(int cabinID) {
+    public void setCabinID(Integer cabinID) {
         this.cabinID = cabinID;
     }
 
@@ -69,11 +98,11 @@ public class Cabin {
         this.description = description;
     }
 
-    public int getCapacity() {
+    public Integer getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(Integer capacity) {
         this.capacity = capacity;
     }
 
@@ -108,6 +137,6 @@ public class Cabin {
     public void setIncludedServices(String includedServices) {
         this.includedServices = includedServices;
     }
-    
-    
+
+   
 }

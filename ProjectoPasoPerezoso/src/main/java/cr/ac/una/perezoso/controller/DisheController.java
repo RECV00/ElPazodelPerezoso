@@ -4,14 +4,12 @@
  */
 package cr.ac.una.perezoso.controller;
 
-import cr.ac.una.perezoso.business.DisheLogic;
-import cr.ac.una.perezoso.data.DisheData;
 import cr.ac.una.perezoso.data.FileUploadUtil;
 import cr.ac.una.perezoso.domain.Dishe;
+import cr.ac.una.perezoso.service.DisheService;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalTime;
-import java.util.LinkedList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,48 +32,45 @@ public class DisheController {
     
     private static final Logger logger = LoggerFactory.getLogger(DisheController.class);
     
+    private final DisheService disheService;
+
     @Autowired
-    private DisheLogic disheLogic;
-    
-    @Autowired
-    private final DisheData disheData;
-    
-    @Autowired
-    public DisheController(DisheData disheData) {
-        this.disheData = disheData;
+    public DisheController(DisheService disheService) {
+        this.disheService = disheService;
     }
 
     @GetMapping("/ListFood")
     public String listDishes(@RequestParam(value = "name", required = false) String name,
                           @RequestParam(value = "disheID", required = false) Integer dishId,
-                          Model model) throws SQLException, ClassNotFoundException {
+                          Model model) {
         
-        LinkedList<Dishe> dishes;
+        List<Dishe> dishes;
         
         if (name != null && !name.isEmpty()) {
-            dishes = disheLogic.searchDisheByName(name);
+            dishes = disheService.searchByName(name);
             if (dishes.isEmpty()) {
                 model.addAttribute("errorMessage", "No se encontraron platos con nombre: " + name);
             }
         } else if (dishId != null) {
-            dishes = disheLogic.searchDisheByID(dishId);
+            Dishe dish = disheService.getById(dishId);
+            dishes = dish != null ? List.of(dish) : List.of();
             if (dishes.isEmpty()) {
                 model.addAttribute("errorMessage", "No se encontraron platos con ID: " + dishId);
             }
-        }  else {
-            dishes = disheLogic.listDishes();
+        } else {
+            dishes = disheService.getAll();
         }
         
-        model.addAttribute("title", "Dishes List");
+        model.addAttribute("title", "Listado de Platos");
         model.addAttribute("count", dishes.size());
         model.addAttribute("dishes", dishes);
-        return "dishe/list_dishe";
+        return "/dishe/list_dishe";
     }
     
     @GetMapping("/addForm")
     public String addDishForm(Model model) {
         model.addAttribute("dish", new Dishe());
-        return "dishe/add_dishe";
+        return "/dishe/add_dishe";
     }
     
     @PostMapping("/add")
@@ -86,31 +81,30 @@ public class DisheController {
                         @RequestParam("available") boolean available,
                         @RequestParam("image") MultipartFile imageFile,
                         @RequestParam("preparationTime") LocalTime preparationTime,
-                        RedirectAttributes redirectAttributes) throws SQLException, ClassNotFoundException, IOException {
+                        RedirectAttributes redirectAttributes) throws IOException {
         
         String imagePath = FileUploadUtil.saveFile(imageFile);
         
         Dishe dish = new Dishe(name, description, price, category, available, imagePath, preparationTime);
-        disheLogic.addDishe(dish);
+        disheService.save(dish);
         
         redirectAttributes.addFlashAttribute("successMessage", "Plato añadido exitosamente.");
         return "redirect:/dishes/ListFood";
     }
     
     @GetMapping("/updateForm")
-    public String editDish(@RequestParam("disheID") int dishId, Model model) 
-                          throws SQLException, ClassNotFoundException {
+    public String editDish(@RequestParam("disheID") int dishId, Model model) {
         if (dishId <= 0) {
-            return "redirect:/dishes/ListFood?error=Dish not found";
+            return "redirect:/dishes/ListFood?error=Plato no encontrado";
         }
         
-        Dishe dish = disheLogic.getDisheByID(dishId);
+        Dishe dish = disheService.getById(dishId);
         if (dish != null) {
             model.addAttribute("dish", dish);
         } else {
-            return "redirect:/dishes/ListFood?error=Dish not found";
+            return "redirect:/dishes/ListFood?error=Plato no encontrado";
         }
-        return "dishe/edit_dishe";
+        return "/dishe/edit_dishe";
     }
     
     @PostMapping("/update")
@@ -122,11 +116,14 @@ public class DisheController {
                            @RequestParam("available") boolean available,
                            @RequestParam("image") MultipartFile imageFile,
                            @RequestParam("preparationTime") LocalTime preparationTime,
-                           RedirectAttributes redirectAttributes) throws SQLException, ClassNotFoundException, IOException {
+                           RedirectAttributes redirectAttributes) throws IOException {
         
-        logger.debug("Dish ID received: {}", disheID);
+        logger.debug("ID de Plato recibido: {}", disheID);
         
-        Dishe dish = disheLogic.getDisheByID(disheID);
+        Dishe dish = disheService.getById(disheID);
+        if (dish == null) {
+            return "redirect:/dishes/ListFood?error=Plato no encontrado";
+        }
         
         if (!imageFile.isEmpty()) {
             String imagePath = FileUploadUtil.saveFile(imageFile);
@@ -140,7 +137,7 @@ public class DisheController {
         dish.setAvailable(available);
         dish.setPreparationTime(preparationTime);
         
-        disheData.updateDish(dish);
+        disheService.save(dish);
         
         redirectAttributes.addFlashAttribute("successMessage", "Plato actualizado exitosamente.");
         return "redirect:/dishes/ListFood";
@@ -150,13 +147,13 @@ public class DisheController {
     public String confirmDelete(@RequestParam("disheID") int dishId, Model model) {
         model.addAttribute("dishIdToDelete", dishId);
         model.addAttribute("showConfirmation", true);
-        return "dishe/list_dishe";
+        return "/dishe/list_dishe";
     }
     
     @PostMapping("/delete")
     public String deleteDish(@RequestParam("disheID") int dishId, 
-                           RedirectAttributes redirectAttributes) throws SQLException, ClassNotFoundException {
-        disheLogic.deleteDishe(dishId);
+                           RedirectAttributes redirectAttributes) {
+        disheService.delete(dishId);
         redirectAttributes.addFlashAttribute("deleteSuccess", "Plato eliminado exitosamente.");
         return "redirect:/dishes/ListFood?deleteSuccess=true";
     }

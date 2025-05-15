@@ -33,7 +33,7 @@ public class FoodController {
     public String showFoods(Model model) {
         List<Food> foods = FoodData.getFoods(); // Obtener todos los registros
         model.addAttribute("foods", foods); // Pasar la lista a la vista
-        return "listFood"; // Renderiza la vista listadoFoods.html
+        return "/listFood"; // Renderiza la vista listadoFoods.html
     }
 
     
@@ -54,7 +54,7 @@ public class FoodController {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return "listFood"; // Renderiza la vista listadoFoods.html
+        return "/listFood"; // Renderiza la vista listadoFoods.html
     }
 
     
@@ -63,7 +63,7 @@ public class FoodController {
     @GetMapping("/add")
     public String showAddFoodForm(Model model) {
         model.addAttribute("food", new Food());
-        return "addFood"; // Nombre de la vista HTML (addFood.html)
+        return "/addFood"; // Nombre de la vista HTML (addFood.html)
     }
 
     // Procesar el formulario para agregar un nuevo registro de comida
@@ -97,7 +97,7 @@ public class FoodController {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return "editFood"; 
+        return "/editFood"; 
     }
 
     // Procesar el formulario para actualizar un registro de comida

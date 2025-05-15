@@ -30,7 +30,7 @@ public class TransportationController {
     public String showTransportations(Model model) {
         List<Transportation> transportations = TransportationData.getTransportations();
         model.addAttribute("transportations", transportations);
-        return "transportation/listTransportations"; 
+        return "/transportation/listTransportations"; 
     }
 //---------------------------------FILTRO-------------------------------------------------------------------------
     
@@ -48,14 +48,14 @@ public class TransportationController {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return "transportation/listTransportations";
+        return "/transportation/listTransportations";
     }
 //--------------------------------ANADIR------------------------------------------------------------------------
     // Mostrar formulario para agregar un nuevo transporte
     @GetMapping("/add")
     public String showAddTransportationForm(Model model) {
         model.addAttribute("transportation", new Transportation());
-        return "transportation/addTransportation";
+        return "/transportation/addTransportation";
     }
 
     // Procesar el formulario para agregar un nuevo transporte
@@ -91,7 +91,7 @@ public class TransportationController {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return "transportation/editTransportation"; 
+        return "/transportation/editTransportation"; 
     }
 
     // Procesar el formulario para actualizar un transporte

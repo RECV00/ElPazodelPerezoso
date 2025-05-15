@@ -36,7 +36,7 @@ public class ArticleController {
   @GetMapping({"/addForm"})
     public String addArticle(Model model) {
         model.addAttribute("article",new Article());             
-        return "article/add_article";  
+        return "/article/add_article";  
     }
      //"/Article"/form""
  @PostMapping("/saveArticle")
@@ -57,7 +57,7 @@ public String saveArticles(
         (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
         
         model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
-        return "article/add_article"; 
+        return "/article/add_article"; 
     }
     
     Article article = new Article(productName, description, productQuantity, 
@@ -74,7 +74,7 @@ public String saveArticles(
     List<Article> articles = ArticleData.getArticle();
      model.addAttribute("articles", articles);
     
-        return "article/list_article";
+        return "/article/list_article";
                 
     }
     //"/Article/formRemove"
@@ -106,7 +106,7 @@ public String saveArticles(
     } else {
         return "redirect:/Article/list?error=Articulo no encontrado";
     }
-    return "article/edit_article";  
+    return "/article/edit_article";  
     }   
         
     //Editar Articulos 
@@ -170,7 +170,7 @@ public String saveArticles(
         } else {
             model.addAttribute("articles", articles);
         }
-        return "article/list"; 
+        return "/article/list"; 
     }
 
 }
