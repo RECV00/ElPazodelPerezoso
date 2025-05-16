@@ -25,25 +25,25 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <h1>Lista de Artículos</h1>
         
         <!-- Sistema de filtrado -->
-        <div class="filter-section">
+        
             <!-- Filtro por ID -->
-            <form th:action="@{/Article/searchById}" method="post" class="filter-form">
+            <form action="/Article/filter" method="get">
                 <label for="id_article">Buscar por ID:</label>
                 <input type="number" id="id_article" name="id_article" required>
-                <button type="submit" class="button">Buscar</button>
+                <button type="submit">Filtrar</button>
             </form>
             
             <!-- Filtro por proveedor -->
-            <form th:action="@{/Article/searchBySupplier}" method="post" class="filter-form">
+            <form action="/Article/filter" method="get">
                 <label for="supplier">Buscar por Proveedor:</label>
                 <input type="text" id="supplier" name="supplier" required>
-                <button type="submit" class="button">Buscar</button>
+               <button type="submit">Filtrar</button>
             </form>
             
             <!-- Mensajes -->
             <div th:if="${error}" class="error-message" th:text="${error}"></div>
             <div th:if="${message}" class="success-message" th:text="${message}"></div>
-        </div>
+       
         
         <!-- Botones de acción -->
         <div class="action-buttons">

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import cr.ac.una.perezoso.data.TransportationData;
 import cr.ac.una.perezoso.domain.Transportation;
-import java.sql.SQLException;
+import cr.ac.una.perezoso.service.TransportationService;
 import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,10 +25,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/transportation")
 public class TransportationController {
+    
+    @Autowired
+    private TransportationService transportationService;
+    
        // Mostrar todos los transportes
     @GetMapping("/listTransport")
     public String showTransportations(Model model) {
-        List<Transportation> transportations = TransportationData.getTransportations();
+        List<Transportation> transportations = transportationService.getAll();
         model.addAttribute("transportations", transportations);
         return "/transportation/listTransportations"; 
     }
@@ -37,17 +41,13 @@ public class TransportationController {
     // Filtrar transportes por conductor o ID de vehículo
     @GetMapping("/filter")
     public String filterTransportations(@RequestParam(required = false) String filter, Model model) {
-        try {
-            List<Transportation> transportations;
-            if (filter != null && !filter.isEmpty()) {
-                transportations = TransportationData.searchTransportations(filter);
-            } else {
-                transportations = TransportationData.getTransportations();
-            }
-            model.addAttribute("transportations", transportations);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        List<Transportation> transportations;
+        if (filter != null && !filter.isEmpty()) {
+            transportations = transportations = transportationService.searchByPlateOrDriver(filter);
+        } else {
+            transportations = transportationService.getAll();
         }
+        model.addAttribute("transportations", transportations);
         return "/transportation/listTransportations";
     }
 //--------------------------------ANADIR------------------------------------------------------------------------
@@ -59,73 +59,100 @@ public class TransportationController {
     }
 
     // Procesar el formulario para agregar un nuevo transporte
-    @PostMapping("/add")
+   @PostMapping("/add")
     public String addTransportation(
-        @RequestParam("idVehicle") String idVehicle,
+        @RequestParam("plate") String plate,
         @RequestParam("driver") String driver,
         @RequestParam("dataTimeService") LocalDateTime dataTimeService,
         @RequestParam("initialLocation") String initialLocation,
         @RequestParam("finalLocation") String finalLocation,
         @RequestParam("serviceStatus") String serviceStatus,
         @RequestParam("serviceDuration") int serviceDuration,
-        RedirectAttributes redirectAttributes
-    ) {
+        RedirectAttributes redirectAttributes) {
+        
+        // Validar si la placa ya existe
+        if (transportationService.getByPlate(plate) != null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "La placa ya está registrada");
+            return "redirect:/transportation/add";
+        }
+        
         Transportation transportation = new Transportation(
-            idVehicle, driver, dataTimeService, 
+            plate, driver, dataTimeService, 
             initialLocation, finalLocation, 
             serviceStatus, serviceDuration
         );
         
-        TransportationData.createTransportation(transportation);
+        transportationService.save(transportation);
         redirectAttributes.addFlashAttribute("successMessage", "Transporte agregado correctamente.");
         return "redirect:/transportation/listTransport";
     }
 
+//    @GetMapping("/edit/{id}")
+//    public String showEditTransportationForm1(@PathVariable Integer id, Model model) {
+//        Transportation transportation = transportationService.getById(id);
+//        if (transportation == null) {
+//            return "redirect:/transportation/listTransport?error=Transporte no encontrado";
+//        }
+//        model.addAttribute("transportation", transportation);
+//        return "/transportation/editTransportation";
+//    }
+//    
+    
 //--------------------------------------------EDITAR--------------------------------------------------------------------
     // Mostrar formulario para editar un transporte
     @GetMapping("/edit/{id}")
-    public String showEditTransportationForm(@PathVariable int id, Model model) {
-        try {
-            Transportation transportation = TransportationData.getTransportationById(id);
-            model.addAttribute("transportation", transportation);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+    public String showEditTransportationForm(@PathVariable Integer id, Model model) {
+        Transportation transportation = transportationService.getById(id);
+        if (transportation == null) {
+            return "redirect:/transportation/listTransport?error=Transporte no encontrado";
         }
-        return "/transportation/editTransportation"; 
+        model.addAttribute("transportation", transportation);
+        return "/transportation/editTransportation";
     }
 
     // Procesar el formulario para actualizar un transporte
-    @PostMapping("/edit/{id}")
+     @PostMapping("/edit/{id}")
     public String updateTransportation(
-        @RequestParam("id") int id,
-        @RequestParam("idVehicle") String idVehicle,
+        @PathVariable Integer id,
+        @RequestParam("plate") String plate,
         @RequestParam("driver") String driver,
         @RequestParam("dataTimeService") LocalDateTime dataTimeService,
         @RequestParam("initialLocation") String initialLocation,
         @RequestParam("finalLocation") String finalLocation,
         @RequestParam("serviceStatus") String serviceStatus,
         @RequestParam("serviceDuration") int serviceDuration,
-        RedirectAttributes redirectAttributes
-    ) throws SQLException, ClassNotFoundException {
+        RedirectAttributes redirectAttributes) {
         
-        Transportation transportation = TransportationData.getTransportationById(id);
-        transportation.setIdVehicle(idVehicle);
-        transportation.setDriver(driver);
-        transportation.setDataTimeService(dataTimeService);
-        transportation.setInitialLocation(initialLocation);
-        transportation.setFinalLocation(finalLocation);
-        transportation.setServiceStatus(serviceStatus);
-        transportation.setServiceDuration(serviceDuration);
+        Transportation existingTransport = transportationService.getById(id);
+        if (existingTransport == null) {
+            return "redirect:/transportation/listTransport?error=Transporte no encontrado";
+        }
         
-        TransportationData.updateTransportation(transportation);
+        // Verificar si la nueva placa ya existe (excepto para este mismo vehículo)
+        Transportation transportWithSamePlate = transportationService.getByPlate(plate);
+        if (transportWithSamePlate != null && !transportWithSamePlate.getId().equals(id)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "La placa ya está registrada en otro vehículo");
+            return "redirect:/transportation/edit/" + id;
+        }
+        
+        existingTransport.setPlate(plate);
+        existingTransport.setDriver(driver);
+        existingTransport.setDataTimeService(dataTimeService);
+        existingTransport.setInitialLocation(initialLocation);
+        existingTransport.setFinalLocation(finalLocation);
+        existingTransport.setServiceStatus(serviceStatus);
+        existingTransport.setServiceDuration(serviceDuration);
+        
+        transportationService.save(existingTransport);
         redirectAttributes.addFlashAttribute("successMessage", "Transporte actualizado correctamente.");
         return "redirect:/transportation/listTransport";
     }
+
 //-----------------------------------ELIMINAR-------------------------------------------------------------------------
     // Eliminar un transporte
     @GetMapping("/delete/{id}")
-    public String deleteTransportation(@PathVariable int id) {
-        TransportationData.deleteTransportation(id);
+    public String deleteTransportation(@PathVariable Integer id) {
+        transportationService.delete(id);
         return "redirect:/transportation/listTransport";
     }
 }

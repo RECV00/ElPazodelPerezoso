@@ -4,11 +4,10 @@
  */
 package cr.ac.una.perezoso.controller;
 import cr.ac.una.perezoso.business.ArticleLogic;
-import cr.ac.una.perezoso.data.ArticleData;
 import cr.ac.una.perezoso.domain.Article;
+import cr.ac.una.perezoso.service.ArticleService;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/Article")
 public class ArticleController {
     
+    @Autowired
+    private ArticleService articleService;
+     
     @Autowired
     private ArticleLogic logic;
     
@@ -62,7 +64,7 @@ public String saveArticles(
     
     Article article = new Article(productName, description, productQuantity, 
                                 unitOfMeasurement, expirationDate, supplier, unitPrice);
-    ArticleData.saveArticle(article);
+     articleService.save(article);
     
     return "redirect:/Article/list?success=Artículo creado correctamente";
 }
@@ -71,12 +73,40 @@ public String saveArticles(
        // "/Article/list"
      @GetMapping("/list")
     public String listArticles(Model model) throws SQLException, ClassNotFoundException {
-    List<Article> articles = ArticleData.getArticle();
+    List<Article> articles = articleService.getAll();
      model.addAttribute("articles", articles);
     
         return "/article/list_article";
                 
     }
+    
+    // Método para filtrar tours por nombre
+    @GetMapping("/filter")
+    public String filterArticle(@RequestParam(value="supplier",required = false) String supplier,@RequestParam(value="id_article", required = false) Integer id_article, Model model) {
+        List<Article> articles;
+        
+        if (supplier != null && !supplier.isEmpty()) {
+            // Filtrar tours por nombre si se proporciona un valor
+            articles = articleService.searchBySupplier(supplier);
+            if (articles.isEmpty()) {
+            model.addAttribute("errorMessage", "No se encontraron artículos del proveedor: " + supplier);
+             }
+        }else if(id_article == null){
+            // Mostrar todos los tours si no se proporciona un valor
+            articles = articleService.getAll();
+        }
+        else {
+            Article article = articleService.getById(id_article);
+            articles = article != null ? List.of(article) : List.of();
+            if (articles.isEmpty()) {
+                model.addAttribute("errorMessage", "No se encontró ningún artículo con el ID: " + id_article);
+            }
+        }
+        model.addAttribute("articles", articles); // Pasar la lista filtrada a la vista
+        return "/article/list_article"; // Renderiza la vista tours.html
+    }
+    
+    
     //"/Article/formRemove"
       @GetMapping({"/formRemove", "/createRemove"})
     public String formRemove() {
@@ -88,7 +118,7 @@ public String saveArticles(
      //"/Article/removeData"
     @PostMapping("/removeData")
     public String removeArticles(@RequestParam("id_article") int id_article) throws SQLException, ClassNotFoundException{
-        ArticleData.removeArticle(id_article);
+        articleService.delete(id_article);
     
         return "redirect:/Article/list";
     }
@@ -100,7 +130,7 @@ public String saveArticles(
             return "redirect:/Article/list?error=Articulo no encontrado";
         }
     // Obtener el articulo existente por su ID
-    Article article = ArticleData.getArticleById(id_article);
+    Article article = articleService.getById(id_article);
     if (article != null) {
         model.addAttribute("article", article);
     } else {
@@ -134,44 +164,44 @@ public String saveArticles(
     
     Article article = new Article(id_article, productName, description, productQuantity,
                                 unitOfMeasurement, expirationDate, supplier, unitPrice);
-    ArticleData.updateArticle(article);
+   articleService.save(article);
     
     return "redirect:/Article/list?success=Artículo actualizado correctamente";
 }
     
    
-     @GetMapping({"/formSearch", "/createSearch"})
-    public String formSearch() {
-        return "searchResult";  
-    }
-    //"/Article/searchById""
-    @PostMapping("/searchById")
-    public String searchArticleById(@RequestParam("id_article") int id_article, Model model) throws SQLException, ClassNotFoundException {
-    Article article = ArticleData.getArticleById(id_article);
-    if (article != null) {
-        model.addAttribute("article", article);
-    } else {
-        model.addAttribute("error", "No se encontró el artículo con ID " + id_article);
-    }
-    return "searchResult";
-   
-}
-    //"/Article/formSupplier
-     @GetMapping({"/formSupplier", "/createSupplier"})
-    public String formSupplier() {
-        return "searchSupplier";  
-    }
-    //"/Article/searchBySupplier
-    @PostMapping("/searchBySupplier")
-    public String searchArticlesBySupplier(@RequestParam("supplier") String supplier, Model model) throws SQLException, ClassNotFoundException {
-        List<Article> articles = ArticleData.getArticlesBySupplier(supplier);
-        if (articles.isEmpty()) {
-            model.addAttribute("error", "No se encontraron artículos para el proveedor: " + supplier);
-        } else {
-            model.addAttribute("articles", articles);
-        }
-        return "/article/list"; 
-    }
+//     @GetMapping({"/formSearch", "/createSearch"})
+//    public String formSearch() {
+//        return "searchResult";  
+//    }
+//    //"/Article/searchById""
+//    @PostMapping("/searchById")
+//    public String searchArticleById(@RequestParam("id_article") int id_article, Model model) throws SQLException, ClassNotFoundException {
+//    Article article = articleService.getById(id_article);
+//    if (article != null) {
+//        model.addAttribute("article", article);
+//    } else {
+//        model.addAttribute("error", "No se encontró el artículo con ID " + id_article);
+//    }
+//    return "searchResult";
+//   
+//}
+//    //"/Article/formSupplier
+//     @GetMapping({"/formSupplier", "/createSupplier"})
+//    public String formSupplier() {
+//        return "searchSupplier";  
+//    }
+//    //"/Article/searchBySupplier
+//    @PostMapping("/searchBySupplier")
+//    public String searchArticlesBySupplier(@RequestParam("supplier") String supplier, Model model) throws SQLException, ClassNotFoundException {
+//        List<Article> articles = articleService.searchBySupplier(supplier);
+//        if (articles.isEmpty()) {
+//            model.addAttribute("error", "No se encontraron artículos para el proveedor: " + supplier);
+//        } else {
+//            model.addAttribute("articles", articles);
+//        }
+//        return "/article/list_article"; 
+//    }
 
 }
 
