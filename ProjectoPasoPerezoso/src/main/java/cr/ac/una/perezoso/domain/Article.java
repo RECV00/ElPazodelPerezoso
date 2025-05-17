@@ -3,21 +3,47 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package cr.ac.una.perezoso.domain;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 
 /**
  *
  * @author keyna
  */
+@Entity
+@Table(name = "tb_article")
 public class Article {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_article")
     private int id_article;
+    
+    @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
+    
+    @Column(name = "description", length = 500)
     private String description;
-    private int productQuantity;
+    
+     @Column(name = "product_quantity", nullable = false)
+    private Integer productQuantity;
+     
+     
+    @Column(name = "unit_of_measurement", length = 50)
     private String unitOfMeasurement;
+    
+    @Column(name = "expiration_date")
     private LocalDate expirationDate;
+    
+    @Column(name = "supplier", length = 100)
     private String supplier;
-    private int unitPrice;
+    
+    @Column(name = "unit_price", nullable = false)
+    private Integer unitPrice;
 
     public Article() {
     }

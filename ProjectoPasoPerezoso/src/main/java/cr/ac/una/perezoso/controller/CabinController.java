@@ -4,13 +4,11 @@
  */
 package cr.ac.una.perezoso.controller;
 
-import cr.ac.una.perezoso.business.CabinLogic;
-import cr.ac.una.perezoso.data.CabinData;
 import cr.ac.una.perezoso.data.FileUploadUtil;
 import cr.ac.una.perezoso.domain.Cabin;
+import cr.ac.una.perezoso.service.CabinService;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,139 +30,131 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/cabins")
 public class CabinController {
     
-    private static final Logger logger=LoggerFactory.getLogger(CabinController.class);
-    @Autowired
-    private CabinLogic cabinLogic;
-    @Autowired
-    private final CabinData cabinData;
+     private static final Logger logger = LoggerFactory.getLogger(CabinController.class);
     
-    // Inyección por constructor
     @Autowired
-    public CabinController(CabinData cabinData) {
-        this.cabinData = cabinData;
-    }
-   
+    private CabinService cabinService;
 
     @GetMapping("/List")
     public String listCabin(@RequestParam(value = "name", required = false) String name,
                          @RequestParam(value = "cabinID", required = false) Integer cabinID, 
-                         Model model) throws SQLException, ClassNotFoundException {
+                         Model model) {
     
-     LinkedList<Cabin> cabins;
+        List<Cabin> cabins;
 
-    if (name != null && !name.isEmpty()) {
-        // Buscar por nombre
-        cabins = cabinLogic.searchCabinsByName(name);    
-        if (cabins.isEmpty()) {
-            model.addAttribute("errorMessage", "No se encontró ninguna cabaña con el nombre: " + name);
+        if (name != null && !name.isEmpty()) {
+            // Buscar por nombre (necesitarías implementar este método en el servicio)
+            cabins = cabinService.findByNameContaining(name);    
+            if (cabins.isEmpty()) {
+                model.addAttribute("errorMessage", "No se encontró ninguna cabaña con el nombre: " + name);
+            }
+        } else if (cabinID != null) {
+            // Buscar por ID
+            Cabin cabin = cabinService.getById(cabinID);
+            cabins = cabin != null ? List.of(cabin) : List.of();
+            if (cabins.isEmpty()) {
+                model.addAttribute("errorMessage", "No se encontró ninguna cabaña con el ID: " + cabinID);
+            }
+        } else {
+            // Si no hay filtro, mostrar todas las cabañas
+            cabins = cabinService.getAll();
         }
-    } else if (cabinID != null) {
-        // Buscar por ID
-        cabins = cabinLogic.searchCabinsByID(cabinID); // Devuelve una LinkedList<Cabin>
-        if (cabins.isEmpty()) {
-            model.addAttribute("errorMessage", "No se encontró ninguna cabaña con el ID: " + cabinID);
-        }
-    } else {
-        // Si no hay filtro, mostrar todas las cabañas
-        cabins = cabinLogic.listCabins();
-    }
 
-    model.addAttribute("titulo", "Listado de Cabañas");
-    model.addAttribute("cantidad", cabins.size());
-    model.addAttribute("cabins", cabins);
-    return "cabin/list_cabins";
+        model.addAttribute("titulo", "Listado de Cabañas");
+        model.addAttribute("cantidad", cabins.size());
+        model.addAttribute("cabins", cabins);
+        return "/cabin/list_cabins";
     }
     
     @GetMapping("/addForm")
     public String addCabinForm(Model model) {
-    model.addAttribute("cabin", new Cabin()); // Pasar un objeto Cabin vacío al formulario
-    return "cabin/add_cabin"; // Redirigir al formulario de agregar
-}
-     @PostMapping("/add")
+        model.addAttribute("cabin", new Cabin());
+        return "/cabin/add_cabin";
+    }
+    
+    @PostMapping("/add")
     public String addCabin(@RequestParam("name") String name,
-                          @RequestParam("description") String description,
-                          @RequestParam("capacity") int capacity,
-                          @RequestParam("pricePerNight") double pricePerNight,
-                          @RequestParam("location") String location,
-                          @RequestParam("image") MultipartFile imageFile,
-                          @RequestParam("includedServices") String includedServices, 
-                          RedirectAttributes redirectAttributes) throws SQLException, 
-                          ClassNotFoundException,IOException {       
-        // Guardar la imagen y obtener la ruta relativa
-    String imagePath = FileUploadUtil.saveFile(imageFile);   
-        // Crear objeto de la cabaña
-        Cabin cabin = new Cabin(name, description, capacity, pricePerNight, location, imagePath, includedServices);
-        cabinLogic.addCabins(cabin);  // Insertar la cabaña en la base de datos        
-        // Redirigir con un mensaje de éxito
-    redirectAttributes.addFlashAttribute("successMessage", "Cabaña agregada correctamente.");
+                        @RequestParam("description") String description,
+                        @RequestParam("capacity") int capacity,
+                        @RequestParam("pricePerNight") double pricePerNight,
+                        @RequestParam("location") String location,
+                        @RequestParam("image") MultipartFile imageFile,
+                        @RequestParam("includedServices") String includedServices, 
+                        RedirectAttributes redirectAttributes) throws IOException {
+        
+        String imagePath = FileUploadUtil.saveFile(imageFile);   
+        Cabin cabin = new Cabin(name, description, capacity, pricePerNight, 
+                              location, imagePath, includedServices);
+        cabinService.save(cabin);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Cabaña agregada correctamente.");
         return "redirect:/cabins/List";
     }
       
-   @GetMapping("/updateForm")
-    public String editCabin(@RequestParam("cabinID") int cabinID, Model model) 
-                            throws SQLException, ClassNotFoundException {
+    @GetMapping("/updateForm")
+    public String editCabin(@RequestParam("cabinID") int cabinID, Model model) {
         if (cabinID <= 0) {
             return "redirect:/cabins/List?error=Cabaña no encontrada";
         }
-    // Obtener la cabaña existente por su ID
-    Cabin cabin = cabinLogic.getCabinsBYID(cabinID);
-    if (cabin != null) {
-        model.addAttribute("cabin", cabin);
-    } else {
-        return "redirect:/cabins/List?error=Cabaña no encontrada";
+        
+        Cabin cabin = cabinService.getById(cabinID);
+        if (cabin != null) {
+            model.addAttribute("cabin", cabin);
+        } else {
+            return "redirect:/cabins/List?error=Cabaña no encontrada";
+        }
+        return "/cabin/edit_cabin";
     }
-    return "cabin/edit_cabin"; // Redirigir al formulario de edición
-}
     
-@PostMapping("/update")
-public String updateCabin(@RequestParam("cabinID") int cabinID,
-                         @RequestParam("name") String name, 
-                         @RequestParam("description") String description, 
-                         @RequestParam("capacity") int capacity, 
-                         @RequestParam("pricePerNight") double pricePerNight, 
-                         @RequestParam("location") String location, 
-                         @RequestParam("image") MultipartFile imageFile, 
-                         @RequestParam("includedServices") String includedServices,
-                         RedirectAttributes redirectAttributes) throws SQLException, 
-                         ClassNotFoundException,IOException {
+    @PostMapping("/update")
+    public String updateCabin(@RequestParam("cabinID") int cabinID,
+                           @RequestParam("name") String name, 
+                           @RequestParam("description") String description, 
+                           @RequestParam("capacity") int capacity, 
+                           @RequestParam("pricePerNight") double pricePerNight, 
+                           @RequestParam("location") String location, 
+                           @RequestParam("image") MultipartFile imageFile, 
+                           @RequestParam("includedServices") String includedServices,
+                           RedirectAttributes redirectAttributes) throws IOException {
    
-    logger.debug("CabinID recibido: {}", cabinID); // Log para depuración  
-    // Obtener la cabaña existente
-    Cabin cabin = cabinLogic.getCabinsBYID(cabinID);
-    // Si se subió una nueva imagen, guardarla y actualizar la ruta
-    if (!imageFile.isEmpty()) {
-        String imagePath = FileUploadUtil.saveFile(imageFile);
-        cabin.setImage(imagePath);
+        logger.debug("CabinID recibido: {}", cabinID);
+        Cabin cabin = cabinService.getById(cabinID);
+        
+        if (cabin == null) {
+            return "redirect:/cabins/List?error=Cabaña no encontrada";
+        }
+        
+        if (!imageFile.isEmpty()) {
+            String imagePath = FileUploadUtil.saveFile(imageFile);
+            cabin.setImage(imagePath);
+        }
+        
+        cabin.setName(name);
+        cabin.setDescription(description);
+        cabin.setCapacity(capacity);
+        cabin.setPricePerNight(pricePerNight);
+        cabin.setLocation(location);
+        cabin.setIncludedServices(includedServices);
+        
+        cabinService.save(cabin);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Cabaña actualizada correctamente.");
+        return "redirect:/cabins/List";
     }
-    // Actualizar los demás campos
-    cabin.setName(name);
-    cabin.setDescription(description);
-    cabin.setCapacity(capacity);
-    cabin.setPricePerNight(pricePerNight);
-    cabin.setLocation(location);
-    cabin.setIncludedServices(includedServices);
-    
-    // Guardar los cambios en la base de datos
-    cabinData.updateCabin(cabin);
-    // Redirigir con un mensaje de éxito
-    redirectAttributes.addFlashAttribute("successMessage", "Cabaña actualizada correctamente.");
-    return "redirect:/cabins/List";
-}
     
     @GetMapping("/confirmDelete")
     public String confirmDelete(@RequestParam("cabinID") int cabinID, Model model) {
-        model.addAttribute("cabinIDToDelete", cabinID); // Pasar el ID de la cabaña a eliminar
-        model.addAttribute("showConfirmation", true); // Mostrar el mensaje de confirmación
-        return "cabin/list_cabins"; // Volver a la misma página
+        model.addAttribute("cabinIDToDelete", cabinID);
+        model.addAttribute("showConfirmation", true);
+        return "/cabin/list_cabins";
     }
     
-   @PostMapping("/delete")
-   public String deleteCabin(@RequestParam("cabinID") int cabinID, RedirectAttributes redirectAttributes) throws SQLException, ClassNotFoundException {
-       cabinLogic.deleteCabin(cabinID);
-        // Agregar un mensaje de éxito
+    @PostMapping("/delete")
+    public String deleteCabin(@RequestParam("cabinID") int cabinID, 
+                           RedirectAttributes redirectAttributes) {
+        cabinService.delete(cabinID);
         redirectAttributes.addFlashAttribute("deleteSuccess", "La cabaña ha sido eliminada correctamente.");
-       return "redirect:/cabins/List?deleteSuccess=true";
-   }
-    
+        return "redirect:/cabins/List?deleteSuccess=true";
+    }
 }
 

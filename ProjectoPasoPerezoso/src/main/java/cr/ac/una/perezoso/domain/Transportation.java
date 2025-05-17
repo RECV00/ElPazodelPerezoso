@@ -4,36 +4,59 @@
  */
 package cr.ac.una.perezoso.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
  *
  * @author natal
  */
+@Entity
+@Table(name = "tb_vehicle")
 public class Transportation {
-    private int id; 
-    private String idVehicle;
+    
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_vehicle")
+    private Integer id;
+    
+    @Column(name = "plate", nullable = false, length = 50, unique = true)
+    private String plate;
+    
+    @Column(name = "driver", nullable = false, length = 100)
     private String driver;
+    
+    @Column(name = "date_time_service", nullable = false)
     private LocalDateTime dataTimeService;
+    
+    @Column(name = "initial_location", nullable = false, length = 200)
     private String initialLocation;
+    
+    @Column(name = "final_location", nullable = false, length = 200)
     private String finalLocation;
+    
+    @Column(name = "service_status", nullable = false, length = 50)
     private String serviceStatus;
-    private int serviceDuration;
+    
+    @Column(name = "service_duration", nullable = false)
+    private Integer serviceDuration;
+
   
+   // Constructores
     public Transportation() {
     }
-    public Transportation(int id, String idVehicle, String driver, LocalDateTime dataTimeService, String initialLocation, String finalLocation, String serviceStatus, int serviceDuration) {
+
+    public Transportation(Integer id, String plate, String driver, LocalDateTime dataTimeService, 
+                        String initialLocation, String finalLocation, 
+                        String serviceStatus, int serviceDuration) {
         this.id = id;
-        this.idVehicle = idVehicle;
-        this.driver = driver;
-        this.dataTimeService = dataTimeService;
-        this.initialLocation = initialLocation;
-        this.finalLocation = finalLocation;
-        this.serviceStatus = serviceStatus;
-        this.serviceDuration = serviceDuration;
-    }
-    public Transportation(String idVehicle, String driver, LocalDateTime dataTimeService, String initialLocation, String finalLocation, String serviceStatus, int serviceDuration) {
-        this.idVehicle = idVehicle;
+        this.plate = plate;
         this.driver = driver;
         this.dataTimeService = dataTimeService;
         this.initialLocation = initialLocation;
@@ -42,22 +65,34 @@ public class Transportation {
         this.serviceDuration = serviceDuration;
     }
 
-    public int getId() {
+    public Transportation(String plate, String driver, LocalDateTime dataTimeService, 
+                        String initialLocation, String finalLocation, 
+                        String serviceStatus, int serviceDuration) {
+        this.plate = plate;
+        this.driver = driver;
+        this.dataTimeService = dataTimeService;
+        this.initialLocation = initialLocation;
+        this.finalLocation = finalLocation;
+        this.serviceStatus = serviceStatus;
+        this.serviceDuration = serviceDuration;
+    }
+
+    // Getters y Setters
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getIdVehicle() {
-        return idVehicle;
+    public String getPlate() {
+        return plate;
     }
 
-    public void setIdVehicle(String idVehicle) {
-        this.idVehicle = idVehicle;
+    public void setPlate(String plate) {
+        this.plate = plate;
     }
-
     public String getDriver() {
         return driver;
     }
@@ -110,7 +145,7 @@ public class Transportation {
    public String toString() {
        return "Transportation{" +
               "id=" + id +
-              ", idVehicle=" + idVehicle +
+              ", plate=" + plate +
               ", driver=" + driver +
               ", dataTimeService=" + dataTimeService +
               ", initialLocation=" + initialLocation +

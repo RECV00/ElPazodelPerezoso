@@ -4,20 +4,46 @@
  */
 package cr.ac.una.perezoso.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalTime;
 
 /**
  *
  * @author keyna
  */
+@Entity
+@Table(name = "tb_dishe")
 public class Dishe {
-     private int disheID;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "disheID")
+    private Integer disheID;
+    
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
+    
+    @Column(name = "description", length = 500)
     private String description;
-    private double price;
+    
+    @Column(name = "price", nullable = false)
+    private Double price;
+    
+    @Column(name = "category", length = 50)
     private String category;
-    private boolean available;
+    
+    @Column(name = "is_available")
+    private Boolean available;
+    
+    @Column(name = "image_url", length = 255)
     private String imageUrl; 
+    
+    @Column(name = "preparation_time")
     private LocalTime preparationTime; 
 
     public Dishe() {

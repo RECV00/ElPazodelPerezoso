@@ -15,7 +15,7 @@ public class TransportationData {
         try (Connection conn = ConectarBD.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            pstmt.setString(1, transportation.getIdVehicle());
+            pstmt.setString(1, transportation.getPlate());
             pstmt.setString(2, transportation.getDriver());
             pstmt.setTimestamp(3, Timestamp.valueOf(transportation.getDataTimeService()));
             pstmt.setString(4, transportation.getInitialLocation());
@@ -49,7 +49,7 @@ public class TransportationData {
             while (rs.next()) {
                 Transportation transportation = new Transportation();
                 transportation.setId(rs.getInt("id"));
-                transportation.setIdVehicle(rs.getString("id_vehicle"));
+                transportation.setPlate(rs.getString("id_vehicle"));
                 transportation.setDriver(rs.getString("driver"));
                 transportation.setDataTimeService(rs.getTimestamp("dataTimeService").toLocalDateTime());
                 transportation.setInitialLocation(rs.getString("initialLocation"));
@@ -73,7 +73,7 @@ public class TransportationData {
         try (Connection conn = ConectarBD.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, transportation.getIdVehicle());
+            pstmt.setString(1, transportation.getPlate());
             pstmt.setString(2, transportation.getDriver());
             pstmt.setTimestamp(3, Timestamp.valueOf(transportation.getDataTimeService()));
             pstmt.setString(4, transportation.getInitialLocation());
@@ -118,7 +118,7 @@ public class TransportationData {
                 while (rs.next()) {
                     Transportation transportation = new Transportation();
                     transportation.setId(rs.getInt("id"));
-                    transportation.setIdVehicle(rs.getString("id_vehicle"));
+                    transportation.setPlate(rs.getString("id_vehicle"));
                     transportation.setDriver(rs.getString("driver"));
                     transportation.setDataTimeService(rs.getTimestamp("dataTimeService").toLocalDateTime());
                     transportation.setInitialLocation(rs.getString("initialLocation"));
@@ -148,7 +148,7 @@ public class TransportationData {
                 if (rs.next()) {
                     transportation = new Transportation();
                     transportation.setId(rs.getInt("id"));
-                    transportation.setIdVehicle(rs.getString("id_vehicle"));
+                    transportation.setPlate(rs.getString("id_vehicle"));
                     transportation.setDriver(rs.getString("driver"));
                     transportation.setDataTimeService(rs.getTimestamp("dataTimeService").toLocalDateTime());
                     transportation.setInitialLocation(rs.getString("initialLocation"));

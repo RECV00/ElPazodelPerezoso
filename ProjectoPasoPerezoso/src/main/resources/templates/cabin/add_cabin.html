@@ -12,7 +12,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 </head>
 <body>
     <!-- Incluir la barra de navegación -->
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{/fragments/navbar :: navbar}"></div>
     <div class="content">
         <h1>Agregar una Nueva Cabaña</h1>
         <form method="post" th:action="@{/cabins/add}" enctype="multipart/form-data" onsubmit="return confirmAdd()" >

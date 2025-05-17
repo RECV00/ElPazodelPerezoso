@@ -18,7 +18,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 </head>
 <body>
     <!-- Incluir la barra de navegación -->
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{/fragments/navbar :: navbar}"></div>
     
     <div class="container">
         <h1>Lista de Transportes</h1>
@@ -59,7 +59,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <tbody>
                 <tr th:each="transportation : ${transportations}">
                     <td th:text="${transportation.id}"></td>
-                    <td th:text="${transportation.idVehicle}"></td>
+                    <td th:text="${transportation.plate}"></td>
                     <td th:text="${transportation.driver}"></td>
                     <td th:text="${#temporals.format(transportation.dataTimeService, 'dd/MM/yyyy HH:mm')}"></td>
                     <td th:text="${transportation.initialLocation}"></td>
