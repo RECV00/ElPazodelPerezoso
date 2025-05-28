@@ -12,12 +12,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,36 +38,30 @@ public class CabinController {
     @Autowired
     private CabinService cabinService;
 
+    // Vista principal con tabla (carga inicial)
     @GetMapping("/List")
-    public String listCabin(@RequestParam(value = "name", required = false) String name,
-                         @RequestParam(value = "cabinID", required = false) Integer cabinID, 
-                         Model model) {
-    
-        List<Cabin> cabins;
-
-        if (name != null && !name.isEmpty()) {
-            // Buscar por nombre (necesitarías implementar este método en el servicio)
-            cabins = cabinService.findByNameContaining(name);    
-            if (cabins.isEmpty()) {
-                model.addAttribute("errorMessage", "No se encontró ninguna cabaña con el nombre: " + name);
-            }
-        } else if (cabinID != null) {
-            // Buscar por ID
-            Cabin cabin = cabinService.getById(cabinID);
-            cabins = cabin != null ? List.of(cabin) : List.of();
-            if (cabins.isEmpty()) {
-                model.addAttribute("errorMessage", "No se encontró ninguna cabaña con el ID: " + cabinID);
-            }
-        } else {
-            // Si no hay filtro, mostrar todas las cabañas
-            cabins = cabinService.getAll();
-        }
-
-        model.addAttribute("titulo", "Listado de Cabañas");
-        model.addAttribute("cantidad", cabins.size());
-        model.addAttribute("cabins", cabins);
+    public String listCabins(Model model) {
+        model.addAttribute("cabins", cabinService.getAll(PageRequest.of(0, 10)).getContent());
         return "/cabin/list_cabins";
     }
+
+    // Endpoint para AJAX
+    @GetMapping("/api/list")
+    @ResponseBody
+    public Page<Cabin> listCabinsApi(
+    @RequestParam(value = "name", required = false) String name,
+    @RequestParam(value = "location", required = false) String location,
+    @RequestParam(value = "page", defaultValue = "0") int page,
+    @RequestParam(value = "size", defaultValue = "4") int size) {
+    
+    if (name != null && !name.isEmpty()) {
+        return cabinService.findByNameContaining(name, PageRequest.of(page, size));
+    } else if (location != null && !location.isEmpty()) {
+        return cabinService.findByLocation(location, PageRequest.of(page, size));
+    } else {
+        return cabinService.getAll(PageRequest.of(page, size));
+    }
+}
     
     @GetMapping("/addForm")
     public String addCabinForm(Model model) {

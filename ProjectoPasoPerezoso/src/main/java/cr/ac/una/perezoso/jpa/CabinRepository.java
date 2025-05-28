@@ -6,7 +6,10 @@ package cr.ac.una.perezoso.jpa;
 
 import cr.ac.una.perezoso.domain.Cabin;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,10 +17,13 @@ import org.springframework.stereotype.Repository;
  * @author keyna
  */
 @Repository
-public interface CabinRepository extends JpaRepository<Cabin, Integer>{
+public interface CabinRepository extends JpaRepository<Cabin, Integer>,JpaSpecificationExecutor<Cabin>{
+    
+    Page<Cabin> findByNameContainingIgnoreCase(String name,Pageable pageable);
+   
     List<Cabin> findByNameContainingIgnoreCase(String name);
     
-    List<Cabin> findByLocationContainingIgnoreCase(String location);
+   Page<Cabin> findByLocationContainingIgnoreCase(String location,Pageable pageable);
     
     List<Cabin> findByCapacityGreaterThanEqual(int capacity);
     

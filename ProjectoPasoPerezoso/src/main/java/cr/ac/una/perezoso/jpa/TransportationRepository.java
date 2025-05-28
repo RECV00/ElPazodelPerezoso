@@ -4,10 +4,14 @@
  */
 package cr.ac.una.perezoso.jpa;
 
+import cr.ac.una.perezoso.domain.Tour;
 import cr.ac.una.perezoso.domain.Transportation;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,7 +21,7 @@ import org.springframework.stereotype.Repository;
  * @author keyna
  */
 @Repository
-public interface TransportationRepository extends JpaRepository<Transportation, Integer>{
+public interface TransportationRepository extends JpaRepository<Transportation, Integer>,JpaSpecificationExecutor<Transportation>{
      @Query("SELECT t FROM Transportation t WHERE " +
            "LOWER(t.plate) LIKE LOWER(CONCAT('%', :filter, '%')) OR " +
            "LOWER(t.driver) LIKE LOWER(CONCAT('%', :filter, '%'))")
@@ -28,5 +32,7 @@ public interface TransportationRepository extends JpaRepository<Transportation, 
     List<Transportation> findByDataTimeServiceBetween(LocalDateTime start, LocalDateTime end);
     
     Transportation findByPlate(String plate);
+    
+    //Page<Transportation> findByNameContainingIgnoreCase(String name,Pageable pageable);
 }
 

@@ -1,27 +1,26 @@
 /* Estilos generales */
 body {
-    background-image: url('/img/fondo.jpg'); /* Ruta de la imagen de fondo */
+    background-image: url('/img/fondo.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     font-family: Arial, sans-serif;
-    color: white; /* Color del texto */
+    color: white;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4; 
-    
+    background-color: #f4f4f4;
 }
 
 /* Barra de navegación */
 nav {
-    background-color: rgba(174, 182, 191, 0.7); /* Color original con 70% de opacidad */
+    background-color: rgba(174, 182, 191, 0.7);
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(8px); /* Efecto de desenfoque para mejorar la transparencia */
+    backdrop-filter: blur(8px);
 }
 
 nav .logo a {
@@ -52,7 +51,7 @@ nav .nav-links a {
 }
 
 nav .nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Fondo semi-transparente al pasar el mouse */
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Contenido principal */
@@ -60,204 +59,272 @@ nav .nav-links a:hover {
     padding: 20px;
     max-width: 1200px;
     margin: 20px auto;
-    background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    
+    background-color: rgba(52, 58, 64, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .content h1 {
-    color: white;  /* Cambiado a blanco */
+    color: white;
     font-size: 2.5em;
-    margin-bottom: 10px;
-    text-align: center
-}
-
-.content h2 {
-    color: white; /* También cambié el h2 a blanco para consistencia */
-    font-size: 1.8em;
     margin-bottom: 20px;
-}
-
-/* Estilos para la tabla */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-table th, table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-table th {
-    background-color: #6f7e14 ;
-    color: white;
-    font-weight: bold;
-}
-
-table tr:hover {
-     background-color: #f5f5f5; /* Cambia el color al pasar el mouse */
-    color: black; /* Color del texto */
-}
-
-/* Estilos para los botones de acción */
-.btn-edit, .btn-delete {
-    padding: 5px 10px;
-    border-radius: 3px;
-    text-decoration: none;
-    color: white;
-    font-size: 0.9em;
-    margin: 2px;
-    display: inline-block;
     text-align: center;
 }
 
-.btn-edit {
-    background-color: #e1b822; /* Verde */
-}
-
-.btn-delete {
-    background-color: #e74c3c; /* Rojo */
-}
-
-.btn-edit:hover, .btn-delete:hover {
-    opacity: 0.8; /* Efecto de opacidad al pasar el mouse */
-}
-
-/*lista*/
-.confirmation-message {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    text-align: center;
-}
-
-.confirmation-message button {
-    margin: 0 10px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.confirmation-message .btn-cancel {
-    color: #333;
-    text-decoration: none;
-}
-
-.confirmation-message .btn-cancel:hover {
-    text-decoration: underline;
-}
-
-.alert-success {
-    color: #3c763d;
-    background-color: #dff0d8;
-    border-color: #d6e9c6;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-}
-
-
-/* Estilos para el contenedor de búsqueda y botón "Ver Todo" */
-.search-container {
+/* Contenedor superior con acciones */
+.top-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-/* Estilos para el formulario de búsqueda */
-.search-form {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.search-form label {
-    margin-right: 5px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.search-form input {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.search-form button {
-    padding: 8px 15px;
-    background-color: #6f7e14;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.search-form button:hover {
-    background-color: #a2a26e;
-}
-
-/* Estilos para el botón "Ver Todo" */
-.view-all-form button {
-    display: inline-block;
-    padding: 5px 10px;
-    background-color: #a2a26e;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.view-all-form button:hover {
-    background-color: #6f7e14;
-}
-
-
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-}
-
-.alert-success {
-    color: #3c763d;
-    background-color: #dff0d8;
-    border-color: #d6e9c6;
-}
-
-.alert-danger {
-    color: #a94442;
-    background-color: #f2dede;
-    border-color: #ebccd1;
-}
-
-/* Estilo para el contenedor del botón Agregar Cabaña */
-.add-cabin-container {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-/* Estilo para el botón Agregar Cabaña */
+/* Botón Agregar */
 .btn-add {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: #6f7e14;
     color: white;
     text-decoration: none;
     border-radius: 4px;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 1em;
+    transition: background-color 0.3s;
 }
 
 .btn-add:hover {
     background-color: #a2a26e;
+}
+
+/* Estilos para filtros */
+.filter-container {
+    background: rgba(108, 117, 125, 0.7);
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: white;
+}
+
+.filter-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-filter, .btn-reset {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
+.btn-filter {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-reset {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-filter:hover, .btn-reset:hover {
+    opacity: 0.8;
+}
+
+/* Estilos para la tabla */
+.cabin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cabin-table th {
+    background-color: #6f7e14;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.cabin-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.cabin-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.cabin-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Estilos para paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.pagination button, .pagination span {
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination button:hover:not(.active) {
+    background-color: #e9ecef;
+}
+
+/* Estilos para botones de acción */
+.btn-edit, .btn-delete {
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9em;
+    margin-right: 5px;
+    display: inline-block;
+    transition: opacity 0.3s;
+}
+
+.btn-edit {
+    background-color: #e1b822;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    opacity: 0.8;
+    color: white;
+}
+
+/* Mensaje cuando no hay datos */
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* Mensajes de alerta */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+/* Modal de confirmación */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 5px;
+    color: #333;
+}
+
+.modal-actions {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    margin-left: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .top-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .btn-add {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .alert {
+        margin-top: 10px;
+    }
 }

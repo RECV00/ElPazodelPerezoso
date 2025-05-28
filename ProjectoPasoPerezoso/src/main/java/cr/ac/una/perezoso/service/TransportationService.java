@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -60,5 +62,19 @@ public class TransportationService implements CRUD<Transportation, Integer>{
 
     public List<Transportation> findByDateRange(LocalDateTime start, LocalDateTime end) {
         return transportationRepository.findByDataTimeServiceBetween(start, end);
+    }
+    
+    @Override
+    public Page<Transportation> getAll(Pageable pageable) {
+        return transportationRepository.findAll(pageable);
+    }
+
+//     public Page<Transportation> findByNameContaining(String name, Pageable pageable) {
+//    return transportationRepository.findByNameContainingIgnoreCase(name, pageable);
+//}
+//     
+     @Override
+    public boolean existsById(Integer id) {
+        return transportationRepository.existsById(id);
     }
 }

@@ -8,105 +8,205 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <title>Listado de Cabañas</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <!-- Incluir Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <!-- Incluir la barra de navegación -->
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
-
-    <!-- Contenido principal -->
+    
     <div class="content">
-        <h1 th:text="${titulo}">Listado de Cabañas</h1>
-
-        <!-- Botón "Agregar Cabaña" -->
-        <div class="add-cabin-container">
-            <a th:href="@{/cabins/addForm}" class="btn-add">
-                <i class="fas fa-plus-circle"></i>Agregar nueva Cabaña
-            </a>
-        </div>
-
-        <!-- Contenedor para el formulario de búsqueda y el botón "Ver Todo" -->
-        <div class="search-container">
-            <!-- Formulario de búsqueda -->
-            <form action="#" th:action="@{/cabins/List}" method="get" class="search-form">
-                <label for="name">Nombre de la Cabaña:</label>
-                <input type="text" id="name" name="name" placeholder="Buscar por nombre" />
-                <label for="cabinID">ID de la Cabaña:</label>
-                <input type="number" id="cabinID" name="cabinID" placeholder="Buscar por ID" />
-                <button type="submit">Filtrar</button>
-            </form>
-
-            <!-- Botón "Ver Todo" -->
-            <form action="#" th:action="@{/cabins/List}" method="get" class="view-all-form">
-                <button type="submit"><i class="fas fa-list"></i> Mostrar Todo</button>
-            </form>
+        <h1>Listado de Cabañas</h1>
+        
+        <!-- Contenedor superior con botón Agregar -->
+        <div class="top-actions">
+            <a th:href="@{/cabins/addForm}" class="btn-add">Agregar Nueva Cabaña</a>
+            
+            <!-- Mensajes de éxito/error -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
         </div>
         
-        <!-- Mensaje de error -->
-        <div th:if="${errorMessage}" class="alert alert-danger">
-            <p th:text="${errorMessage}"></p>
+        <!-- Formulario de Filtros -->
+        <div class="filter-container">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="name">Nombre:</label>
+                    <input type="text" id="name" name="name" placeholder="Buscar por nombre">
+                </div>
+                <div class="filter-group">
+                    <label for="location">Ubicación:</label>
+                    <input type="text" id="location" name="location" placeholder="Buscar por ubicación">
+                </div>
+                <div class="filter-group" style="align-self: flex-end;">
+                    <div class="filter-actions">
+                        <button type="button" id="filterButton" class="btn-filter">Filtrar</button>
+                        <button type="button" id="resetButton" class="btn-reset">Limpiar</button>
+                    </div>
+                </div>
+            </div>
         </div>
-  
-        <!-- Mensaje de éxito -->
-        <div th:if="${deleteSuccess}" class="alert alert-success">
-            <p><i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span></p>
-        </div>
-
-        <!-- Tabla de cabañas -->
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Capacidad</th>
-                    <th>Precio por Noche</th>
-                    <th>Ubicación</th>
-                    <th>Servicios Incluidos</th>
-                    <th>Imagen</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+        
+        <!-- Tabla de resultados -->
+        <div id="cabinTableContainer">
+            <table class="cabin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Ubicación</th>
+                        <th>Capacidad</th>
+                        <th>Precio/Noche</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cabinTableBody">
+                    <!-- Los datos se cargarán via AJAX -->
+                </tbody>
+            </table>
             
-            <tbody>
-                <tr th:each="tempCabin : ${cabins}">
-                    <td th:text="${tempCabin.cabinID}"></td>
-                    <td th:text="${tempCabin.name}"></td>
-                    <td th:text="${tempCabin.description}"></td>
-                    <td th:text="${tempCabin.capacity}"></td>
-                    <td th:text="${tempCabin.pricePerNight}"></td>
-                    <td th:text="${tempCabin.location}"></td>
-                    <td th:text="${tempCabin.includedServices}"></td>
-                    <!--muestra la imagen-->
-                    <td>
-                        <img th:src="@{'/'+ ${tempCabin.image}}" alt="Imagen de la cabaña" style="width: 100px; height: auto;">
-                    </td>
-                    <!--para los botones de editar y eliminar-->
-                    <td>
-                        <a th:href="@{/cabins/updateForm(cabinID=${tempCabin.cabinID})}" 
-                            class="btn-edit">
-                            <i class="fas fa-edit"></i> Editar 
-                        </a>
-                        <form th:action="@{/cabins/delete(cabinID=${tempCabin.cabinID})}" 
-                              method="post" style="display: inline;">
-                         <button type="submit" class="btn-delete" 
-                             onclick="return confirmDelete();">
-                             <i class="fas fa-trash-alt"></i> Eliminar        
-                         </button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-         <h2 th:text="'Total de Cabañas: ' + ${cantidad}"><i class="fas fa-list-ol"></i> Total de Cabañas: 0</h2>
+            <!-- Paginación -->
+            <div class="pagination" id="paginationControls">
+                <!-- Los controles de paginación se generarán via JavaScript -->
+            </div>
+        </div>
     </div>
-     <script>
-        function confirmDelete() {
-            return confirm('¿Estás seguro de que deseas eliminar esta cabaña?');
+    
+    <!-- Modal de confirmación para eliminar -->
+    <!--<div th:replace="~{/fragments/confirmationModal :: confirmationModal}"></div>-->
+    
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            // Cargar datos iniciales
+            loadCabins(0);
+            
+            // Manejar clic en botón de filtro
+            $('#filterButton').click(function() {
+                loadCabins(0);
+            });
+            
+            // Manejar clic en botón de reset
+            $('#resetButton').click(function() {
+                $('#name').val('');
+                $('#location').val('');
+                loadCabins(0);
+            });
+            
+            // Manejar tecla Enter en los filtros
+            $('#name, #location').keypress(function(e) {
+                if (e.which === 13) {
+                    loadCabins(0);
+                }
+            });
+            
+            // Configurar modal de confirmación para eliminar
+            $(document).on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+                const deleteUrl = $(this).attr('href');
+                $('#confirmationModal').modal('show');
+                $('#confirmDeleteBtn').off('click').on('click', function() {
+                    window.location.href = deleteUrl;
+                });
+            });
+        });
+        
+        function loadCabins(page) {
+            const filters = {
+                name: $('#name').val(),
+                location: $('#location').val(),
+                page: page,
+                size: 10
+            };
+            
+            // Mostrar loading
+            $('#cabinTableBody').html('<tr><td colspan="6" class="no-data">Cargando datos...</td></tr>');
+            
+            $.ajax({
+                url: '/cabins/api/list',
+                type: 'GET',
+                data: filters,
+                success: function(response) {
+                    updateTable(response.content);
+                    updatePagination(response.totalPages, page);
+                },
+                error: function(xhr) {
+                    $('#cabinTableBody').html('<tr><td colspan="6" class="no-data">Error al cargar los datos</td></tr>');
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        }
+        
+        function updateTable(cabins) {
+            const tbody = $('#cabinTableBody');
+            tbody.empty();
+            
+            if (cabins.length === 0) {
+                tbody.append('<tr><td colspan="6" class="no-data">No se encontraron cabañas con los filtros aplicados</td></tr>');
+                return;
+            }
+            
+            cabins.forEach(cabin => {
+                const row = `
+                    <tr>
+                        <td>${cabin.cabinID}</td>
+                        <td>${cabin.name}</td>
+                        <td>${cabin.location}</td>
+                        <td>${cabin.capacity}</td>
+                        <td>$${cabin.pricePerNight.toFixed(2)}</td>
+                        <td>
+                            <a href="/cabins/updateForm?cabinID=${cabin.cabinID}" class="btn-edit">Editar</a>
+                            <a href="/cabins/confirmDelete?cabinID=${cabin.cabinID}" class="btn-delete">Eliminar</a>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+        
+        function updatePagination(totalPages, currentPage) {
+            const pagination = $('#paginationControls');
+            pagination.empty();
+            
+            if (totalPages <= 1) return;
+            
+            // Botón Anterior
+            if (currentPage > 0) {
+                pagination.append(`<button onclick="loadCabins(${currentPage - 1})">&laquo; Anterior</button>`);
+            }
+            
+            // Números de página
+            const startPage = Math.max(0, currentPage - 2);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+            
+            // Mostrar elipsis al inicio si es necesario
+            if (startPage > 0) {
+                pagination.append(`<button onclick="loadCabins(0)">1</button>`);
+                if (startPage > 1) {
+                    pagination.append('<span>...</span>');
+                }
+            }
+            
+            // Botones de páginas
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    pagination.append(`<button class="active" onclick="loadCabins(${i})">${i + 1}</button>`);
+                } else {
+                    pagination.append(`<button onclick="loadCabins(${i})">${i + 1}</button>`);
+                }
+            }
+            
+            // Mostrar elipsis al final si es necesario
+            if (endPage < totalPages - 1) {
+                if (endPage < totalPages - 2) {
+                    pagination.append('<span>...</span>');
+                }
+                pagination.append(`<button onclick="loadCabins(${totalPages - 1})">${totalPages}</button>`);
+            }
+            
+            // Botón Siguiente
+            if (currentPage < totalPages - 1) {
+                pagination.append(`<button onclick="loadCabins(${currentPage + 1})">Siguiente &raquo;</button>`);
+            }
         }
     </script>
-    
 </body>
 </html>
