@@ -38,10 +38,10 @@ public class CabinController {
     @Autowired
     private CabinService cabinService;
 
-    // Vista principal con tabla (carga inicial)
+   
     @GetMapping("/List")
     public String listCabins(Model model) {
-        model.addAttribute("cabins", cabinService.getAll(PageRequest.of(0, 10)).getContent());
+        model.addAttribute("cabins", cabinService.getAll(PageRequest.of(0, 4)).getContent());
         return "/cabin/list_cabins";
     }
 

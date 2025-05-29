@@ -98,6 +98,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
             });
             
+             // Efecto visual al enfocar inputs
+            $('.filter-group input').focus(function() {
+                $(this).parent().find('label').css('color', '#a2a26e');
+            }).blur(function() {
+                $(this).parent().find('label').css('color', 'white');
+            });
+
+
+
             // Configurar modal de confirmación para eliminar
             $(document).on('click', '.btn-delete', function(e) {
                 e.preventDefault();
@@ -114,7 +123,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 name: $('#name').val(),
                 location: $('#location').val(),
                 page: page,
-                size: 10
+                size: 4
             };
             
             // Mostrar loading

@@ -101,22 +101,24 @@ nav .nav-links a:hover {
 
 /* Estilos para filtros */
 .filter-container {
-    background: rgba(108, 117, 125, 0.7);
+    background: rgba(108, 117, 125, 0.8);
     padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .filter-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
 .filter-group {
     flex: 1;
-    min-width: 200px;
+    min-width: 250px;
 }
 
 .filter-group label {
@@ -128,15 +130,22 @@ nav .nav-links a:hover {
 
 .filter-group input {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border: 2px solid #6f7e14;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.95);
+    font-size: 1em;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
+.filter-group input:focus {
+    outline: none;
+    border-color: #a2a26e;
+    box-shadow: 0 0 0 3px rgba(111, 126, 20, 0.3);
+}
 .filter-actions {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     margin-top: 10px;
 }
 
@@ -145,10 +154,26 @@ nav .nav-links a:hover {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: 500;
-    transition: opacity 0.3s;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transform: scale(1);
 }
 
+/* Efecto hover */
+.btn-filter:hover, .btn-reset:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Efecto al hacer click */
+.btn-filter:active, .btn-reset:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
 .btn-filter {
     background-color: #28a745;
     color: white;
@@ -157,10 +182,6 @@ nav .nav-links a:hover {
 .btn-reset {
     background-color: #dc3545;
     color: white;
-}
-
-.btn-filter:hover, .btn-reset:hover {
-    opacity: 0.8;
 }
 
 /* Estilos para la tabla */
