@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Modal de confirmación -->
+    <div id="confirmationModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-content">
+            <h3>Confirmar Eliminación</h3>
+            <p>¿Estás seguro que deseas eliminar esta cabaña? Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="btn-delete">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            // Cerrar modal al hacer clic en cancelar
+            $('.btn-cancel').click(function(){
+                $('#confirmationModal').hide();
+            });
+            
+            // Cerrar modal al hacer clic fuera del contenido
+            $(window).click(function(e){
+                if(e.target == document.getElementById('confirmationModal')){
+                    $('#confirmationModal').hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

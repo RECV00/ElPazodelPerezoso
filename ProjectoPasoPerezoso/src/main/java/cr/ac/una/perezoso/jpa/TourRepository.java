@@ -7,7 +7,10 @@ package cr.ac.una.perezoso.jpa;
 import cr.ac.una.perezoso.domain.Tour;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,9 +18,11 @@ import org.springframework.stereotype.Repository;
  * @author keyna
  */
 @Repository
-public interface TourRepository extends JpaRepository<Tour, Integer>{
+public interface TourRepository extends JpaRepository<Tour, Integer>,JpaSpecificationExecutor<Tour>{
      
     List<Tour> findByNameTourContainingIgnoreCase(String name);
+    
+    Page<Tour> findByNameTourContainingIgnoreCase(String name,Pageable pageable);
     
     List<Tour> findByDate(LocalDate date);
     

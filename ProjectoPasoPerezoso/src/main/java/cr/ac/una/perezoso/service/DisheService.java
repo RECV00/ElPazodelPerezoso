@@ -9,6 +9,8 @@ import cr.ac.una.perezoso.jpa.DisheRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,5 +63,19 @@ public class DisheService implements CRUD<Dishe, Integer>{
     
     public List<Dishe> getByPriceRange(Double minPrice, Double maxPrice) {
         return disheRepository.findByPriceBetween(minPrice, maxPrice);
+    }
+    
+    @Override
+    public Page<Dishe> getAll(Pageable pageable) {
+        return disheRepository.findAll(pageable);
+    }
+
+     public Page<Dishe> findByNameContaining(String name, Pageable pageable) {
+    return disheRepository.findByNameContainingIgnoreCase(name, pageable);
+}
+     
+     @Override
+    public boolean existsById(Integer id) {
+        return disheRepository.existsById(id);
     }
 }

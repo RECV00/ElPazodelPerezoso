@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -62,5 +64,19 @@ public class TourService implements CRUD<Tour, Integer>{
 
     public List<Tour> searchByLocation(String location) {
         return tourRepository.findByStartingPointContainingIgnoreCase(location);
+    }
+    
+     @Override
+    public Page<Tour> getAll(Pageable pageable) {
+        return tourRepository.findAll(pageable);
+    }
+
+     public Page<Tour> findByNameContaining(String name, Pageable pageable) {
+    return tourRepository.findByNameTourContainingIgnoreCase(name, pageable);
+}
+     
+     @Override
+    public boolean existsById(Integer id) {
+        return tourRepository.existsById(id);
     }
 }

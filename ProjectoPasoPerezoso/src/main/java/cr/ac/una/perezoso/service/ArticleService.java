@@ -5,11 +5,14 @@
 package cr.ac.una.perezoso.service;
 
 import cr.ac.una.perezoso.domain.Article;
+import cr.ac.una.perezoso.domain.Dishe;
 import cr.ac.una.perezoso.jpa.ArticleRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -60,4 +63,17 @@ public class ArticleService implements CRUD<Article, Integer>{
         return articleRepository.findByExpirationDate(expirationDate);
     }
     
+     @Override
+    public Page<Article> getAll(Pageable pageable) {
+        return articleRepository.findAll(pageable);
+    }
+
+     public Page<Article> findByNameContaining(String name, Pageable pageable) {
+    return articleRepository.findByProductNameContainingIgnoreCase(name, pageable);
+}
+     
+     @Override
+    public boolean existsById(Integer id) {
+        return articleRepository.existsById(id);
+    }
 }
