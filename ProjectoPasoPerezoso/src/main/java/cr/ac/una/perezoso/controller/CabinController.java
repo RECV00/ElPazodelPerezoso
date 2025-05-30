@@ -40,8 +40,11 @@ public class CabinController {
 
    
     @GetMapping("/List")
-    public String listCabins(Model model) {
-        model.addAttribute("cabins", cabinService.getAll(PageRequest.of(0, 4)).getContent());
+    public String listCabins(Model model,
+                           @RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "4") int size) {
+        Page<Cabin> cabinPage = cabinService.getAll(PageRequest.of(page, size));
+        model.addAttribute("cabins", cabinPage.getContent());
         return "/cabin/list_cabins";
     }
 
@@ -64,9 +67,8 @@ public class CabinController {
 }
     
     @GetMapping("/addForm")
-    public String addCabinForm(Model model) {
-        model.addAttribute("cabin", new Cabin());
-        return "/cabin/add_cabin";
+    public String getAddModal() {
+        return "/cabin/add_cabin_modal :: addModal";
     }
     
     @PostMapping("/add")
@@ -88,20 +90,16 @@ public class CabinController {
         return "redirect:/cabins/List";
     }
       
-    @GetMapping("/updateForm")
-    public String editCabin(@RequestParam("cabinID") int cabinID, Model model) {
-        if (cabinID <= 0) {
-            return "redirect:/cabins/List?error=Cabaña no encontrada";
-        }
-        
+     @GetMapping("/updateForm")
+    public String getEditModal(@RequestParam("cabinID") int cabinID, Model model) {
         Cabin cabin = cabinService.getById(cabinID);
-        if (cabin != null) {
-            model.addAttribute("cabin", cabin);
-        } else {
+        if (cabin == null) {
             return "redirect:/cabins/List?error=Cabaña no encontrada";
         }
-        return "/cabin/edit_cabin";
+        model.addAttribute("cabin", cabin);
+        return "/cabin/edit_cabin_modal :: editModal";
     }
+    
     
     @PostMapping("/update")
     public String updateCabin(@RequestParam("cabinID") int cabinID,
@@ -114,7 +112,7 @@ public class CabinController {
                            @RequestParam("includedServices") String includedServices,
                            RedirectAttributes redirectAttributes) throws IOException {
    
-        logger.debug("CabinID recibido: {}", cabinID);
+//        logger.debug("CabinID recibido: {}", cabinID);
         Cabin cabin = cabinService.getById(cabinID);
         
         if (cabin == null) {
@@ -139,19 +137,19 @@ public class CabinController {
         return "redirect:/cabins/List";
     }
     
-    @GetMapping("/confirmDelete")
-    public String confirmDelete(@RequestParam("cabinID") int cabinID, Model model) {
-        model.addAttribute("cabinIDToDelete", cabinID);
-        model.addAttribute("showConfirmation", true);
-        return "/cabin/list_cabins";
-    }
+//    @GetMapping("/confirmDelete")
+//    public String confirmDelete(@RequestParam("cabinID") int cabinID, Model model) {
+//        model.addAttribute("cabinIDToDelete", cabinID);
+//        model.addAttribute("showConfirmation", true);
+//        return "/cabin/list_cabins";
+//    }
     
     @PostMapping("/delete")
     public String deleteCabin(@RequestParam("cabinID") int cabinID, 
                            RedirectAttributes redirectAttributes) {
         cabinService.delete(cabinID);
         redirectAttributes.addFlashAttribute("deleteSuccess", "La cabaña ha sido eliminada correctamente.");
-        return "redirect:/cabins/List?deleteSuccess=true";
+        return "redirect:/cabins/List";
     }
 }
 

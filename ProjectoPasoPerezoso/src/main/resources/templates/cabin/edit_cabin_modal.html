@@ -1,0 +1,139 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="editModal">
+        <!-- Modal para editar cabaña -->
+        <div class="modal fade" id="editCabinModal" tabindex="-1" aria-labelledby="editCabinModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="editCabinModalLabel">Editar Cabaña</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/cabins/update}" enctype="multipart/form-data" id="editCabinForm" class="needs-validation" novalidate>
+                        <input type="hidden" name="cabinID" id="editCabinId">
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="editName" class="form-label fw-bold">Nombre:</label>
+                                        <input type="text" class="form-control" id="editName" name="name" required>
+                                        <div class="invalid-feedback">Por favor ingrese un nombre válido</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editDescription" class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
+                                        <div class="invalid-feedback">Por favor ingrese una descripción</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editCapacity" class="form-label fw-bold">Capacidad:</label>
+                                        <input type="number" class="form-control" id="editCapacity" name="capacity" min="1" required>
+                                        <div class="invalid-feedback">La capacidad debe ser al menos 1</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="editPrice" class="form-label fw-bold">Precio por noche ($):</label>
+                                        <input type="number" class="form-control" id="editPrice" name="pricePerNight" step="0.01" min="0" required>
+                                        <div class="invalid-feedback">Ingrese un precio válido</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editLocation" class="form-label fw-bold">Ubicación:</label>
+                                        <input type="text" class="form-control" id="editLocation" name="location" required>
+                                        <div class="invalid-feedback">Ingrese una ubicación válida</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editImage" class="form-label fw-bold">Nueva imagen (opcional):</label>
+                                        <input type="file" class="form-control" id="editImage" name="image" accept="image/*">
+                                        <small class="text-muted d-block mt-1">Formatos aceptados: JPG, PNG, GIF (Máx. 5MB)</small>
+                                        <div id="currentImageContainer" class="mt-3">
+                                            <small class="text-muted d-block mb-2">Imagen actual:</small>
+                                            <img id="currentImage" src="" class="img-thumbnail d-block" style="max-width: 200px; max-height: 150px; display: none;">
+                                        </div>
+                                        <div class="invalid-feedback">La imagen debe ser menor a 5MB</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="editServices" class="form-label fw-bold">Servicios incluidos:</label>
+                                <input type="text" class="form-control" id="editServices" name="includedServices" required>
+                                <small class="text-muted d-block mt-1">Separar servicios con comas (ej: Wifi, Piscina, Desayuno)</small>
+                                <div class="invalid-feedback">Ingrese al menos un servicio</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Actualizar Cabaña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            const form = document.getElementById('editCabinForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        })();
+        
+        // Validación de tamaño de imagen
+        document.getElementById('editImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file && file.size > maxSize) {
+                e.target.setCustomValidity('La imagen no debe exceder 5MB');
+                e.target.reportValidity();
+                e.target.value = '';
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+
+        // Script para manejar la carga de datos en el modal de edición
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#editCabinModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var modal = $(this);
+                
+                // Cargar datos en los campos del formulario
+                modal.find('#editCabinId').val(button.data('cabin-id'));
+                modal.find('#editName').val(button.data('cabin-name'));
+                modal.find('#editDescription').val(button.data('cabin-description'));
+                modal.find('#editCapacity').val(button.data('cabin-capacity'));
+                modal.find('#editPrice').val(button.data('cabin-price'));
+                modal.find('#editLocation').val(button.data('cabin-location'));
+                modal.find('#editServices').val(button.data('cabin-services'));
+                
+                // Manejar la imagen actual
+                var imagePath = button.data('cabin-image');
+                var currentImage = modal.find('#currentImage');
+                if(imagePath && imagePath.trim() !== '') {
+                    currentImage.attr('src', '/' + imagePath).show();
+                    modal.find('#currentImageContainer').show();
+                } else {
+                    currentImage.hide();
+                    modal.find('#currentImageContainer').hide();
+                }
+            });
+
+            // Resetear el modal cuando se cierra
+            $('#editCabinModal').on('hidden.bs.modal', function() {
+                $(this).find('form')[0].reset();
+                $('#currentImage').hide();
+                $(this).find('.was-validated').removeClass('was-validated');
+            });
+        });
+        </script>
+    </div>
+</body>
+</html>
