@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="addModal">
+        <!-- Modal para agregar cabaña -->
+        <div class="modal fade" id="addCabinModal" tabindex="-1" aria-labelledby="addCabinModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="addCabinModalLabel">Agregar Nueva Cabaña</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/cabins/add}" enctype="multipart/form-data" id="addCabinForm" class="needs-validation" novalidate>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="addName" class="form-label fw-bold">Nombre:</label>
+                                        <input type="text" class="form-control" id="addName" name="name" required>
+                                        <div class="invalid-feedback">Por favor ingrese un nombre válido</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addDescription" class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control" id="addDescription" name="description" rows="3" required></textarea>
+                                        <div class="invalid-feedback">Por favor ingrese una descripción</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addCapacity" class="form-label fw-bold">Capacidad:</label>
+                                        <input type="number" class="form-control" id="addCapacity" name="capacity" min="1" required>
+                                        <div class="invalid-feedback">La capacidad debe ser al menos 1</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="addPrice" class="form-label fw-bold">Precio por noche ($):</label>
+                                        <input type="number" class="form-control" id="addPrice" name="pricePerNight" step="0.01" min="0" required>
+                                        <div class="invalid-feedback">Ingrese un precio válido</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addLocation" class="form-label fw-bold">Ubicación:</label>
+                                        <input type="text" class="form-control" id="addLocation" name="location" required>
+                                        <div class="invalid-feedback">Ingrese una ubicación válida</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addImage" class="form-label fw-bold">Imagen:</label>
+                                        <input type="file" class="form-control" id="addImage" name="image" accept="image/*" required>
+                                        <small class="text-muted d-block mt-1">Formatos aceptados: JPG, PNG, GIF (Máx. 5MB)</small>
+                                        <div class="invalid-feedback">Seleccione una imagen válida</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="addServices" class="form-label fw-bold">Servicios incluidos:</label>
+                                <input type="text" class="form-control" id="addServices" name="includedServices" required>
+                                <small class="text-muted d-block mt-1">Separar servicios con comas (ej: Wifi, Piscina, Desayuno)</small>
+                                <div class="invalid-feedback">Ingrese al menos un servicio</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Guardar Cabaña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            const form = document.getElementById('addCabinForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        })();
+        
+        // Validación de tamaño de imagen
+        document.getElementById('addImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file && file.size > maxSize) {
+                e.target.setCustomValidity('La imagen no debe exceder 5MB');
+                e.target.reportValidity();
+                e.target.value = '';
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+        </script>
+    </div>
+</body>
+</html>

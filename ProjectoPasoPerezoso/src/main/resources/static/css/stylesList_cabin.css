@@ -101,22 +101,29 @@ nav .nav-links a:hover {
 
 /* Estilos para filtros */
 .filter-container {
-    background: rgba(108, 117, 125, 0.7);
+    background: rgba(108, 117, 125, 0.8);
     padding: 20px;
     border-radius: 5px;
     margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .filter-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 30px;
     margin-bottom: 15px;
 }
 
 .filter-group {
     flex: 1;
-    min-width: 200px;
+    /*min-width: 200px;*/
+    margin-right: 30px; /* Espacio a la derecha de cada grupo */
+}
+/* Para que el último no tenga margen */
+.filter-group:last-child {
+    margin-right: 0;
 }
 
 .filter-group label {
@@ -129,11 +136,18 @@ nav .nav-links a:hover {
 .filter-group input {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid #ced4da;
+    border: 1px solid #6f7e14;
     border-radius: 4px;
     background-color: rgba(255, 255, 255, 0.9);
+    font-size: 1em;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
+.filter-group input:focus {
+    outline: none;
+    border-color: #a2a26e;
+    box-shadow: 0 0 0 3px rgba(111, 126, 20, 0.3);
+}
 .filter-actions {
     display: flex;
     gap: 10px;
@@ -146,9 +160,25 @@ nav .nav-links a:hover {
     border-radius: 4px;
     cursor: pointer;
     font-weight: 500;
-    transition: opacity 0.3s;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transform: scale(1);
 }
 
+/* Efecto hover */
+.btn-filter:hover, .btn-reset:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Efecto al hacer click */
+.btn-filter:active, .btn-reset:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
 .btn-filter {
     background-color: #28a745;
     color: white;
@@ -157,10 +187,6 @@ nav .nav-links a:hover {
 .btn-reset {
     background-color: #dc3545;
     color: white;
-}
-
-.btn-filter:hover, .btn-reset:hover {
-    opacity: 0.8;
 }
 
 /* Estilos para la tabla */
@@ -271,40 +297,6 @@ nav .nav-links a:hover {
     color: #721c24;
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
-}
-
-/* Modal de confirmación */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 5px;
-    color: #333;
-}
-
-.modal-actions {
-    text-align: right;
-    margin-top: 20px;
-}
-
-.modal-actions button {
-    margin-left: 10px;
-    padding: 6px 12px;
-    cursor: pointer;
 }
 
 /* Responsive */

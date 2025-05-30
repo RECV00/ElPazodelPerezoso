@@ -1,0 +1,201 @@
+/* Estilos base para los modales - adaptados a tu diseño original */
+.modal-content {
+    background-color: rgba(52, 58, 64, 0.95); /* Fondo negro semitransparente */
+    color: white;
+    border: 1px solid black; /* Borde negro como en tus formularios */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); /* Sombra igual que en tu diseño */
+}
+
+.modal-header {
+    border-bottom: 1px solid #6f7e14; /* Línea divisoria verde oscuro */
+    padding: 15px 20px;
+    background-color: rgba(52, 58, 64, 0.9); /* Fondo ligeramente más oscuro */
+}
+
+.modal-title {
+    color: white;
+    font-size: 2.5em; /* Tamaño igual que en tus h1 */
+    margin: 0;
+    text-align: center; /* Centrado como en tus diseños */
+    width: 100%;
+}
+
+.modal-body {
+    padding: 20px;
+    background-color: rgba(52, 58, 64, 0.85); /* Fondo semitransparente */
+}
+
+.modal-footer {
+    border-top: 1px solid #6f7e14; /* Línea divisoria verde oscuro */
+    padding: 15px 20px;
+    background-color: rgba(52, 58, 64, 0.9); /* Fondo ligeramente más oscuro */
+    display: flex;
+    justify-content: space-between; /* Para separar los botones */
+}
+
+.btn-close {
+    filter: invert(1); /* X blanca para contrastar */
+    opacity: 0.8;
+    align-self: flex-start; /* Posicionamiento mejorado */
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Estilos para formularios - idénticos a tus diseños originales */
+.modal .form-group {
+    margin-bottom: 15px;
+}
+
+.modal .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.modal .form-control {
+    width: 95%; /* Igual que en tus formularios */
+    padding: 8px;
+    border: 1px solid black; /* Borde negro como en tus diseños */
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: white;
+    color: black;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.modal .form-control:focus {
+    border-color: #82750b; /* Color dorado al enfocar como en tus diseños */
+    outline: none;
+    box-shadow: none; /* Eliminamos la sombra de Bootstrap */
+}
+
+.modal textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Botones - idénticos a tu diseño original */
+.modal .btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none; /* Sin bordes como en tu diseño */
+}
+
+.modal .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.modal .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.modal .btn-primary {
+    background-color: #a2a26e; /* Verde claro como en tu diseño */
+    color: white;
+}
+
+.modal .btn-primary:hover {
+    background-color: #6f7e14; /* Verde oscuro al pasar el ratón */
+}
+
+/* Estilos específicos para la imagen actual en edición */
+#currentImageContainer {
+    margin-top: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#currentImage {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #6f7e14;
+    border-radius: 4px;
+    margin-top: 5px;
+    display: block; /* Para centrar la imagen */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Textos pequeños */
+.modal small.text-muted {
+    color: #adb5bd !important; /* Color gris claro para textos secundarios */
+    display: block;
+    margin-top: 5px;
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 10px;
+    }
+    
+    .modal-content {
+        margin-top: 50px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    .modal-title {
+        font-size: 1.8em; /* Tamaño más pequeño en móviles */
+    }
+    
+    .modal .form-control {
+        width: 100%; /* Ocupar todo el ancho en móviles */
+    }
+}
+
+/* Efecto de transición para el modal */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+    transform: translate(0, -50px);
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Estilos para validación */
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.was-validated .form-control:valid {
+    border-color: #28a745;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875em;
+}
+
+/* Botones personalizados */
+.btn-submit {
+    background-color: #a2a26e;
+    color: white;
+    border: none;
+}
+
+.btn-submit:hover {
+    background-color: #6f7e14;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+}

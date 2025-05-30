@@ -9,7 +9,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
@@ -17,16 +18,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="content">
         <h1>Listado de Cabañas</h1>
         
-        <!-- Contenedor superior con botón Agregar -->
+        <!-- Contenedor superior con botón Agregar (ahora abre modal) -->
         <div class="top-actions">
-            <a th:href="@{/cabins/addForm}" class="btn-add">Agregar Nueva Cabaña</a>
+            <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#addCabinModal">
+                Agregar Nueva Cabaña
+            </button>
             
             <!-- Mensajes de éxito/error -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
         </div>
         
-        <!-- Formulario de Filtros -->
+        <!-- Formulario de Filtros (se mantiene igual) -->
         <div class="filter-container">
             <div class="filter-row">
                 <div class="filter-group">
@@ -39,8 +42,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </div>
                 <div class="filter-group" style="align-self: flex-end;">
                     <div class="filter-actions">
-                        <button type="button" id="filterButton" class="btn-filter">Filtrar</button>
-                        <button type="button" id="resetButton" class="btn-reset">Limpiar</button>
+                        <button type="button" id="resetButton" class="btn-reset">Limpiar Filtros</button>
                     </div>
                 </div>
             </div>
@@ -69,19 +71,33 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <!-- Los controles de paginación se generarán via JavaScript -->
             </div>
         </div>
+        
+        <!-- Incluir modal de agregar -->
+        <div th:replace="~{/cabin/add_cabin_modal :: addModal}"></div>
+        
+        <!-- Incluir modal de editar -->
+        <div th:replace="~{/cabin/edit_cabin_modal :: editModal}"></div>
     </div>
     
-    <!-- Modal de confirmación para eliminar -->
-    <!--<div th:replace="~{/fragments/confirmationModal :: confirmationModal}"></div>-->
-    
+    <!-- Scripts -->
+    <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
     <script th:inline="javascript">
         $(document).ready(function() {
+            // Variable para almacenar el timeout
+            let filterTimeout;
+            
             // Cargar datos iniciales
             loadCabins(0);
             
-            // Manejar clic en botón de filtro
-            $('#filterButton').click(function() {
-                loadCabins(0);
+            // Manejar cambios en los filtros (en tiempo real con debounce)
+            $('#name, #location').on('input', function() {
+                // Cancelar el timeout anterior si existe
+                clearTimeout(filterTimeout);
+                
+                // Establecer un nuevo timeout para esperar 500ms después de la última tecla
+                filterTimeout = setTimeout(function() {
+                    loadCabins(0);
+                }, 500);
             });
             
             // Manejar clic en botón de reset
@@ -91,30 +107,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 loadCabins(0);
             });
             
-            // Manejar tecla Enter en los filtros
-            $('#name, #location').keypress(function(e) {
-                if (e.which === 13) {
-                    loadCabins(0);
-                }
-            });
-            
-            // Configurar modal de confirmación para eliminar
-            $(document).on('click', '.btn-delete', function(e) {
-                e.preventDefault();
-                const deleteUrl = $(this).attr('href');
-                $('#confirmationModal').modal('show');
-                $('#confirmDeleteBtn').off('click').on('click', function() {
-                    window.location.href = deleteUrl;
-                });
+            // Efecto visual al enfocar inputs
+            $('.filter-group input').focus(function() {
+                $(this).parent().find('label').css('color', '#a2a26e');
+            }).blur(function() {
+                $(this).parent().find('label').css('color', 'white');
             });
         });
-        
+
         function loadCabins(page) {
             const filters = {
                 name: $('#name').val(),
                 location: $('#location').val(),
                 page: page,
-                size: 10
+                size: 4
             };
             
             // Mostrar loading
@@ -153,8 +159,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <td>${cabin.capacity}</td>
                         <td>$${cabin.pricePerNight.toFixed(2)}</td>
                         <td>
-                            <a href="/cabins/updateForm?cabinID=${cabin.cabinID}" class="btn-edit">Editar</a>
-                            <a href="/cabins/confirmDelete?cabinID=${cabin.cabinID}" class="btn-delete">Eliminar</a>
+                            <a href="#" class="btn-edit" 
+                               data-bs-toggle="modal" 
+                               data-bs-target="#editCabinModal"
+                               data-cabin-id="${cabin.cabinID}"
+                               data-cabin-name="${cabin.name}"
+                               data-cabin-description="${cabin.description}"
+                               data-cabin-capacity="${cabin.capacity}"
+                               data-cabin-price="${cabin.pricePerNight}"
+                               data-cabin-location="${cabin.location}"
+                               data-cabin-services="${cabin.includedServices}"
+                               data-cabin-image="${cabin.image}">
+                                Editar
+                            </a>
+                            <a href="/cabins/delete?cabinID=${cabin.cabinID}" class="btn-delete" onclick="return confirm('¿Estás seguro que deseas eliminar esta cabaña?')">Eliminar</a>
                         </td>
                     </tr>
                 `;
@@ -207,6 +225,39 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 pagination.append(`<button onclick="loadCabins(${currentPage + 1})">Siguiente &raquo;</button>`);
             }
         }
+        
+        // Manejar la apertura del modal de edición
+        $('#editCabinModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            // Obtener datos de los atributos data
+            modal.find('#editCabinId').val(button.data('cabin-id'));
+            modal.find('#editName').val(button.data('cabin-name'));
+            modal.find('#editDescription').val(button.data('cabin-description'));
+            modal.find('#editCapacity').val(button.data('cabin-capacity'));
+            modal.find('#editPrice').val(button.data('cabin-price'));
+            modal.find('#editLocation').val(button.data('cabin-location'));
+            modal.find('#editServices').val(button.data('cabin-services'));
+            
+            // Manejar la imagen actual
+            var imagePath = button.data('cabin-image');
+            if(imagePath) {
+                modal.find('#currentImage').attr('src', '/' + imagePath);
+                modal.find('#currentImageContainer').show();
+            } else {
+                modal.find('#currentImageContainer').hide();
+            }
+        });
+        
+        // Confirmación antes de enviar formularios
+        $('#addCabinForm').on('submit', function() {
+            return confirm('¿Estás seguro de que deseas agregar esta cabaña?');
+        });
+        
+        $('#editCabinForm').on('submit', function() {
+            return confirm('¿Estás seguro de que deseas actualizar esta cabaña?');
+        });
     </script>
 </body>
 </html>
