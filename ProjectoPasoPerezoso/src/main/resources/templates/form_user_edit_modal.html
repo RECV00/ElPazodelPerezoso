@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Usuario</title>
+</head>
+<body>
+    <!-- Modal para editar usuario -->
+    <div th:fragment="editModal" class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" th:action="@{/user/actualizar}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="editUserId" name="id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editName" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="editName" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editLastName" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editIdentification" class="form-label">Identificación</label>
+                                    <input type="text" class="form-control" id="editIdentification" name="identification" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPhone" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="editPhone" name="phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editUserType" class="form-label">Tipo de Usuario</label>
+                                    <select class="form-select" id="editUserType" name="userType" required>
+                                        <option value="ADMIN">Administrador</option>
+                                        <option value="EMPLOYEE">Empleado</option>
+                                        <option value="CLIENT">Cliente</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">Nueva Contraseña (dejar en blanco para no cambiar)</label>
+                            <input type="password" class="form-control" id="editPassword" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProfileImage" class="form-label">Foto de perfil</label>
+                            <input type="file" class="form-control" id="editProfileImage" name="profileImage">
+                            <div id="currentImageContainer" class="mt-2" style="display: none;">
+                                <img id="currentImage" src="" class="img-thumbnail" style="max-width: 150px;">
+                                <p class="small text-muted">Imagen actual</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para manejar la edición -->
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $('#editUserModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var modal = $(this);
+                
+                // Obtener datos del usuario
+                var userId = button.data('user-id');
+                var userName = button.data('user-name');
+                var userLastName = button.data('user-lastname');
+                var userIdentification = button.data('user-identification');
+                var userEmail = button.data('user-email');
+                var userPhone = button.data('user-phone');
+                var userType = button.data('user-type');
+                var userImage = button.data('user-image');
+                
+                // Llenar el formulario
+                modal.find('#editUserId').val(userId);
+                modal.find('#editName').val(userName);
+                modal.find('#editLastName').val(userLastName);
+                modal.find('#editIdentification').val(userIdentification);
+                modal.find('#editEmail').val(userEmail);
+                modal.find('#editPhone').val(userPhone);
+                modal.find('#editUserType').val(userType);
+                
+                // Manejar la imagen actual
+                if(userImage) {
+                    modal.find('#currentImage').attr('src', '/' + userImage);
+                    modal.find('#currentImageContainer').show();
+                } else {
+                    modal.find('#currentImageContainer').hide();
+                }
+            });
+            
+            // Confirmación antes de actualizar
+            $('#editUserForm').on('submit', function() {
+                return confirm('¿Estás seguro de que deseas actualizar este usuario?');
+            });
+        });
+    </script>
+</body>
+</html>

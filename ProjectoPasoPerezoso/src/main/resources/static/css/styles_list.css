@@ -424,12 +424,11 @@ nav .nav-links a:hover {
 /* ========== PAGINACIÓN ========== */
 .pagination-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    margin-top: 30px;
+    margin-top: 20px;
     padding: 15px 0;
-    border-top: 1px solid rgba(160, 179, 32, 0.3);
+    border-top: 1px solid rgba(160, 179, 32, 0.2);
 }
 
 .pagination {
@@ -440,42 +439,39 @@ nav .nav-links a:hover {
     gap: 5px;
 }
 
-.pagination li a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
+.pagination button {
+    padding: 8px 12px;
     border: 1px solid rgba(111, 126, 20, 0.3);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
     background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95em;
+    min-width: 36px;
 }
 
-.pagination li.active a {
-    background: linear-gradient(135deg, #8a9a1a, #6f7e14);
-    color: white;
-    border-color: #8a9a1a;
-}
-
-.pagination li a:hover:not(.active) {
+.pagination button:hover:not(.active) {
     background-color: rgba(111, 126, 20, 0.2);
     border-color: rgba(111, 126, 20, 0.5);
 }
 
-.pagination li.disabled a {
-    color: rgba(255, 255, 255, 0.3);
-    pointer-events: none;
-    background-color: transparent;
+.pagination button.active {
+    background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+    color: white;
+    border-color: #8a9a1a;
+    font-weight: 600;
+}
+
+.pagination span {
+    padding: 8px 12px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .pagination-info {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.95em;
-    font-weight: 500;
+    margin-right: 15px;
 }
 
 .page-size-selector {
@@ -485,25 +481,23 @@ nav .nav-links a:hover {
 }
 
 .page-size-selector label {
-    font-size: 0.95em;
     color: rgba(255, 255, 255, 0.8);
-    font-weight: 500;
+    font-size: 0.95em;
 }
 
 .page-size-selector select {
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 6px 10px;
+    border-radius: 4px;
     border: 1px solid rgba(111, 126, 20, 0.5);
     background-color: rgba(255, 255, 255, 0.9);
-    font-size: 0.95em;
-    transition: all 0.3s ease;
     color: #333;
+    font-size: 0.95em;
 }
 
 .page-size-selector select:focus {
     outline: none;
     border-color: #a0b320;
-    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.2);
 }
 
 /* ========== RESPONSIVIDAD ========== */
@@ -630,4 +624,51 @@ nav .nav-links a:hover {
     .alert i {
         margin-bottom: 8px;
     }
+}
+
+/* Loading states */
+.table-section.loading {
+    position: relative;
+    opacity: 0.7;
+}
+
+.table-section.loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+}
+
+.table-section.error {
+    border: 1px solid #ffcccc;
+}
+
+.retry-btn {
+    background-color: #6f7e14;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.retry-btn:hover {
+    background-color: #5a6a0f;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }

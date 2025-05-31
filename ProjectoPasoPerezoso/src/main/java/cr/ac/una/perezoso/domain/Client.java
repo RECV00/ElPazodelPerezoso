@@ -4,6 +4,8 @@
  */
 package cr.ac.una.perezoso.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -20,12 +22,13 @@ import java.util.List;
 @Entity
 @Table(name = "tb_client")
 @DiscriminatorValue("CLIENT")
-
 @PrimaryKeyJoinColumn(name = "id_client")
+
 public class Client extends User{
     
      // Relación con Booking
     @OneToMany(mappedBy = "client")
+   
     private List<Booking> bookings;
     
     

@@ -5,53 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Listado de usuarios del sistema">
     <title>Listado de Usuarios | Sistema de Gestión</title>
-    <link rel="stylesheet" href="/css/styles_list.css">
-    <link rel="stylesheet" href="/css/modal_styles.css">
-    <link rel="stylesheet" href="/css/styles_form.css">
-    <link rel="stylesheet" href="/css/styles_form_edit.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+     <!-- Incluye los estilos comunes -->
+    <div th:replace="~{/fragments/modal_includes :: head}"></div>
+    <link rel="stylesheet" href="/css/styles_list.css">
+    <link rel="stylesheet" href="/css/stylesModal.css">
+    
+   
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
-
-
+    
     <main class="user-container">
-        
         <header class="page-header">
-        <h1>Listado de Usuarios</h1>
-        
+            <h1>Listado de Usuarios</h1>
         </header>
         
         <div class="user-actions-top">
-            <a th:href="@{/user/formulario}" class="add-user-btn" id="newUserBtn">
+            <button type="button" class="add-user-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
                 <i class="fas fa-plus"></i> Nuevo Usuario
-            </a>
+            </button>
             <span class="user-count">
-                Total: <span id="totalUsers" th:text="${totalItems}">0</span> usuarios
+                Total: <span id="totalUsers">0</span> usuarios
             </span>
         </div>
         
-        <!-- Sección de filtros modificada para filtrado en tiempo real -->
-        <section class="filter-section" aria-label="Filtros de búsqueda">
+        <!-- Sección de filtros -->
+        <section class="filter-section" role="search" aria-label="Filtros de búsqueda de usuario">
             <div class="filter-form">
-                <input type="hidden" id="currentPage" th:value="${currentPage}">
-                <input type="hidden" id="pageSize" th:value="${size}">
-                
                 <div class="filter-group">
                     <label for="filterIdentification"><i class="fas fa-id-card"></i> Identificación:</label>
-                    <input type="text" id="filterIdentification" 
-                           th:value="${identificationFilter}" 
-                           placeholder="Ingrese identificación..." class="filter-input">
+                    <input type="text" id="filterIdentification" placeholder="Buscar por identificación">
                 </div>
                 
                 <div class="filter-group">
                     <label for="filterType"><i class="fas fa-users"></i> Tipo de usuario:</label>
-                    <select id="filterType" class="filter-select">
+                    <select id="filterType">
                         <option value="">Todos los tipos</option>
-                        <option value="ADMIN" th:selected="${typeFilter == 'ADMIN'}">Administrador</option>
-                        <option value="EMPLOYEE" th:selected="${typeFilter == 'EMPLOYEE'}">Empleado</option>
-                        <option value="CLIENT" th:selected="${typeFilter == 'CLIENT'}">Cliente</option>
+                        <option value="ADMIN">Administrador</option>
+                        <option value="EMPLOYEE">Empleado</option>
+                        <option value="CLIENT">Cliente</option>
                     </select>
                 </div>
                 
@@ -63,100 +56,271 @@
             </div>
         </section>
         
-        <section class="table-section" aria-label="Resultados de usuarios">
+        <!-- Tabla de resultados -->
+        <section class="table-section">
             <div class="table-responsive">
-                <table class="user-table" aria-describedby="tableDescription">
-                    <caption id="tableDescription" class="sr-only">Listado de usuarios registrados en el sistema</caption>
+                <table class="user-table">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Identificación</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Teléfono</th>
-                            <th scope="col">Acciones</th>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Nombre</th>
+                            <th>Identificación</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <!-- Datos iniciales cargados por Thymeleaf -->
-                        <tr th:if="${#lists.isEmpty(users)}">
+                        <tr>
                             <td colspan="7" class="text-center no-users">
-                                <i class="fas fa-info-circle"></i> No se encontraron usuarios registrados
-                            </td>
-                        </tr>
-
-                        <tr th:each="user : ${users}" th:object="${user}">
-                            <td th:text="*{id_user}">1</td>
-                            <td>
-                                <span class="badge" th:classappend="*{userType} == 'ADMIN' ? 'badge-admin' : 
-                                                          (*{userType} == 'EMPLOYEE' ? 'badge-employee' : 'badge-client')"
-                                      th:text="*{userType}">Tipo</span>
-                            </td>
-                            <td th:text="*{name + ' ' + last_name}">Nombre Apellido</td>
-                            <td th:text="*{identification}">1-1234-5678</td>
-                            <td>
-                                <a th:href="'mailto:' + *{email}" th:text="*{email}">
-                                    <i class="fas fa-envelope"></i> email@example.com
-                                </a>
-                            </td>
-                            <td>
-                                <a th:href="'tel:' + *{phone}" th:text="*{phone}">88888888</a>
-                            </td>
-                            <td class="user-actions">
-                                <a th:href="@{/user/detalle/{id}(id=*{id_user})}" class="action-btn view-btn" title="Ver detalles">
-                                    <i class="fas fa-eye"></i> <span class="sr-only">Ver</span>
-                                </a>
-                                <a th:href="@{/user/editar/{id}(id=*{id_user})}" class="action-btn edit-btn" title="Editar">
-                                    <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
-                                </a>
-                                <form th:action="@{/user/eliminar/{id}(id=*{id_user})}" method="post" class="delete-form">
-                                    <button type="submit" class="action-btn delete-btn" title="Eliminar">
-                                        <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                                    </button>
-                                </form>
+                                <i class="fas fa-spinner fa-spin"></i> Cargando usuarios...
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             
-            <nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
-                <div class="pagination-info">
-                    Mostrando <span th:text="${users.size()}"></span> de 
-                    <span th:text="${totalItems}"></span> usuarios
-                </div>
-                
-                <ul class="pagination" id="paginationControls">
-                    <!-- La paginación se actualizará dinámicamente via JavaScript -->
-                </ul>
-                
-                <div class="page-size-selector">
-                    <label for="pageSizeSelect">Mostrar:</label>
-                    <select id="pageSizeSelect">
-                        <option value="4" th:selected="${size == 4}">4</option>
-                        <option value="10" th:selected="${size == 10}">10</option>
-                        <option value="20" th:selected="${size == 20}">20</option>
-                        <option value="50" th:selected="${size == 50}">50</option>
-                    </select>
-                    <span>por página</span>
-                </div>
-            </nav>
+            <!-- Paginación -->
+            <div class="pagination" id="paginationControls"></div>
         </section>
     </main>
 
-    <!-- Modal Container -->
-    <div id="modalContainer" class="modal-container">
-        <div class="modal-content">
-            <button id="closeModal" class="close-modal">&times;</button>
-            <div id="modalContent"></div>
-        </div>
-    </div>
+    <!-- Incluir modales -->
+    <div th:replace="~{/form_user_modal :: addModal}"></div>
+    <div th:replace="~{/form_user_edit_modal :: editModal}"></div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     
+    <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/modal_handlers.js"></script>
-    <script src="/js/user_list_actions.js"></script>
+    
+    
+    <!-- Script principal -->
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            
+            let filterTimeout;
+            
+            // Cargar datos iniciales
+            loadUsers(0);
+            
+            // Manejar cambios en los filtros
+            $('#filterIdentification, #filterType').on('input change', function() {
+                clearTimeout(filterTimeout);
+                filterTimeout = setTimeout(function() {
+                    loadUsers(0);
+                }, 500);
+            });
+            
+            // Manejar clic en botón de limpiar
+            $('#clearFiltersBtn').click(function() {
+                $('#filterIdentification').val('');
+                $('#filterType').val('');
+                loadUsers(0);
+            });
+            
+//            // Efecto visual al enfocar inputs
+//            $('.filter-group input').focus(function() {
+//                $(this).parent().find('label').css('color', '#a2a26e');
+//            }).blur(function() {
+//                $(this).parent().find('label').css('color', 'white');
+//            });
+
+             // Manejar la apertura del modal de edición
+            $('#editUserModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var modal = $(this);
+                
+                // Obtener datos de los atributos data
+                modal.find('#editUserId').val(button.data('user-id'));
+                modal.find('#editName').val(button.data('user-name'));
+                modal.find('#editLastName').val(button.data('user-lastname'));
+                modal.find('#editIdentification').val(button.data('user-identification'));
+                modal.find('#editEmail').val(button.data('user-email'));
+                modal.find('#editPhone').val(button.data('user-phone'));
+                modal.find('#editUserType').val(button.data('user-type'));
+                
+                // Manejar la imagen actual
+                var imagePath = button.data('user-image');
+                if(imagePath) {
+                    modal.find('#currentImage').attr('src', '/' + imagePath);
+                    modal.find('#currentImageContainer').show();
+                } else {
+                    modal.find('#currentImageContainer').hide();
+                }
+            });
+            
+            // Confirmación antes de enviar formularios
+            $('#addUserForm').on('submit', function() {
+                return confirm('¿Estás seguro de que deseas agregar este usuario?');
+            });
+            
+            $('#editUserForm').on('submit', function() {
+                return confirm('¿Estás seguro de que deseas actualizar este usuario?');
+            });
+        });
+        
+
+        function loadUsers(page) {
+            const filters = {
+                identification: $('#filterIdentification').val(),
+                type: $('#filterType').val(),
+                page: page,
+                size: 4
+            };
+            
+            $.ajax({
+                url: '/admin/api/list',
+                type: 'GET',
+                data: filters,
+                success: function(response) {
+                    console.log("Respuesta completa:", response); // Depuración
+
+                    if(response && response.content) {
+                        updateTable(response.content);
+                        updatePagination(response.totalPages, page, response.totalElements);
+                    } else {
+                        $('#usersTableBody').html(
+                            '<tr><td colspan="7" class="text-center no-users">No se encontraron usuarios</td></tr>'
+                        );
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error en la solicitud:', xhr.responseText);
+                    $('#usersTableBody').html(
+                        '<tr><td colspan="7" class="text-center no-users">Error al cargar datos</td></tr>'
+                    );
+                }
+            });
+}
+        
+        function updateTable(users) {
+            const tbody = $('#usersTableBody');
+            tbody.empty();
+            
+            if (!users || users.length === 0) {
+                tbody.append(
+                    '<tr><td colspan="7" class="text-center no-users">No se encontraron usuarios</td></tr>'
+                );
+                return;
+            }
+            
+            users.forEach(user => {
+                const row = `
+                    <tr>
+                        <td>${user.id_user}</td>
+                        <td>
+                            <span class="badge ${getBadgeClass(user.userType)}">
+                                ${user.userType}
+                            </span>
+                        </td>
+                        <td>${user.name} ${user.last_name}</td>
+                        <td>${user.identification}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone}</td>
+                        <td class="user-actions">
+                            <button class="btn btn-sm btn-primary edit-btn" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editUserModal"
+                                    data-user-id="${user.id_user}"
+                                    data-user-name="${user.name}"
+                                    data-user-lastname="${user.last_name}"
+                                    data-user-identification="${user.identification}"
+                                    data-user-email="${user.email}"
+                                    data-user-phone="${user.phone}"
+                                    data-user-type="${user.userType}"
+                                    data-user-image="${user.profileImage || ''}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn" 
+                                    onclick="confirmDeleteUser(${user.id_user}, '${user.name} ${user.last_name}')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+        
+        function getBadgeClass(userType) {
+            switch(userType) {
+                case 'ADMIN': return 'badge-admin';
+                case 'EMPLOYEE': return 'badge-employee';
+                case 'CLIENT': return 'badge-client';
+                default: return '';
+            }
+        }
+        
+        function updatePagination(totalPages, currentPage, totalElements) {
+            const pagination = $('#paginationControls');
+            pagination.empty();
+            
+            $('#totalUsers').text(totalElements);
+            
+            if (totalPages <= 1) return;
+            
+            if (currentPage > 0) {
+                pagination.append(`<button onclick="loadUsers(${currentPage - 1})">&laquo; Anterior</button>`);
+            }
+            
+            const startPage = Math.max(0, currentPage - 2);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+            
+            if (startPage > 0) {
+                pagination.append(`<button onclick="loadUsers(0)">1</button>`);
+                if (startPage > 1) {
+                    pagination.append('<span>...</span>');
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    pagination.append(`<button class="active" onclick="loadUsers(${i})">${i + 1}</button>`);
+                } else {
+                    pagination.append(`<button onclick="loadUsers(${i})">${i + 1}</button>`);
+                }
+            }
+            // Mostrar elipsis al final si es necesario
+            if (endPage < totalPages - 1) {
+                if (endPage < totalPages - 2) {
+                    pagination.append('<span>...</span>');
+                }
+                pagination.append(`<button onclick="loadUsers(${totalPages - 1})">${totalPages}</button>`);
+            }
+             // Botón Siguiente
+            if (currentPage < totalPages - 1) {
+                pagination.append(`<button onclick="loadUsers(${currentPage + 1})">Siguiente &raquo;</button>`);
+            }
+        }
+        
+        function confirmDeleteUser(userId, userName) {
+            Swal.fire({
+                title: `¿Eliminar a ${userName}?`,
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/user/eliminar/${userId}`,
+                        type: 'DELETE',
+                        success: function() {
+                            Swal.fire('Eliminado', `${userName} ha sido eliminado.`, 'success');
+                            loadUsers(0);
+                        },
+                        error: function(xhr) {
+                            Swal.fire('Error', 'No se pudo eliminar el usuario.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>
