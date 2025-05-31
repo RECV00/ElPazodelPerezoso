@@ -33,7 +33,7 @@ public class FoodData {
             pstmt.setTime(3, Time.valueOf(food.getHourService()));
             pstmt.setInt(4, food.getNumberDishes());
             pstmt.setString(5, food.getCustomOptions());
-            pstmt.setString(6, food.getAdditionalObservactions());
+            pstmt.setString(6, food.getAdditionalObservations());
             pstmt.setString(7, food.getTypeService());
             pstmt.executeUpdate();
             System.out.println("Registro de comida creado exitosamente.");
@@ -51,13 +51,13 @@ public class FoodData {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Food food = new Food();
-                food.setId_Food(rs.getInt("id_Food"));
+                food.setId_food(rs.getInt("id_Food"));
                 food.setSelectedMenu(rs.getString("selectedMenu"));
                 food.setDateService(rs.getDate("dateService").toLocalDate());
                 food.setHourService(rs.getTime("hourService").toLocalTime());
                 food.setNumberDishes(rs.getInt("numberDishes"));
                 food.setCustomOptions(rs.getString("customOptions"));
-                food.setAdditionalObservactions(rs.getString("additionalObservactions"));
+                food.setAdditionalObservations(rs.getString("additionalObservactions"));
                 food.setTypeService(rs.getString("typeService"));
                 foods.add(food);
             }
@@ -78,9 +78,9 @@ public class FoodData {
             pstmt.setTime(3, Time.valueOf(food.getHourService()));
             pstmt.setInt(4, food.getNumberDishes());
             pstmt.setString(5, food.getCustomOptions());
-            pstmt.setString(6, food.getAdditionalObservactions());
+            pstmt.setString(6, food.getAdditionalObservations());
             pstmt.setString(7, food.getTypeService());
-            pstmt.setInt(8, food.getId_Food());
+            pstmt.setInt(8, food.getId_food());
             pstmt.executeUpdate();
             System.out.println("Registro de comida actualizado exitosamente.");
         } catch (SQLException | ClassNotFoundException e) {
@@ -112,13 +112,13 @@ public class FoodData {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Food food = new Food();
-                    food.setId_Food(rs.getInt("id_Food"));
+                    food.setId_food(rs.getInt("id_Food"));
                     food.setSelectedMenu(rs.getString("selectedMenu"));
                     food.setDateService(rs.getDate("dateService").toLocalDate());
                     food.setHourService(rs.getTime("hourService").toLocalTime());
                     food.setNumberDishes(rs.getInt("numberDishes"));
                     food.setCustomOptions(rs.getString("customOptions"));
-                    food.setAdditionalObservactions(rs.getString("additionalObservactions"));
+                    food.setAdditionalObservations(rs.getString("additionalObservactions"));
                     food.setTypeService(rs.getString("typeService"));
                     foodsFiltrados.add(food);
                 }
@@ -137,13 +137,13 @@ public class FoodData {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     food = new Food();
-                    food.setId_Food(rs.getInt("id_Food"));
+                    food.setId_food(rs.getInt("id_Food"));
                     food.setSelectedMenu(rs.getString("selectedMenu"));
                     food.setDateService(rs.getDate("dateService").toLocalDate());
                     food.setHourService(rs.getTime("hourService").toLocalTime());
                     food.setNumberDishes(rs.getInt("numberDishes"));
                     food.setCustomOptions(rs.getString("customOptions"));
-                    food.setAdditionalObservactions(rs.getString("additionalObservactions"));
+                    food.setAdditionalObservations(rs.getString("additionalObservactions"));
                     food.setTypeService(rs.getString("typeService"));
                 }
             }

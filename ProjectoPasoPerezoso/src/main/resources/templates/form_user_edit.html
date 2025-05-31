@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
+    <link rel="stylesheet" href="/css/styles_form_edit.css">
+    <link rel="stylesheet" href="/css/modal_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="formContent">
+        <div class="form-container">
+            <h1>Editar Usuario</h1>
+            
+            <form id="editForm" th:action="@{/user/actualizar/{id}(id=${user.id_user})}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" th:value="${user.id_user}">
+                
+                <div class="form-group">
+                    <label for="tipoUsuario">Tipo de Usuario:</label>
+                    <select id="tipoUsuario" name="tipoUsuario" disabled>
+                        <option th:each="tipo : ${tiposUsuario}" 
+                                th:value="${tipo}"
+                                th:text="${tipo}"
+                                th:selected="${user.userType != null and user.userType.equalsIgnoreCase(tipo)}">
+                        </option>
+                    </select>
+                    <input type="hidden" name="tipoUsuario" th:value="${user.userType}">
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" th:value="${user.name}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido">Apellidos:</label>
+                    <input type="text" id="apellido" name="apellido" th:value="${user.last_name}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cedula">Identificación:</label>
+                    <input type="text" id="cedula" name="cedula" th:value="${user.identification}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" 
+                           th:value="${#temporals.format(user.birthdate, 'yyyy-MM-dd')}">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="email" name="email" th:value="${user.email}">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="number" id="telefono" name="telefono" th:value="${user.phone}">
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" th:value="${user.address}">
+                </div>
+
+                <div class="form-group">
+                       <input type="hidden" name="password" th:value="${user.password}">
+                </div>
+
+                <div class="form-group">
+                    <label>Foto de Perfil:</label>
+                    <div class="file-upload">
+                        <img id="previewImage" th:if="${user.profile_picture}" th:src="${user.profile_picture}" alt="Foto actual">
+                        <img id="previewImageNew" src="#" alt="Nueva foto" style="display:none;">
+                        <label for="profile_picture">Seleccionar nueva imagen</label>
+                        <input type="file" id="profile_picture" name="imageFile" accept="image/*">
+                        <p id="fileNameEdit">No se ha seleccionado nueva imagen</p>
+                    </div>
+                </div>
+                
+                <div th:if="${user.userType != null and user.userType.equalsIgnoreCase('Empleado')}">
+                    <div class="form-group">
+                        <label for="puesto">Puesto de Trabajo:</label>
+                        <input type="text" id="puesto" name="puesto" th:value="${puesto}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numeroCuenta">Número de Cuenta:</label>
+                        <input type="text" id="numeroCuenta" name="numeroCuenta" th:value="${numeroCuenta}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salario">Salario:</label>
+                        <input type="number" step="0.01" id="salario" name="salario" th:value="${salario}">
+                    </div>
+                </div>
+                
+                <div class="form-group button-group">
+                    <button type="submit" class="btn-submit">Actualizar Usuario</button>
+                    <a th:href="@{/admin/list}" class="btn-cancel">Cancelar</a>
+                </div>
+                
+                <div th:if="${error}" class="error-message" th:text="${error}"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/form_scripts.js"></script>
+</body>
+</html>
