@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
  *
  * @author keyna
  */
-@Controller
-public class HomeController {
-    @GetMapping("/")
-    public String home() {
-        return "/index"; 
-    }
-}
+//@Controller
+//public class HomeController {
+//    @GetMapping("/")
+//    public String home() {
+//        return "/index"; 
+//    }
+//}

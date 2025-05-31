@@ -1,0 +1,60 @@
+/* Hereda todos los estilos del formulario principal */
+@import url('styles_form.css');
+
+/* Sobreescribe algunos estilos específicos para edición */
+.form-container {
+    max-width: 900px;
+}
+
+/* Estilos específicos para la vista previa de imagen */
+#previewImage {
+    max-width: 200px;
+    max-height: 200px;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 2px solid #3498db;
+}
+
+#previewImageNew {
+    max-width: 200px;
+    max-height: 200px;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 2px dashed #3498db;
+}
+
+/* Estilo para el campo de contraseña */
+.form-group input[type="password"] {
+    background-color: #f8f9fa;
+}
+
+/* Estilo para campos deshabilitados */
+.form-group select:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Mensaje de archivo en edición */
+#fileNameEdit {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Estilo para la sección de empleado en edición */
+#empleadoFields {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 6px;
+    margin-top: 1.5rem;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    #previewImage, #previewImageNew {
+        max-width: 150px;
+        max-height: 150px;
+    }
+}

@@ -192,4 +192,22 @@ table tr:hover {
         content: attr(data-label);
         font-weight: bold;
     }
+    
+    nav {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    nav .nav-links {
+        width: 100%;
+        justify-content: space-around;
+        gap: 5px;
+    }
+    
+    nav .nav-links a {
+        padding: 8px 12px;
+        font-size: 0.95em;
+    }
+    
 }

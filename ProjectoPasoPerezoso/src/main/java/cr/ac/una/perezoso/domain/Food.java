@@ -4,6 +4,12 @@
  */
 package cr.ac.una.perezoso.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -11,36 +17,58 @@ import java.time.LocalTime;
  *
  * @author corra
  */
+@Entity
+@Table(name = "tb_food")
 public class Food {
     
-    private int id_Food;
+   @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_food")
+    private int id_food;
+    
+    @Column(name = "selected_menu", nullable = false, length = 100)
     private String selectedMenu;
+    
+    @Column(name = "date_service", nullable = false)
     private LocalDate dateService;
+    
+    @Column(name = "hour_service", nullable = false)
     private LocalTime hourService;
+    
+    @Column(name = "number_dishes", nullable = false)
     private int numberDishes;
+    
+    @Column(name = "custom_options", length = 255)
     private String customOptions;
-    private String additionalObservactions;
+    
+    @Column(name = "additional_observations", length = 500)
+    private String additionalObservations;
+    
+    @Column(name = "type_service", nullable = false, length = 50)
     private String typeService;
 
     public Food() {
     }
 
-    public Food(String selectedMenu, LocalDate dateService, LocalTime hourService, int numberDishes, String customOptions, String additionalObservactions, String typeService) {
+    public Food(String selectedMenu, LocalDate dateService, LocalTime hourService, 
+               int numberDishes, String customOptions, String additionalObservations, 
+               String typeService) {
         this.selectedMenu = selectedMenu;
         this.dateService = dateService;
         this.hourService = hourService;
         this.numberDishes = numberDishes;
         this.customOptions = customOptions;
-        this.additionalObservactions = additionalObservactions;
+        this.additionalObservations = additionalObservations;
         this.typeService = typeService;
     }
 
-    public int getId_Food() {
-        return id_Food;
+    // Getters y Setters
+    public int getId_food() {
+        return id_food;
     }
 
-    public void setId_Food(int id_Food) {
-        this.id_Food = id_Food;
+    public void setId_food(int id_food) {
+        this.id_food = id_food;
     }
 
     public String getSelectedMenu() {
@@ -83,12 +111,12 @@ public class Food {
         this.customOptions = customOptions;
     }
 
-    public String getAdditionalObservactions() {
-        return additionalObservactions;
+    public String getAdditionalObservations() {
+        return additionalObservations;
     }
 
-    public void setAdditionalObservactions(String additionalObservactions) {
-        this.additionalObservactions = additionalObservactions;
+    public void setAdditionalObservations(String additionalObservations) {
+        this.additionalObservations = additionalObservations;
     }
 
     public String getTypeService() {
@@ -97,11 +125,5 @@ public class Food {
 
     public void setTypeService(String typeService) {
         this.typeService = typeService;
-    }
-
-    @Override
-    public String toString() {
-        return "Food{" + "id_Food=" + id_Food + ", selectedMenu=" + selectedMenu + ", dateService=" + dateService + ", hourService=" + hourService + ", numberDishes=" + numberDishes + ", customOptions=" + customOptions + ", additionalObservactions=" + additionalObservactions + ", typeService=" + typeService + '}';
-    }
-    
+    }    
 }

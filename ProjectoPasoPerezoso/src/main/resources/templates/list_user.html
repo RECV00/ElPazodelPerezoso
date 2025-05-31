@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Listado de usuarios del sistema">
+    <title>Listado de Usuarios | Sistema de Gestión</title>
+    <link rel="stylesheet" href="/css/styles_list.css">
+    <link rel="stylesheet" href="/css/modal_styles.css">
+    <link rel="stylesheet" href="/css/styles_form.css">
+    <link rel="stylesheet" href="/css/styles_form_edit.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div th:replace="~{/fragments/navbar :: navbar}"></div>
+
+
+    <main class="user-container">
+        
+        <header class="page-header">
+        <h1>Listado de Usuarios</h1>
+        
+        </header>
+        
+        <div class="user-actions-top">
+            <a th:href="@{/user/formulario}" class="add-user-btn" id="newUserBtn">
+                <i class="fas fa-plus"></i> Nuevo Usuario
+            </a>
+            <span class="user-count">
+                Total: <span id="totalUsers" th:text="${totalItems}">0</span> usuarios
+            </span>
+        </div>
+        
+        <!-- Sección de filtros modificada para filtrado en tiempo real -->
+        <section class="filter-section" aria-label="Filtros de búsqueda">
+            <div class="filter-form">
+                <input type="hidden" id="currentPage" th:value="${currentPage}">
+                <input type="hidden" id="pageSize" th:value="${size}">
+                
+                <div class="filter-group">
+                    <label for="filterIdentification"><i class="fas fa-id-card"></i> Identificación:</label>
+                    <input type="text" id="filterIdentification" 
+                           th:value="${identificationFilter}" 
+                           placeholder="Ingrese identificación..." class="filter-input">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterType"><i class="fas fa-users"></i> Tipo de usuario:</label>
+                    <select id="filterType" class="filter-select">
+                        <option value="">Todos los tipos</option>
+                        <option value="ADMIN" th:selected="${typeFilter == 'ADMIN'}">Administrador</option>
+                        <option value="EMPLOYEE" th:selected="${typeFilter == 'EMPLOYEE'}">Empleado</option>
+                        <option value="CLIENT" th:selected="${typeFilter == 'CLIENT'}">Cliente</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <button type="button" id="clearFiltersBtn" class="filter-btn clear-btn">
+                        <i class="fas fa-broom"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="table-section" aria-label="Resultados de usuarios">
+            <div class="table-responsive">
+                <table class="user-table" aria-describedby="tableDescription">
+                    <caption id="tableDescription" class="sr-only">Listado de usuarios registrados en el sistema</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Identificación</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Datos iniciales cargados por Thymeleaf -->
+                        <tr th:if="${#lists.isEmpty(users)}">
+                            <td colspan="7" class="text-center no-users">
+                                <i class="fas fa-info-circle"></i> No se encontraron usuarios registrados
+                            </td>
+                        </tr>
+
+                        <tr th:each="user : ${users}" th:object="${user}">
+                            <td th:text="*{id_user}">1</td>
+                            <td>
+                                <span class="badge" th:classappend="*{userType} == 'ADMIN' ? 'badge-admin' : 
+                                                          (*{userType} == 'EMPLOYEE' ? 'badge-employee' : 'badge-client')"
+                                      th:text="*{userType}">Tipo</span>
+                            </td>
+                            <td th:text="*{name + ' ' + last_name}">Nombre Apellido</td>
+                            <td th:text="*{identification}">1-1234-5678</td>
+                            <td>
+                                <a th:href="'mailto:' + *{email}" th:text="*{email}">
+                                    <i class="fas fa-envelope"></i> email@example.com
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="'tel:' + *{phone}" th:text="*{phone}">88888888</a>
+                            </td>
+                            <td class="user-actions">
+                                <a th:href="@{/user/detalle/{id}(id=*{id_user})}" class="action-btn view-btn" title="Ver detalles">
+                                    <i class="fas fa-eye"></i> <span class="sr-only">Ver</span>
+                                </a>
+                                <a th:href="@{/user/editar/{id}(id=*{id_user})}" class="action-btn edit-btn" title="Editar">
+                                    <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
+                                </a>
+                                <form th:action="@{/user/eliminar/{id}(id=*{id_user})}" method="post" class="delete-form">
+                                    <button type="submit" class="action-btn delete-btn" title="Eliminar">
+                                        <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
+                <div class="pagination-info">
+                    Mostrando <span th:text="${users.size()}"></span> de 
+                    <span th:text="${totalItems}"></span> usuarios
+                </div>
+                
+                <ul class="pagination" id="paginationControls">
+                    <!-- La paginación se actualizará dinámicamente via JavaScript -->
+                </ul>
+                
+                <div class="page-size-selector">
+                    <label for="pageSizeSelect">Mostrar:</label>
+                    <select id="pageSizeSelect">
+                        <option value="4" th:selected="${size == 4}">4</option>
+                        <option value="10" th:selected="${size == 10}">10</option>
+                        <option value="20" th:selected="${size == 20}">20</option>
+                        <option value="50" th:selected="${size == 50}">50</option>
+                    </select>
+                    <span>por página</span>
+                </div>
+            </nav>
+        </section>
+    </main>
+
+    <!-- Modal Container -->
+    <div id="modalContainer" class="modal-container">
+        <div class="modal-content">
+            <button id="closeModal" class="close-modal">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/modal_handlers.js"></script>
+    <script src="/js/user_list_actions.js"></script>
+</body>
+</html>

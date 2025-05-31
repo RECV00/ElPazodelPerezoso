@@ -121,7 +121,7 @@ public class FoodController {
         food.setHourService(hourService);
         food.setNumberDishes(numberDishes);
         food.setCustomOptions(customOptions);
-        food.setAdditionalObservactions(additionalObservactions);
+        food.setAdditionalObservations(additionalObservactions);
         food.setTypeService(typeService);
         
         // Guardar los cambios en la base de datos

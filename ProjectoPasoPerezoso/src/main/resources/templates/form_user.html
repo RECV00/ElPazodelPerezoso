@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Usuario</title>
+    <link rel="stylesheet" href="/css/styles_form.css">
+    <link rel="stylesheet" href="/css/modal_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="formContent">
+        <div class="form-container">
+            <h1 class="form-title">Formulario de Usuario</h1>
+            
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+            
+            <form id="userForm" th:action="@{/user/guardar}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="tipoUsuario">Tipo de Usuario:</label>
+                    <select id="tipoUsuario" name="tipoUsuario" required>
+                        <option value="">Seleccione un tipo</option>
+                        <option th:each="tipo : ${userType}" 
+                                th:value="${tipo}"
+                                th:text="${tipo}"
+                                th:selected="${tipo == tipoUsuario}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cedula">Identificación:</label>
+                    <input type="text" id="cedula" name="cedula" th:value="${cedula}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" th:value="${nombre}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido">Apellidos:</label>
+                    <input type="text" id="apellido" name="apellido" th:value="${apellido}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" th:value="${fechaNacimiento}">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="email" name="email" th:value="${email}">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="number" id="telefono" name="telefono" th:value="${telefono}">
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" th:value="${direccion}">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto de Perfil:</label>
+                    <div class="file-upload">
+                        <img id="previewImage" src="#" alt="Vista previa de la imagen">
+                        <label for="imageFile">Seleccionar imagen</label>
+                        <input type="file" id="imageFile" name="imageFile" accept="image/*">
+                        <p id="fileName">No se ha seleccionado ninguna imagen</p>
+                    </div>
+                </div>
+
+                <div id="empleadoFields" style="display: none;">
+                    <h3>Información de Empleado</h3>
+                    <div class="form-group">
+                        <label for="puesto">Puesto de Trabajo:</label>
+                        <input type="text" id="puesto" name="puesto" th:value="${puesto}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numeroCuenta">Número de Cuenta:</label>
+                        <input type="text" id="numeroCuenta" name="numeroCuenta" th:value="${numeroCuenta}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salario">Salario:</label>
+                        <input type="number" step="0.01" id="salario" name="salario" th:value="${salario}">
+                    </div>
+                </div>
+                
+                <div class="form-group button-group">
+                    <button type="submit" class="btn-submit">Guardar Usuario</button>
+                    <a th:href="@{/admin/list}" class="btn-cancel">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/form_scripts.js"></script>
+</body>
+</html>

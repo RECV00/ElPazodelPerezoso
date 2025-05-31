@@ -13,15 +13,25 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div th:fragment="navbar">
         <nav>
             <div class="logo">
-                <a href="/">El Paso del Perezoso</a>
+                <a href="/index">El Paso del Perezoso</a>
             </div>
             <ul class="nav-links">
+               <li><a th:href="@{/admin/list}">Usuarios</a></li>
                <li><a th:href="@{/cabins/List}">Cabañas</a></li>
                <li><a th:href="@{/tours/listTours}">Tours</a></li>
                <li><a th:href="@{/dishes/ListFood}">Alimentación</a></li>
                <li><a th:href="@{/Article/list}">Articulos</a></li>
                <li><a th:href="@{/transportation/listTransport}">Transporte</a></li>
-               <li><a th:href="@{/report/listReports}">Reportes y Reseñas</a></li>
+                <li><a th:href="@{/bookings/listBooking}">Reservas</a></li>
+               <li><a th:href="@{/report/listReports}">Reportes</a></li>
+                
+                   <div class="logout-container">
+                    <a th:href="@{/logout}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
+                    </a>
+                </div>
+               
+               
                
             </ul>
         </nav>
