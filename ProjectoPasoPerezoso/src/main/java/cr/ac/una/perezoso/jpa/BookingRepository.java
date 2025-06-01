@@ -20,21 +20,21 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer>{
     // Buscar reservaciones por estado
-//    List<Booking> findByReservationStatus(String status);
-//
-//    // Buscar reservaciones por rango de fechas
-//   @Query("SELECT b FROM Booking b WHERE b.checkInDate BETWEEN :startDate AND :endDate OR b.checkOutDate BETWEEN :startDate AND :endDate")
-//    List<Booking> findByDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-//
-//    // Buscar reservaciones por cliente (ID)
-//    @Query("SELECT b FROM Booking b WHERE b.client.id = :clientId")
-//    List<Booking> findByClientId(@Param("clientId") Integer clientId);
-//    
-//    // Versión paginada de búsqueda por estado
-//    Page<Booking> findByReservationStatus(String status, Pageable pageable);
-//    
-//    // Versión paginada de búsqueda por cliente
-//   @Query("SELECT b FROM Booking b WHERE b.client.id = :clientId")
-//   Page<Booking> findByClientId(@Param("clientId") Integer clientId, Pageable pageable);
-//  
+    List<Booking> findByReservationStatus(String status);
+
+    // Buscar reservaciones por rango de fechas
+   @Query("SELECT b FROM Booking b WHERE b.checkInDate BETWEEN :startDate AND :endDate OR b.checkOutDate BETWEEN :startDate AND :endDate")
+    List<Booking> findByDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    // Buscar reservaciones por cliente (ID)
+    @Query("SELECT b FROM Booking b WHERE b.client.id = :clientId")
+    List<Booking> findByClientId(@Param("clientId") Integer clientId);
+    
+    // Versión paginada de búsqueda por estado
+    Page<Booking> findByReservationStatus(String status, Pageable pageable);
+    
+    // Versión paginada de búsqueda por cliente
+   @Query("SELECT b FROM Booking b WHERE b.client.id = :clientId")
+   Page<Booking> findByClientId(@Param("clientId") Integer clientId, Pageable pageable);
+  
 }
