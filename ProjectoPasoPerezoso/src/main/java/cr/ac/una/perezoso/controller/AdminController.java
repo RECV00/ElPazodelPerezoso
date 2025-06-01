@@ -55,7 +55,6 @@ public class AdminController {
         return "/list_user";
     }
     
-    
 // API para AJAX
     @GetMapping("/api/list")
     @ResponseBody
