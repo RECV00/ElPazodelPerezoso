@@ -4,7 +4,6 @@
  */
 package cr.ac.una.perezoso.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +18,6 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "tb_payment_management")
-
 public class PaymentManagement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

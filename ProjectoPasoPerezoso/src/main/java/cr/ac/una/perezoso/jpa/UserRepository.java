@@ -51,7 +51,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 
     // Conteo de usuarios por tipo (usando el atributo userType)
     @Query("SELECT COUNT(u) FROM User u WHERE u.userType = :userType")
-    long countByUserType(@Param("userType") String userType);
+    long countByUserType(@Param("user_type") String userType);
 
     
     // Búsquedas generales
@@ -73,9 +73,9 @@ public interface UserRepository extends JpaRepository<User, Integer>{
     List<Booking> findRecentBookingsByClient(@Param("clientId") Integer clientId);
     
     // Métodos para paginación
-    Page<User> findByIdentificationContaining(String identification, Pageable pageable);
+    Page<User> findByIdentificationContainingIgnoreCase(String identification, Pageable pageable);
     Page<User> findByUserType(String userType, Pageable pageable);
-    Page<User> findByIdentificationContainingAndUserType(String identification, String userType, Pageable pageable);
+    Page<User> findByIdentificationContainingIgnoreCaseAndUserType(String identification, String userType, Pageable pageable);
     
     // Métodos para conteo con filtros combinados
     public long countByIdentificationContainingIgnoreCaseAndUserType(String identification, String userType);

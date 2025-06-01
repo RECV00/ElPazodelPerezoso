@@ -4,7 +4,6 @@
  */
 package cr.ac.una.perezoso.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -61,7 +60,6 @@ public class Booking {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_client", referencedColumnName = "id_client", nullable = false)
-   
     private Client client;
     
     @ManyToOne(fetch = FetchType.LAZY)

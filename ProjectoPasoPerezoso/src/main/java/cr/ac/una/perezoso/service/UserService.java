@@ -140,21 +140,25 @@ public class UserService implements CRUD<User, Integer>{
     return query.getResultList();
 }
     
+  // Método para paginación y filtrado
+    public Page<User> filterAndPaginateUsers(String identification, String userType, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        
+        if (identification != null && !identification.isEmpty() && 
+            userType != null && !userType.isEmpty()) {
+            return repoUser.findByIdentificationContainingIgnoreCaseAndUserType(identification, userType, pageable);
+        } else if (identification != null && !identification.isEmpty()) {
+            return repoUser.findByIdentificationContainingIgnoreCase(identification, pageable);
+        } else if (userType != null && !userType.isEmpty()) {
+            return repoUser.findByUserType(userType, pageable);
+        }
+        return repoUser.findAll(pageable);
+    }
     
    @Override
     public boolean existsById(Integer id) {
         return repoUser.existsById(id);
     }
     
-    public Page<User> findByIdentificationContaining(String identification, Pageable pageable) {
-    return repoUser.findByIdentificationContaining(identification, pageable);
-}
-
-    public Page<User> findByUserType(String userType, Pageable pageable) {
-        return repoUser.findByUserType(userType, pageable);
-    }
-
-    public Page<User> findByIdentificationContainingAndUserType(String identification, String userType, Pageable pageable) {
-        return repoUser.findByIdentificationContainingAndUserType(identification, userType, pageable);
-    }
+    
 }
