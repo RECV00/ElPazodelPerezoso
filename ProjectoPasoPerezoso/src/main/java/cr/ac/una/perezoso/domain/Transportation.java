@@ -24,7 +24,7 @@ public class Transportation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_vehicle")
-    private Integer id;
+    private Integer id_transportation;
     
     @Column(name = "plate", nullable = false, length = 50, unique = true)
     private String plate;
@@ -52,10 +52,10 @@ public class Transportation {
     public Transportation() {
     }
 
-    public Transportation(Integer id, String plate, String driver, LocalDateTime dataTimeService, 
+    public Transportation(Integer id_transportation, String plate, String driver, LocalDateTime dataTimeService, 
                         String initialLocation, String finalLocation, 
                         String serviceStatus, int serviceDuration) {
-        this.id = id;
+        this.id_transportation = id_transportation;
         this.plate = plate;
         this.driver = driver;
         this.dataTimeService = dataTimeService;
@@ -78,12 +78,12 @@ public class Transportation {
     }
 
     // Getters y Setters
-    public Integer getId() {
-        return id;
+    public Integer getId_transportation() {
+        return id_transportation;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId_transportation(Integer id_transportation) {
+        this.id_transportation = id_transportation;
     }
 
     public String getPlate() {
@@ -144,7 +144,7 @@ public class Transportation {
     @Override
    public String toString() {
        return "Transportation{" +
-              "id=" + id +
+              "id=" + id_transportation +
               ", plate=" + plate +
               ", driver=" + driver +
               ", dataTimeService=" + dataTimeService +
@@ -154,5 +154,7 @@ public class Transportation {
               ", serviceDuration=" + serviceDuration +
               '}';
    }
+
+    
     
 }

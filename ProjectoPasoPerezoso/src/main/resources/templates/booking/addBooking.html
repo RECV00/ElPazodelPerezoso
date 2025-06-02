@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Reserva</title>
+    <link th:href="@{/css/stylesAddReservation.css}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar Nueva Reserva</h1>
+        
+<!--         Mensajes de error 
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>-->
+        
+        <form th:action="@{/reservations/save}" method="post" th:object="${reservation}" class="reservation-form" onsubmit="return confirmSubmit()">
+
+            
+<!--           <div class="form-group">
+                <label for="client">Cliente:</label>
+                <select id="client" th:field="*{id_client}" required
+                        th:classappend="${#fields.hasErrors('id_client')} ? 'is-invalid'">
+                    <option value="">Seleccione un cliente</option>
+                    <option th:each="client : ${clients}" 
+                            th:value="${client.id_client}"
+                            th:text="${client.name}"
+                            th:selected="${reservation.id_client != null && reservation.id_client == client.id_client}">
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('id_client')}" class="invalid-feedback">
+                    <span th:errors="*{id_client}"></span>
+                </div>
+            </div>-->
+             <!--Sección de fechas--> 
+            <div class="form-section">
+                <h2>Fechas</h2>
+                <div class="form-group">
+                    <label for="checkInDate">Fecha de Entrada:</label>
+                    <input type="date" id="checkInDate" th:field="*{checkInDate}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="checkOutDate">Fecha de Salida:</label>
+                    <input type="date" id="checkOutDate" th:field="*{checkOutDate}" required>
+                </div>
+            </div>
+            
+             <!--Sección de detalles principales--> 
+            <div class="form-section">
+                <h2>Detalles Principales</h2>
+                <div class="form-group">
+                    <label for="numberGuests">Número de huéspedes:</label>
+                    <input type="number" id="numberGuests" th:field="*{numberGuests}" min="1" max="20" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo de reserva:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" th:field="*{reservationType}" value="false" required> 
+                            <span class="radio-label">Hospedaje</span>
+                        </label>
+                        <label>
+                            <input type="radio" th:field="*{reservationType}" value="true"> 
+                            <span class="radio-label">Alquiler Temporal</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reservationStatus">Estado de la Reserva:</label>
+                    <select id="reservationStatus" th:field="*{reservationStatus}" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="completada">Completada</option>
+                    </select>
+                </div>
+            </div>
+            
+             <!--Sección de servicios adicionales--> 
+            <div class="form-section">
+                <h2>Servicios Adicionales</h2>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="enableAdditionalServices" th:field="*{additionalServices}" onchange="toggleAdditionalServices()">
+                        <span class="checkmark"></span>
+                        ¿Desea servicios adicionales?
+                    </label>
+                    
+                    <div id="additionalServicesContainer" class="services-container" style="display: none;">
+                        <div class="checkbox-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="tour" id="tourServiceCheckbox" onclick="handleTourServiceSelection()">
+                                <span class="checkmark"></span>
+                                Tour
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="alimentacion">
+                                <span class="checkmark"></span>
+                                Alimentación
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="transporte">
+                                <span class="checkmark"></span>
+                                Transporte
+                            </label>
+                        </div>
+                        
+                         <!--Dentro de tu formulario, en la sección de servicios adicionales--> 
+                        <div id="tourSelectorContainer" style="display: none; margin-top: 15px;">
+                             Incluir el fragmento de tours 
+                            <div th:replace="~{fragments/TourFragmento :: tourFragment}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+             <!--Sección de información adicional--> 
+            <div class="form-section">
+                <h2>Información Adicional</h2>
+                <div class="form-group">
+                    <label for="specialRequirements">Requerimientos Especiales:</label>
+                    <textarea id="specialRequirements" th:field="*{specialRequirements}" rows="3" 
+                              placeholder="Indique cualquier requerimiento especial..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="promotionCode">Código de Promoción/Descuento:</label>
+                    <input type="text" id="promotionCode" th:field="*{promotionCode}" 
+                           placeholder="Opcional">
+                </div>
+            </div>
+            
+              <!--<input type="hidden" id="selectedTourIds" name="selectedTourIds" th:value="*{selectedTourIds}">-->
+    
+            <!-- Botón de enviar -->
+            <div class="form-actions">
+                <button type="submit" class="button save-btn">Guardar Reserva</button>
+                <a th:href="@{/reservations/listaReservas}" class="button cancel-btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedTours = [];
+        
+        // Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDates();
+            toggleAdditionalServices();
+            
+            // Verificar si hay servicios adicionales marcados al cargar
+            if (document.getElementById('enableAdditionalServices').checked) {
+                toggleAdditionalServices();
+            }
+        });
+
+        function setupDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            
+            checkInInput.setAttribute('min', today);
+            
+            checkInInput.addEventListener('change', function() {
+                checkOutInput.setAttribute('min', this.value);
+                if (checkOutInput.value && checkOutInput.value < this.value) {
+                    checkOutInput.value = '';
+                }
+            });
+        }
+
+        function toggleAdditionalServices() {
+            const servicesDiv = document.getElementById('additionalServicesContainer');
+            const isChecked = document.getElementById('enableAdditionalServices').checked;
+            
+            servicesDiv.style.display = isChecked ? 'block' : 'none';
+            
+            // Si se desactivan los servicios, ocultar también el selector de tours
+            if (!isChecked) {
+                document.getElementById('tourSelectorContainer').style.display = 'none';
+                document.getElementById('tourServiceCheckbox').checked = false;
+                clearTourSelections();
+            }
+        }
+
+        function handleTourServiceSelection() {
+            const tourCheckbox = document.getElementById('tourServiceCheckbox');
+            const tourContainer = document.getElementById('tourSelectorContainer');
+            
+            if (tourCheckbox.checked) {
+                tourContainer.style.display = 'block';
+                initializeTourSelector();
+            } else {
+                tourContainer.style.display = 'none';
+                clearTourSelections();
+            }
+        }
+
+        function initializeTourSelector() {
+            // Limpiar búsqueda previa
+            document.getElementById('tourSearch').value = '';
+            document.getElementById('tourResults').innerHTML = '';
+            updateSelectedToursList();
+        }
+
+        function clearTourSelections() {
+            selectedTours = [];
+            updateSelectedToursList();
+            removeTourIdsInput();
+        }
+
+        function searchTours(searchTerm) {
+            if (searchTerm.length < 2) {
+                document.getElementById('tourResults').innerHTML = '<p>Ingrese al menos 2 caracteres</p>';
+                return;
+            }
+            
+            fetch(`/tours/search?name=${encodeURIComponent(searchTerm)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en la respuesta del servidor');
+                    return response.json();
+                })
+                .then(tours => {
+                    const resultsContainer = document.getElementById('tourResults');
+                    resultsContainer.innerHTML = '';
+                    
+                    if (tours.length === 0) {
+                        resultsContainer.innerHTML = '<p>No se encontraron tours</p>';
+                        return;
+                    }
+                    
+                    tours.forEach(tour => {
+                        const tourItem = document.createElement('div');
+                        tourItem.className = 'tour-item';
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = tour.id_tour;
+                        checkbox.id = `tour_${tour.id_tour}`;
+                        checkbox.checked = selectedTours.some(t => t.id === tour.id_tour);
+                        checkbox.addEventListener('change', () => {
+                            updateTourSelection(tour.id_tour, tour.nameTour, checkbox.checked);
+                        });
+                        
+                        const label = document.createElement('label');
+                        label.htmlFor = `tour_${tour.id_tour}`;
+                        label.textContent = `${tour.nameTour} - $${tour.price.toFixed(2)}`;
+                        
+                        tourItem.appendChild(checkbox);
+                        tourItem.appendChild(label);
+                        resultsContainer.appendChild(tourItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('tourResults').innerHTML = '<p>Error al cargar tours</p>';
+                });
+        }
+
+        function updateTourSelection(tourId, tourName, isSelected) {
+            if (isSelected) {
+                if (!selectedTours.some(t => t.id === tourId)) {
+                    selectedTours.push({ id: tourId, name: tourName });
+                }
+            } else {
+                selectedTours = selectedTours.filter(t => t.id !== tourId);
+            }
+            updateSelectedToursList();
+        }
+
+        function updateSelectedToursList() {
+            const listContainer = document.getElementById('selectedToursList');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = '';
+            
+            selectedTours.forEach(tour => {
+                const li = document.createElement('li');
+                li.textContent = `${tour.name} (ID: ${tour.id})`;
+                listContainer.appendChild(li);
+            });
+        }
+
+        function removeTourIdsInput() {
+            const existingInput = document.getElementById('selectedTourIds');
+            if (existingInput) {
+                existingInput.remove();
+            }
+        }
+
+        function confirmTourSelection() {
+            if (selectedTours.length === 0) {
+                alert('Por favor seleccione al menos un tour');
+                return false;
+            }
+            
+            let tourIdsInput = document.getElementById('selectedTourIds');
+            if (!tourIdsInput) {
+                tourIdsInput = document.createElement('input');
+                tourIdsInput.type = 'hidden';
+                tourIdsInput.name = 'selectedTourIds';
+                tourIdsInput.id = 'selectedTourIds';
+                document.querySelector('form').appendChild(tourIdsInput);
+            }
+            
+            tourIdsInput.value = selectedTours.map(t => t.id).join(',');
+            document.getElementById('tourSelectionContainer').style.display = 'none';
+            alert(`Se han seleccionado ${selectedTours.length} tours.`);
+            return true;
+        }
+
+        function confirmSubmit() {
+            // Validar tours seleccionados si el servicio está activado
+            const tourServiceChecked = document.getElementById('tourServiceCheckbox')?.checked;
+            const hasSelectedTours = selectedTours.length > 0;
+            
+            if (tourServiceChecked && !hasSelectedTours) {
+                alert('Por favor seleccione al menos un tour');
+                return false;
+            }
+            
+            return confirm("¿Estás seguro de que deseas agregar esta reserva?");
+        }
+        
+// Función para abrir el selector de tours en una ventana emergente
+function openTourSelectionWindow() {
+    const tourWindow = window.open('/tours/listForReservation', 'TourSelector', 
+        'width=800,height=600,scrollbars=yes,resizable=yes');
+    
+    // Escuchar mensajes de la ventana emergente
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'tourSelection') {
+            handleIncomingTourSelection(event.data.tourIds);
+        }
+    });
+}
+
+// Función para manejar la selección de tours desde la ventana emergente
+function handleIncomingTourSelection(tourIds) {
+    // Limpiar selecciones anteriores
+    selectedTours = [];
+    const tourResults = document.getElementById('tourResults');
+    tourResults.innerHTML = '';
+    
+    // Buscar y seleccionar los tours recibidos
+    if (tourIds && tourIds.length > 0) {
+        fetch(`/tours/getMultiple?ids=${tourIds.join(',')}`)
+            .then(response => response.json())
+            .then(tours => {
+                tours.forEach(tour => {
+                    selectedTours.push({ id: tour.id_tour, name: tour.nameTour });
+                    addTourToSelectionList(tour);
+                });
+                updateSelectedToursList();
+            });
+    }
+}
+
+// Función para agregar un tour a la lista de resultados
+function addTourToSelectionList(tour) {
+    const tourItem = document.createElement('div');
+    tourItem.className = 'tour-item';
+    tourItem.innerHTML = `
+        <input type="hidden" name="selectedTours" value="${tour.id_tour}">
+        ${tour.nameTour} - $${tour.price.toFixed(2)}
+    `;
+    document.getElementById('tourResults').appendChild(tourItem);
+}
+
+// Modifica la función handleTourServiceSelection para usar la ventana emergente
+function handleTourServiceSelection() {
+    const tourCheckbox = document.getElementById('tourServiceCheckbox');
+    
+    if (tourCheckbox.checked) {
+        openTourSelectionWindow();
+    } else {
+        clearTourSelections();
+    }
+}
+    </script>
+</body>
+</html>
+
+
+
+
+
+<!--
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Reserva</title>
+    <link th:href="@{/css/stylesAddReservation.css}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar Nueva Reserva</h1>
+        
+         Mensajes de error 
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+        
+        <form th:action="@{/reservations/save}" method="post" th:object="${reservation}" class="reservation-form" onsubmit="return confirmSubmit()">
+            
+            <div class="form-group">
+                <label for="client">Cliente:</label>
+                <select id="client" th:field="*{id_client}" required>
+                    <option value="">Seleccione un cliente</option>
+                    <option th:each="client : ${clients}" 
+                            th:value="${client.id_client}"
+                            th:text="${client.name}">
+                    </option>
+                </select>
+            </div>
+             Sección de fechas 
+            <div class="form-section">
+                <h2>Fechas</h2>
+                <div class="form-group">
+                    <label for="checkInDate">Fecha de Entrada:</label>
+                    <input type="date" id="checkInDate" th:field="*{checkInDate}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="checkOutDate">Fecha de Salida:</label>
+                    <input type="date" id="checkOutDate" th:field="*{checkOutDate}" required>
+                </div>
+            </div>
+            
+             Sección de detalles principales 
+            <div class="form-section">
+                <h2>Detalles Principales</h2>
+                <div class="form-group">
+                    <label for="numberGuests">Número de huéspedes:</label>
+                    <input type="number" id="numberGuests" th:field="*{numberGuests}" min="1" max="20" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo de reserva:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" th:field="*{reservationType}" value="false" required> 
+                            <span class="radio-label">Hospedaje</span>
+                        </label>
+                        <label>
+                            <input type="radio" th:field="*{reservationType}" value="true"> 
+                            <span class="radio-label">Alquiler Temporal</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reservationStatus">Estado de la Reserva:</label>
+                    <select id="reservationStatus" th:field="*{reservationStatus}" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="completada">Completada</option>
+                    </select>
+                </div>
+            </div>
+            
+             Sección de servicios adicionales 
+            <div class="form-section">
+                <h2>Servicios Adicionales</h2>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="enableAdditionalServices" th:field="*{additionalServices}" onchange="toggleAdditionalServices()">
+                        <span class="checkmark"></span>
+                        ¿Desea servicios adicionales?
+                    </label>
+                    
+                    <div id="additionalServicesContainer" class="services-container" style="display: none;">
+                        <div class="checkbox-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="tour" id="tourServiceCheckbox" onclick="handleTourServiceSelection()">
+                                <span class="checkmark"></span>
+                                Tour
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="alimentacion">
+                                <span class="checkmark"></span>
+                                Alimentación
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="transporte">
+                                <span class="checkmark"></span>
+                                Transporte
+                            </label>
+                        </div>
+                        
+                         Dentro de tu formulario, en la sección de servicios adicionales 
+                        <div id="tourSelectorContainer" style="display: none; margin-top: 15px;">
+                             Incluir el fragmento de tours 
+                            <div th:replace="~{fragments/TourFragmento :: tourFragment}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+             Sección de información adicional 
+            <div class="form-section">
+                <h2>Información Adicional</h2>
+                <div class="form-group">
+                    <label for="specialRequirements">Requerimientos Especiales:</label>
+                    <textarea id="specialRequirements" th:field="*{specialRequirements}" rows="3" 
+                              placeholder="Indique cualquier requerimiento especial..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="promotionCode">Código de Promoción/Descuento:</label>
+                    <input type="text" id="promotionCode" th:field="*{promotionCode}" 
+                           placeholder="Opcional">
+                </div>
+            </div>
+            
+             Botones de acción 
+            <div class="form-actions">
+                <button type="submit" class="button save-btn">Guardar Reserva</button>
+                <a th:href="@{/reservations/listaReservas}" class="button cancel-btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedTours = [];
+        
+        // Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDates();
+            toggleAdditionalServices();
+            
+            // Verificar si hay servicios adicionales marcados al cargar
+            if (document.getElementById('enableAdditionalServices').checked) {
+                toggleAdditionalServices();
+            }
+        });
+
+        function setupDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            
+            checkInInput.setAttribute('min', today);
+            
+            checkInInput.addEventListener('change', function() {
+                checkOutInput.setAttribute('min', this.value);
+                if (checkOutInput.value && checkOutInput.value < this.value) {
+                    checkOutInput.value = '';
+                }
+            });
+        }
+
+        function toggleAdditionalServices() {
+            const servicesDiv = document.getElementById('additionalServicesContainer');
+            const isChecked = document.getElementById('enableAdditionalServices').checked;
+            
+            servicesDiv.style.display = isChecked ? 'block' : 'none';
+            
+            // Si se desactivan los servicios, ocultar también el selector de tours
+            if (!isChecked) {
+                document.getElementById('tourSelectorContainer').style.display = 'none';
+                document.getElementById('tourServiceCheckbox').checked = false;
+                clearTourSelections();
+            }
+        }
+
+        function handleTourServiceSelection() {
+            const tourCheckbox = document.getElementById('tourServiceCheckbox');
+            const tourContainer = document.getElementById('tourSelectorContainer');
+            
+            if (tourCheckbox.checked) {
+                tourContainer.style.display = 'block';
+                initializeTourSelector();
+            } else {
+                tourContainer.style.display = 'none';
+                clearTourSelections();
+            }
+        }
+
+        function initializeTourSelector() {
+            // Limpiar búsqueda previa
+            document.getElementById('tourSearch').value = '';
+            document.getElementById('tourResults').innerHTML = '';
+            updateSelectedToursList();
+        }
+
+        function clearTourSelections() {
+            selectedTours = [];
+            updateSelectedToursList();
+            removeTourIdsInput();
+        }
+
+        function searchTours(searchTerm) {
+            if (searchTerm.length < 2) {
+                document.getElementById('tourResults').innerHTML = '<p>Ingrese al menos 2 caracteres</p>';
+                return;
+            }
+            
+            fetch(`/tours/search?name=${encodeURIComponent(searchTerm)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en la respuesta del servidor');
+                    return response.json();
+                })
+                .then(tours => {
+                    const resultsContainer = document.getElementById('tourResults');
+                    resultsContainer.innerHTML = '';
+                    
+                    if (tours.length === 0) {
+                        resultsContainer.innerHTML = '<p>No se encontraron tours</p>';
+                        return;
+                    }
+                    
+                    tours.forEach(tour => {
+                        const tourItem = document.createElement('div');
+                        tourItem.className = 'tour-item';
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = tour.id_tour;
+                        checkbox.id = `tour_${tour.id_tour}`;
+                        checkbox.checked = selectedTours.some(t => t.id === tour.id_tour);
+                        checkbox.addEventListener('change', () => {
+                            updateTourSelection(tour.id_tour, tour.nameTour, checkbox.checked);
+                        });
+                        
+                        const label = document.createElement('label');
+                        label.htmlFor = `tour_${tour.id_tour}`;
+                        label.textContent = `${tour.nameTour} - $${tour.price.toFixed(2)}`;
+                        
+                        tourItem.appendChild(checkbox);
+                        tourItem.appendChild(label);
+                        resultsContainer.appendChild(tourItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('tourResults').innerHTML = '<p>Error al cargar tours</p>';
+                });
+        }
+
+        function updateTourSelection(tourId, tourName, isSelected) {
+            if (isSelected) {
+                if (!selectedTours.some(t => t.id === tourId)) {
+                    selectedTours.push({ id: tourId, name: tourName });
+                }
+            } else {
+                selectedTours = selectedTours.filter(t => t.id !== tourId);
+            }
+            updateSelectedToursList();
+        }
+
+        function updateSelectedToursList() {
+            const listContainer = document.getElementById('selectedToursList');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = '';
+            
+            selectedTours.forEach(tour => {
+                const li = document.createElement('li');
+                li.textContent = `${tour.name} (ID: ${tour.id})`;
+                listContainer.appendChild(li);
+            });
+        }
+
+        function removeTourIdsInput() {
+            const existingInput = document.getElementById('selectedTourIds');
+            if (existingInput) {
+                existingInput.remove();
+            }
+        }
+
+        function confirmTourSelection() {
+            if (selectedTours.length === 0) {
+                alert('Por favor seleccione al menos un tour');
+                return false;
+            }
+            
+            let tourIdsInput = document.getElementById('selectedTourIds');
+            if (!tourIdsInput) {
+                tourIdsInput = document.createElement('input');
+                tourIdsInput.type = 'hidden';
+                tourIdsInput.name = 'selectedTourIds';
+                tourIdsInput.id = 'selectedTourIds';
+                document.querySelector('form').appendChild(tourIdsInput);
+            }
+            
+            tourIdsInput.value = selectedTours.map(t => t.id).join(',');
+            document.getElementById('tourSelectionContainer').style.display = 'none';
+            alert(`Se han seleccionado ${selectedTours.length} tours.`);
+            return true;
+        }
+
+        function confirmSubmit() {
+            // Validar tours seleccionados si el servicio está activado
+            const tourServiceChecked = document.getElementById('tourServiceCheckbox')?.checked;
+            const hasSelectedTours = selectedTours.length > 0;
+            
+            if (tourServiceChecked && !hasSelectedTours) {
+                alert('Por favor seleccione al menos un tour');
+                return false;
+            }
+            
+            return confirm("¿Estás seguro de que deseas agregar esta reserva?");
+        }
+        
+// Función para abrir el selector de tours en una ventana emergente
+function openTourSelectionWindow() {
+    const tourWindow = window.open('/tours/listForReservation', 'TourSelector', 
+        'width=800,height=600,scrollbars=yes,resizable=yes');
+    
+    // Escuchar mensajes de la ventana emergente
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'tourSelection') {
+            handleIncomingTourSelection(event.data.tourIds);
+        }
+    });
+}
+
+// Función para manejar la selección de tours desde la ventana emergente
+function handleIncomingTourSelection(tourIds) {
+    // Limpiar selecciones anteriores
+    selectedTours = [];
+    const tourResults = document.getElementById('tourResults');
+    tourResults.innerHTML = '';
+    
+    // Buscar y seleccionar los tours recibidos
+    if (tourIds && tourIds.length > 0) {
+        fetch(`/tours/getMultiple?ids=${tourIds.join(',')}`)
+            .then(response => response.json())
+            .then(tours => {
+                tours.forEach(tour => {
+                    selectedTours.push({ id: tour.id_tour, name: tour.nameTour });
+                    addTourToSelectionList(tour);
+                });
+                updateSelectedToursList();
+            });
+    }
+}
+
+// Función para agregar un tour a la lista de resultados
+function addTourToSelectionList(tour) {
+    const tourItem = document.createElement('div');
+    tourItem.className = 'tour-item';
+    tourItem.innerHTML = `
+        <input type="hidden" name="selectedTours" value="${tour.id_tour}">
+        ${tour.nameTour} - $${tour.price.toFixed(2)}
+    `;
+    document.getElementById('tourResults').appendChild(tourItem);
+}
+
+// Modifica la función handleTourServiceSelection para usar la ventana emergente
+function handleTourServiceSelection() {
+    const tourCheckbox = document.getElementById('tourServiceCheckbox');
+    
+    if (tourCheckbox.checked) {
+        openTourSelectionWindow();
+    } else {
+        clearTourSelections();
+    }
+}
+    </script>
+</body>
+</html>-->

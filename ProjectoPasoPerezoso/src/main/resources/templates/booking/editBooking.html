@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Reserva</title>
+    <link th:href="@{/css/stylesAddReservation.css}" rel="stylesheet">
+    <script>
+        // Función para establecer fechas mínimas y validar rango
+        function setupDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            
+            checkInInput.setAttribute('min', today);
+            
+            checkInInput.addEventListener('change', function() {
+                checkOutInput.setAttribute('min', this.value);
+                if (checkOutInput.value && checkOutInput.value < this.value) {
+                    checkOutInput.value = '';
+                }
+            });
+        }
+
+        // Función para mostrar/ocultar servicios adicionales
+        function toggleAdditionalServices() {
+            const servicesDiv = document.getElementById('additionalServicesSection');
+            servicesDiv.style.display = document.getElementById('additionalServices').checked ? 'block' : 'none';
+        }
+
+        // Función para confirmar el envío
+        function confirmSubmit() {
+            return confirm("¿Estás seguro de que deseas actualizar esta reserva?");
+        }
+
+        // Función para marcar los checkboxes de servicios seleccionados
+        function markSelectedServices() {
+            const selectedServices = [[${reservation.additionalServices}]];
+            if (selectedServices) {
+                selectedServices.forEach(service => {
+                    const checkbox = document.querySelector(`input[name='services'][value='${service}']`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+        }
+
+        // Ejecutar configuraciones al cargar la página
+        window.onload = function() {
+            setupDates();
+            toggleAdditionalServices(); // Inicializar estado de servicios
+            markSelectedServices(); // Marcar servicios seleccionados
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Reserva</h1>
+        
+        <!-- Mensajes de error -->
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+        
+        <form th:action="@{/reservations/edit/{id}}" method="post" th:object="${reservation}" class="reservation-form" onsubmit="return confirmSubmit()">
+            <input type="hidden" th:field="*{id_reservation}">
+            
+            <!-- Sección de fechas -->
+            <div class="form-section">
+                <h2>Fechas</h2>
+                <div class="form-group">
+                    <label for="checkInDate">Fecha de Entrada:</label>
+                    <input type="date" id="checkInDate" th:field="*{checkInDate}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="checkOutDate">Fecha de Salida:</label>
+                    <input type="date" id="checkOutDate" th:field="*{checkOutDate}" required>
+                </div>
+            </div>
+            
+            <!-- Sección de detalles principales -->
+            <div class="form-section">
+                <h2>Detalles Principales</h2>
+                <div class="form-group">
+                    <label for="numberGuests">Número de huéspedes:</label>
+                    <input type="number" id="numberGuests" th:field="*{numberGuests}" min="1" max="20" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo de reserva:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" th:field="*{reservationType}" value="false" required> 
+                            <span class="radio-label">Hospedaje</span>
+                        </label>
+                        <label>
+                            <input type="radio" th:field="*{reservationType}" value="true"> 
+                            <span class="radio-label">Alquiler Temporal</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reservationStatus">Estado de la Reserva:</label>
+                    <select id="reservationStatus" th:field="*{reservationStatus}" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="completada">Completada</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Sección de servicios adicionales -->
+            <div class="form-section">
+                <h2>Servicios Adicionales</h2>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="additionalServices" th:field="*{additionalServices}" onchange="toggleAdditionalServices()">
+                        <span class="checkmark"></span>
+                        ¿Desea servicios adicionales?
+                    </label>
+                    
+                    <div id="additionalServices" class="services-container">
+                        <div class="checkbox-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="tour">
+                                <span class="checkmark"></span>
+                                Tour
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="alimentacion">
+                                <span class="checkmark"></span>
+                                Alimentación
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="transporte">
+                                <span class="checkmark"></span>
+                                Transporte
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de información adicional -->
+            <div class="form-section">
+                <h2>Información Adicional</h2>
+                <div class="form-group">
+                    <label for="specialRequirements">Requerimientos Especiales:</label>
+                    <textarea id="specialRequirements" th:field="*{specialRequirements}" rows="3" 
+                              placeholder="Indique cualquier requerimiento especial..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="promotionCode">Código de Promoción/Descuento:</label>
+                    <input type="text" id="promotionCode" th:field="*{promotionCode}" 
+                           placeholder="Opcional">
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="form-actions">
+                <button type="submit" class="button save-btn">Actualizar Reserva</button>
+                <a th:href="@{/reservations/listaReservas}" class="button cancel-btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

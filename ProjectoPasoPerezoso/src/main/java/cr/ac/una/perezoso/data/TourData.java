@@ -47,7 +47,7 @@ public class TourData {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Tour tour = new Tour();
-                tour.setId_Tour(rs.getInt("id_Tour"));
+                tour.setId_tour(rs.getInt("id_Tour"));
                 tour.setNameTour(rs.getString("nameTour"));
                 tour.setDescription(rs.getString("description"));
                 tour.setPrice(rs.getDouble("price"));
@@ -80,7 +80,7 @@ public class TourData {
             pstmt.setTime(6, Time.valueOf(tour.getDuration())); 
             pstmt.setString(7, tour.getStartingPoint());
             pstmt.setString(8, tour.getMultimedia());
-            pstmt.setInt(9, tour.getId_Tour());
+            pstmt.setInt(9, tour.getId_tour());
             pstmt.executeUpdate();
             System.out.println("Tour actualizado exitosamente.");
         } catch (SQLException | ClassNotFoundException e) {
@@ -112,7 +112,7 @@ public static List<Tour> searchToursByName(String nameTour) throws SQLException,
         try (ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 Tour tour = new Tour();
-                tour.setId_Tour(rs.getInt("id_Tour"));
+                tour.setId_tour(rs.getInt("id_Tour"));
                 tour.setNameTour(rs.getString("nameTour"));
                 tour.setDescription(rs.getString("description"));
                 tour.setPrice(rs.getDouble("price"));
@@ -138,7 +138,7 @@ public static Tour getTourById(int idTour) throws SQLException, ClassNotFoundExc
         try (ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 tour = new Tour();
-                tour.setId_Tour(rs.getInt("id_Tour"));
+                tour.setId_tour(rs.getInt("id_Tour"));
                 tour.setNameTour(rs.getString("nameTour"));
                 tour.setDescription(rs.getString("description"));
                 tour.setPrice(rs.getDouble("price"));

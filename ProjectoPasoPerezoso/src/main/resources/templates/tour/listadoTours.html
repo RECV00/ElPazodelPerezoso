@@ -54,7 +54,7 @@
             <tbody>
                 <!-- Iterar sobre la lista de tours -->
                 <tr th:each="tour : ${tours}">
-                    <td th:text="${tour.id_Tour}"></td>
+                    <td th:text="${tour.id_tour}"></td>
                     <td th:text="${tour.nameTour}"></td>
                     <td th:text="${tour.description}"></td>
                     <td th:text="${tour.price}"></td>
@@ -68,13 +68,13 @@
                     </td>
                     <td>
                         <!-- Botón para editar un tour -->
-                        <a th:href="@{/tours/edit/{id}(id=${tour.id_Tour})}" 
+                        <a th:href="@{/tours/edit/{id}(id=${tour.id_tour})}" 
                            class="button edit">
                            <i class="fas fa-edit"></i> Editar 
                         </a>
 
                         <!-- Botón para eliminar un tour -->
-                        <a th:href="@{/tours/delete/{id}(id=${tour.id_Tour})}" 
+                        <a th:href="@{/tours/delete/{id}(id=${tour.id_tour})}" 
                            class="button delete" onclick="return confirmDelete()">
                             <i class="fas fa-trash-alt"></i> Eliminar 
                         </a>

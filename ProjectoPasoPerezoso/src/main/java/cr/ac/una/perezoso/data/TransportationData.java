@@ -28,7 +28,7 @@ public class TransportationData {
             // Obtener el ID generado
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    transportation.setId(generatedKeys.getInt(1));
+                    transportation.setId_transportation(generatedKeys.getInt(1));
                 }
             }
             
@@ -48,7 +48,7 @@ public class TransportationData {
             
             while (rs.next()) {
                 Transportation transportation = new Transportation();
-                transportation.setId(rs.getInt("id"));
+                transportation.setId_transportation(rs.getInt("id"));
                 transportation.setPlate(rs.getString("id_vehicle"));
                 transportation.setDriver(rs.getString("driver"));
                 transportation.setDataTimeService(rs.getTimestamp("dataTimeService").toLocalDateTime());
@@ -80,7 +80,7 @@ public class TransportationData {
             pstmt.setString(5, transportation.getFinalLocation());
             pstmt.setString(6, transportation.getServiceStatus());
             pstmt.setInt(7, transportation.getServiceDuration());
-            pstmt.setInt(8, transportation.getId());
+            pstmt.setInt(8, transportation.getId_transportation());
             
             pstmt.executeUpdate();
             System.out.println("Transporte actualizado exitosamente.");
@@ -117,7 +117,7 @@ public class TransportationData {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Transportation transportation = new Transportation();
-                    transportation.setId(rs.getInt("id"));
+                    transportation.setId_transportation(rs.getInt("id"));
                     transportation.setPlate(rs.getString("id_vehicle"));
                     transportation.setDriver(rs.getString("driver"));
                     transportation.setDataTimeService(rs.getTimestamp("dataTimeService").toLocalDateTime());
@@ -147,7 +147,7 @@ public class TransportationData {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     transportation = new Transportation();
-                    transportation.setId(rs.getInt("id"));
+                    transportation.setId_transportation(rs.getInt("id"));
                     transportation.setPlate(rs.getString("id_vehicle"));
                     transportation.setDriver(rs.getString("driver"));
                     transportation.setDataTimeService(rs.getTimestamp("dataTimeService").toLocalDateTime());

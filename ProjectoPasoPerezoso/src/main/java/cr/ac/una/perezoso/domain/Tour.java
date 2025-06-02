@@ -25,7 +25,7 @@ public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tour")
-    private Integer id_Tour;
+    private Integer id_tour;
     
     @Column(name = "name_tour", nullable = false, length = 100)
     private String nameTour;
@@ -65,8 +65,8 @@ public class Tour {
         this.multimedia = multimedia;
     }
 
-    public Tour(int id_Tour, String nameTour, String description, double price, LocalDate date, LocalTime startTime, LocalTime duration, String startingPoint, String multimedia) {
-        this.id_Tour = id_Tour;
+    public Tour(int id_tour, String nameTour, String description, double price, LocalDate date, LocalTime startTime, LocalTime duration, String startingPoint, String multimedia) {
+        this.id_tour = id_tour;
         this.nameTour = nameTour;
         this.description = description;
         this.price = price;
@@ -77,12 +77,12 @@ public class Tour {
         this.multimedia = multimedia;
     }
 
-    public int getId_Tour() {
-        return id_Tour;
+    public int getId_tour() {
+        return id_tour;
     }
 
-    public void setId_Tour(int id_Tour) {
-        this.id_Tour = id_Tour;
+    public void setId_tour(int id_tour) {
+        this.id_tour = id_tour;
     }
 
     public String getNameTour() {
@@ -151,7 +151,7 @@ public class Tour {
 
     @Override
     public String toString() {
-        return "Tour{" + "id_Tour=" + id_Tour + ", nameTour=" + nameTour + ", description=" + description + ", price=" + price + ", date=" + date + ", startTime=" + startTime + ", duration=" + duration + ", startingPoint=" + startingPoint + ", multimedia=" + multimedia + '}';
+        return "Tour{" + "id_Tour=" + id_tour + ", nameTour=" + nameTour + ", description=" + description + ", price=" + price + ", date=" + date + ", startTime=" + startTime + ", duration=" + duration + ", startingPoint=" + startingPoint + ", multimedia=" + multimedia + '}';
     }
      
     

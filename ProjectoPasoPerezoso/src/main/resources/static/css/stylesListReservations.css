@@ -1,0 +1,333 @@
+/* Estilos generales */
+body {
+    background-image: url('/img/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Barra de navegación */
+nav {
+    background-color: rgba(174, 182, 191, 0.7);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+nav .logo a {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 20px;
+}
+
+nav .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+nav .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Contenedor principal */
+.container {
+    margin: 100px auto 30px;
+    background-color: rgba(52, 58, 64, 0.8);
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 1200px;
+    width: 95%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Títulos */
+h1, h2, h3 {
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #6f7e14;
+    padding-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.8em;
+    margin-top: 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Sección de agregar reserva */
+.add-section {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Filtros */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.filter-group input, 
+.filter-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-clear {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    align-self: flex-end;
+}
+
+.btn-clear:hover {
+    background-color: #d32f2f;
+}
+
+/* Tabla de reservas */
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.bookings-table th {
+    background-color: #6f7e14;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.bookings-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.bookings-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.bookings-table tr:hover {
+    background-color: rgba(111, 126, 20, 0.3);
+}
+
+/* Acciones */
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit, .btn-delete {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.btn-edit {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #0b7dda;
+}
+
+.btn-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+}
+
+/* Botones */
+.btn-add {
+    display: inline-block;
+    background-color: #6f7e14;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add:hover {
+    background-color: #a2a26e;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #a2a26e;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #6f7e14;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.page-link {
+    padding: 8px 15px;
+    background-color: #6f7e14;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.page-link:hover {
+    background-color: #a2a26e;
+}
+
+.page-link.active {
+    background-color: #4a5410;
+    font-weight: bold;
+}
+
+/* Formularios */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input, form select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 95%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+form button {
+    padding: 10px;
+    background-color: #6f7e14;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form button:hover {
+    background-color: #a2a26e;
+}
+
+/* Efectos y responsive */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin-top: 80px;
+    }
+    
+    .filters {
+        flex-direction: column;
+    }
+    
+    .bookings-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    nav .nav-links {
+        display: none;
+    }
+}

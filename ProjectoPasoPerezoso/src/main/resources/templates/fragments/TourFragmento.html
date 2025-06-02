@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="tourFragment">
+    <div id="tourSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+        <h3 style="margin-top: 0;">Selección de Tours</h3>
+        
+        <!-- Lista de tours -->
+        <div id="tourResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+            <div th:if="${tours == null or tours.isEmpty()}">
+                <p>No hay tours disponibles en este momento.</p>
+            </div>
+            
+            <div th:unless="${tours == null or tours.isEmpty()}" th:each="tour : ${tours}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" 
+                           th:value="${tour.id_tour}" 
+                           th:id="'id_tour' + ${tour.id_tour}"
+                           style="margin-right: 10px;" 
+                           onchange="updateSelectedTours(this)"/>
+                    <div>
+                        <strong th:text="${tour.nameTour}"></strong>
+                        <div style="font-size: 0.9em; color: #555;">
+                            <span th:text="'Precio: $' + ${tour.price}"></span> | 
+                            <span th:text="'Duración: ' + ${tour.duration}"></span>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+        
+         <!--Tours seleccionados--> 
+        <div id="selectedToursDisplay" style="display: none; margin-top: 15px;">
+            <h4>Tours Seleccionados:</h4>
+            <ul id="selectedToursList"></ul>
+        </div>
+        
+        <!-- Botón de confirmación -->
+        <button type="button" onclick="confirmTourSelection()" class="button" 
+                style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+            Confirmar Tours Seleccionados
+        </button>
+        
+        <!-- Campo oculto para enviar los IDs al formulario -->
+        <input type="hidden" id="selectedTourIds" name="selectedTourIds" value="">
+    </div>
+</div>
+
+<script>
+    // Array para almacenar los IDs de los tours seleccionados
+    let selectedTours = [];
+    
+    // Función para actualizar la lista de tours seleccionados
+    function updateSelectedTours(checkbox) {
+        const tourId = parseInt(checkbox.value);
+        
+        if (checkbox.checked) {
+            if (!selectedTours.includes(tourId)) {
+                selectedTours.push(tourId);
+            }
+        } else {
+            selectedTours = selectedTours.filter(id => id !== tourId);
+        }
+        
+        updateSelectedToursList();
+    }
+    
+    // Función para actualizar la visualización de tours seleccionados
+    function updateSelectedToursList() {
+        const selectedList = document.getElementById('selectedToursList');
+        const selectedContainer = document.getElementById('selectedTours');
+        
+        selectedList.innerHTML = '';
+        
+        if (selectedTours.length > 0) {
+            selectedContainer.style.display = 'block';
+            
+            selectedTours.forEach(tourId => {
+                // Aquí podrías hacer una llamada AJAX para obtener más detalles del tour si es necesario
+                const tourName = document.querySelector(`#tour_${tourId} + div strong`).textContent;
+                
+                const li = document.createElement('li');
+                li.style.padding = '5px 0';
+                li.style.borderBottom = '1px solid #eee';
+                li.innerHTML = `
+                    ${tourName}
+                    <button onclick="removeTour(${tourId})" style="float: right; background-color: #f44336; color: white; border: none; border-radius: 3px; padding: 2px 5px; cursor: pointer;">
+                        Quitar
+                    </button>
+                `;
+                selectedList.appendChild(li);
+            });
+        } else {
+            selectedContainer.style.display = 'none';
+        }
+    }
+    
+    // Función para remover un tour de la selección
+    function removeTour(tourId) {
+        selectedTours = selectedTours.filter(id => id !== tourId);
+        const checkbox = document.querySelector(`#tour_${tourId}`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+        updateSelectedToursList();
+    }
+    
+    // Función para confirmar la selección
+    function confirmTourSelection() {
+        if (selectedTours.length === 0) {
+            alert('Por favor seleccione al menos un tour para reservar.');
+            return;
+        }
+        
+        // Aquí puedes hacer lo que necesites con los tours seleccionados
+        console.log('Tours seleccionados para reservación:', selectedTours);
+        
+        // Ejemplo: Enviar los IDs al backend
+        fetch('/tours/reservar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tourIds: selectedTours }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Reservación realizada con éxito!');
+            // Puedes redirigir o limpiar la selección aquí
+            selectedTours = [];
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateSelectedToursList();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un error al procesar la reservación.');
+        });
+    }
+</script>
+</html>
+
+
+
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="tourFragment">
+    <div id="tourSelectionContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+        <h3 style="margin-top: 0;">Selección de Tours</h3>
+        
+         Campo de búsqueda 
+        <div class="form-group">
+            <label for="tourSearch">Buscar Tour:</label>
+            <input type="text" id="tourSearch" class="form-control" placeholder="Nombre del tour..." 
+                   oninput="searchTours(this.value)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        </div>
+        
+         Resultados de búsqueda 
+        <div id="tourResults" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+             Los tours se cargarán aquí dinámicamente 
+        </div>
+        
+         Tours seleccionados 
+        <div id="selectedTours" style="margin-top: 10px;">
+            <h4 style="margin-bottom: 10px;">Tours seleccionados:</h4>
+            <ul id="selectedToursList" style="list-style-type: none; padding-left: 0;">
+                 Se mostrarán los tours seleccionados aquí 
+            </ul>
+        </div>
+        
+        <button type="button" onclick="confirmTourSelection()" class="button" 
+                style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;">
+            Confirmar selección
+        </button>
+    </div>
+</div>
+</html>-->
