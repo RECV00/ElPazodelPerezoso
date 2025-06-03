@@ -4,7 +4,6 @@
  */
 package cr.ac.una.perezoso.service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,7 @@ public interface CRUD<T, ID> {//clase generica
     public void delete(ID id);
     public List<T> getAll();
     public T getById(ID id);
-    public void update(T t);
+    
     // Nuevos métodos para paginación
     Page<T> getAll(Pageable pageable);
     boolean existsById(ID id);

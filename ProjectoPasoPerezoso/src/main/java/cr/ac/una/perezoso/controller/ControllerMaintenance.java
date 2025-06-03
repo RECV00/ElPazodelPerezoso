@@ -1,13 +1,18 @@
 
 package cr.ac.una.perezoso.controller;
 
+import cr.ac.una.perezoso.business.Logic;
 import cr.ac.una.perezoso.domain.Maintenance;
-import java.awt.print.Pageable;
+import cr.ac.una.perezoso.service.MaintenanceService;
+//import java.awt.print.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
-import javax.swing.JTabbedPane.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
+//import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +40,7 @@ public String viewList(Model model,
                        @RequestParam(defaultValue = "3") int size) {
 
     Pageable pageable = PageRequest.of(page, size, Sort.by("maintenanceDate").descending());
-    Page<Maintenance> pagedResult = ms.getPaginatedList(pageable);
+    Page<Maintenance> pagedResult = ms.getAll((org.springframework.data.domain.Pageable) pageable);
 
     model.addAttribute("listM", pagedResult.getContent());
     model.addAttribute("currentPage", page);
