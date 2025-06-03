@@ -1,360 +1,232 @@
-// user_list_actions.js
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Configuración
-    const delay = 500; // Tiempo de espera para filtrar después de escribir (ms)
-    let filterTimeout;
-    
-    // Referencias a elementos del DOM
-    const elements = {
-        filterId: document.getElementById('filterIdentification'),
-        filterType: document.getElementById('filterType'),
-        clearBtn: document.getElementById('clearFiltersBtn'),
-        pageSizeSelect: document.getElementById('pageSizeSelect'),
+    // Cache de elementos DOM - VERSIÓN COMPLETA
+    const domElements = {
         newUserBtn: document.getElementById('newUserBtn'),
+        filterForm: document.getElementById('filterForm'),
+        pageSizeSelect: document.getElementById('pageSizeSelect'),
+        clearFiltersBtn: document.getElementById('clearFiltersBtn'),
         usersTableBody: document.getElementById('usersTableBody'),
-        modalContainer: document.getElementById('modalContainer'),
-        modalContent: document.getElementById('modalContent'),
-        closeModal: document.getElementById('closeModal'),
-        currentPage: document.getElementById('currentPage'),
-        pageSize: document.getElementById('pageSize'),
-        totalUsers: document.getElementById('totalUsers')
+        tableSection: document.querySelector('.table-section'), // Añadido
+        tableContent: document.querySelector('.table-responsive'), // Añadido
+        currentPageInput: document.querySelector('input[name="page"]'),
+        sizeInput: document.querySelector('input[name="size"]'),
+        totalUsersSpan: document.getElementById('totalUsers'), // Añadido
+        filterIdentification: document.getElementById('filterIdentification'), // Añadido
+        filterType: document.getElementById('filterType') // Añadido
     };
 
-    // Inicialización - No cargamos datos iniciales aquí, ya vienen del servidor
-    setupEventListeners();
-
-    function setupEventListeners() {
-        // Solo configuramos listeners si hay elementos de filtro
-        if (elements.filterId || elements.filterType) {
-            if (elements.filterId) elements.filterId.addEventListener('input', handleFilterChange);
-            if (elements.filterType) elements.filterType.addEventListener('change', handleFilterChange);
-            if (elements.clearBtn) elements.clearBtn.addEventListener('click', clearFilters);
-        }
-        
-        if (elements.pageSizeSelect) elements.pageSizeSelect.addEventListener('change', handlePageSizeChange);
-        if (elements.newUserBtn) elements.newUserBtn.addEventListener('click', handleNewUserClick);
-        if (elements.modalContainer) elements.modalContainer.addEventListener('click', handleModalOutsideClick);
-        if (elements.closeModal) elements.closeModal.addEventListener('click', closeModalHandler);
-        
-        // Delegación de eventos para elementos dinámicos
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.edit-btn')) {
-                e.preventDefault();
-                loadFormInModal(e.target.closest('a').href);
-            }
-            
-            if (e.target.closest('.delete-btn')) {
-                e.preventDefault();
-                confirmDelete(e, e.target.closest('.delete-btn'));
-            }
-        });
-    }
-
-
-    // **********************
-    // Funciones de Filtrado
-    // **********************
-    
-   function handleFilterChange() {
-        clearTimeout(filterTimeout);
-        filterTimeout = setTimeout(() => {
-            // Solo cargar si hay filtros aplicados
-            if (hasFilters()) {
-                loadUsers();
-            } else {
-                // Si no hay filtros, mantener los datos iniciales
-                resetToInitialState();
-            }
-        }, delay);
-    }
-
-    function clearFilters() {
-        if (elements.filterId) elements.filterId.value = '';
-        if (elements.filterType) elements.filterType.value = '';
-        resetToInitialState();
-    }
-
-    function handlePageSizeChange() {
-        if (elements.pageSize) elements.pageSize.value = this.value;
-        loadUsers(0);
-    }
-
-    function hasFilters() {
-        return (elements.filterId && elements.filterId.value.trim() !== '') || 
-               (elements.filterType && elements.filterType.value !== '');
-    }
-
-    function resetToInitialState() {
-        // Recargar la página para volver al estado inicial
-        window.location.href = buildUrl('/admin/list', {
-            page: 0,
-            size: elements.pageSize?.value || 4
-        });
-    }
-
-    function loadUsers(page = 0) {
-        // Solo mostrar loading si hay filtros aplicados
-        if (hasFilters()) {
-            showLoadingState();
-        }
-
-        const params = {
-            page: page,
-            size: elements.pageSize?.value || 4,
-            identification: elements.filterId?.value || '',
-            type: elements.filterType?.value || ''
-        };
-
-        if (page !== parseInt(elements.currentPage?.value || 0)) {
-            if (elements.currentPage) elements.currentPage.value = page;
-        }
-
-        fetch(buildUrl('/admin/list', params), {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Error en la respuesta');
-            return response.text();
-        })
-        .then(html => {
-            if (html.includes('usersTableBody')) {
-                updateUI(html);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            if (hasFilters()) {
-                showErrorState();
-            }
-        });
-    }
-
-    function buildUrl(path, params) {
-        const url = new URL(path, window.location.origin);
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined && value !== '') {
-                url.searchParams.append(key, value);
-            }
-        });
-        return url;
-    }
-
-    function updateUI(html) {
-        updateTableContent(html);
-        updatePagination(html);
-        updateUserCount(html);
-    }
-
-    function updateTableContent(html) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        const newTableBody = tempDiv.querySelector('#usersTableBody');
-        
-        if (elements.usersTableBody && newTableBody) {
-            elements.usersTableBody.innerHTML = newTableBody.innerHTML;
-        }
-    }
-
-    function updatePagination(html) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        const newPagination = tempDiv.querySelector('.pagination');
-        const currentPagination = document.querySelector('.pagination');
-        
-        if (currentPagination && newPagination) {
-            currentPagination.innerHTML = newPagination.innerHTML;
-            
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = new URL(this.href).searchParams.get('page');
-                    loadUsers(parseInt(page));
-                });
-            });
-        }
-    }
-
-    function updateUserCount(html) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        const newTotalUsers = tempDiv.querySelector('#totalUsers');
-        
-        if (elements.totalUsers && newTotalUsers) {
-            elements.totalUsers.textContent = newTotalUsers.textContent;
-        }
-    }
-
-    // **********************
-    // Funciones de Interfaz
-    // **********************
-    
-    function showLoadingState() {
-        if (elements.usersTableBody) {
-            elements.usersTableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center no-users">
-                        <i class="fas fa-spinner fa-spin"></i> Cargando usuarios...
-                    </td>
-                </tr>
-            `;
-        }
-    }
-
-    function showErrorState() {
-        if (elements.usersTableBody) {
-            elements.usersTableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center no-users">
-                        <i class="fas fa-exclamation-triangle"></i> Error al cargar los datos
-                    </td>
-                </tr>
-            `;
-        }
-    }
-
-    // **********************
-    // Funciones de Modal
-    // **********************
-    
-    function handleNewUserClick(e) {
+    // Manejar clic en "Nuevo Usuario"
+    domElements.newUserBtn?.addEventListener('click', function(e) {
         e.preventDefault();
         loadFormInModal(this.href);
-    }
-
-    function loadFormInModal(url) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al cargar el formulario');
-                return response.text();
-            })
-            .then(html => {
-                if (elements.modalContent) {
-                    elements.modalContent.innerHTML = html;
-                    if (elements.modalContainer) elements.modalContainer.style.display = 'flex';
-                    initFormScripts();
-                    setupFormSubmitHandler();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'No se pudo cargar el formulario', 'error');
-            });
-    }
-
-    function initFormScripts() {
-        const tipoUsuarioSelect = document.getElementById('tipoUsuario');
-        if (tipoUsuarioSelect) {
-            tipoUsuarioSelect.addEventListener('change', function() {
-                const empleadoFields = document.getElementById('empleadoFields');
-                if (empleadoFields) {
-                    empleadoFields.style.display = this.value === 'Empleado' ? 'block' : 'none';
-                }
-            });
-            
-            if (tipoUsuarioSelect.value) {
-                tipoUsuarioSelect.dispatchEvent(new Event('change'));
-            }
-        }
-
-        const fileInput = document.querySelector('input[type="file"]');
-        if (fileInput) {
-            fileInput.addEventListener('change', handleFileUpload);
-        }
-    }
-
-    function handleFileUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const isEditForm = this.id === 'profile_picture';
-        const previewId = isEditForm ? 'previewImageNew' : 'previewImage';
-        const fileNameId = isEditForm ? 'fileNameEdit' : 'fileName';
-        
-        const preview = document.getElementById(previewId);
-        const fileName = document.getElementById(fileNameId);
-        
-        if (fileName) fileName.textContent = file.name;
-        
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            if (preview) {
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function setupFormSubmitHandler() {
-        const form = elements.modalContent?.querySelector('form');
-        if (!form) return;
-        
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitForm(this);
-        });
-    }
-
-    function submitForm(form) {
-        const formData = new FormData(form);
-        
-        fetch(form.action, {
-            method: form.method,
-            body: formData
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
-                return response.text().then(html => {
-                    if (elements.modalContent) {
-                        elements.modalContent.innerHTML = html;
-                        initFormScripts();
-                        setupFormSubmitHandler();
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Error', 'Error al enviar el formulario', 'error');
-        });
-    }
-
-    function handleModalOutsideClick(e) {
-        if (e.target === this) {
-            closeModalHandler();
-        }
-    }
-
-    function closeModalHandler() {
-        if (elements.modalContainer) elements.modalContainer.style.display = 'none';
-    }
-
-    // **********************
-    // Funciones de Confirmación
-    // **********************
+    });
     
-   function confirmDelete(event, button) {
+    // Delegación de eventos centralizada
+    document.addEventListener('click', function(e) {
+        const editBtn = e.target.closest('.edit-btn');
+        const deleteBtn = e.target.closest('.delete-btn');
+        const paginationLink = e.target.closest('.pagination a');
+        const viewBtn = e.target.closest('.view-btn');
+        
+        // Editar usuario
+        if (editBtn) {
+            e.preventDefault();
+            loadFormInModal(editBtn.closest('a').href);
+        }
+        
+        // Eliminar usuario
+        if (deleteBtn) {
+            e.preventDefault();
+            confirmDelete(e, deleteBtn);
+        }
+        
+        // Paginación
+        if (paginationLink) {
+            e.preventDefault();
+            const url = new URL(paginationLink.href);
+            const page = url.searchParams.get('page');
+            loadUsersWithFilters(page);
+        }
+        
+//        // Ver detalles (evita que se recargue la página)
+//        if (viewBtn) {
+//            e.preventDefault();
+//            // loadFormInModal(viewBtn.closest('a').href); // Descomenta si quieres cargar en modal
+//        }
+    });
+    
+    async function loadUsersWithFilters(page = 0) {
+        try {
+            // Actualizar página actual en el formulario
+            if (domElements.currentPageInput) {
+                domElements.currentPageInput.value = page;
+            }
+            
+            // Mostrar loader
+            if (domElements.tableSection) {
+                domElements.tableSection.innerHTML = `
+                    <div class="loader">Cargando usuarios...</div>
+                `;
+            }
+            
+            // Construir parámetros
+            const params = new URLSearchParams();
+            params.append('page', page);
+            params.append('size', domElements.sizeInput?.value || '4');
+            
+            // Agregar filtros si existen
+            if (domElements.filterIdentification?.value) {
+                params.append('identification', domElements.filterIdentification.value);
+            }
+            if (domElements.filterType?.value) {
+                params.append('type', domElements.filterType.value);
+            }
+            
+            console.log('Enviando parámetros:', params.toString()); // Para depuración
+            
+            // Configurar headers para AJAX
+            const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+            
+            // Realizar petición
+            const response = await fetch(`/admin/list?${params.toString()}`, { headers });
+            
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            
+            const html = await response.text();
+            updateUIWithResponse(html);
+        } catch (error) {
+            console.error('Error al cargar usuarios:', error);
+            showErrorMessage(error.message);
+        }
+    }
+    
+    function updateUIWithResponse(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Opción 1: Actualizar solo el cuerpo de la tabla
+        const newTableBody = doc.getElementById('usersTableBody');
+        if (newTableBody && domElements.usersTableBody) {
+            domElements.usersTableBody.innerHTML = newTableBody.innerHTML;
+        }
+        
+        // Opción 2: Actualizar toda la sección de tabla (incluyendo paginación)
+        const newTableSection = doc.querySelector('.table-section');
+        if (newTableSection && domElements.tableSection) {
+            domElements.tableSection.innerHTML = newTableSection.innerHTML;
+        }
+        
+        // Actualizar el contador total
+        const totalUsers = doc.getElementById('totalUsers');
+        if (totalUsers && domElements.totalUsersSpan) {
+            domElements.totalUsersSpan.textContent = totalUsers.textContent;
+        }
+        
+        // Actualizar los inputs ocultos
+        const currentPage = doc.querySelector('input[name="page"]');
+        const size = doc.querySelector('input[name="size"]');
+        if (currentPage && domElements.currentPageInput) {
+            domElements.currentPageInput.value = currentPage.value;
+        }
+        if (size && domElements.sizeInput) {
+            domElements.sizeInput.value = size.value;
+        }
+    }
+    
+    function showErrorMessage(message) {
+        if (domElements.tableSection) {
+            domElements.tableSection.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    ${message || 'Error al cargar los usuarios'}
+                </div>
+            `;
+        }
+    }
+    
+    // Manejador de envío del formulario de filtrado
+    domElements.filterForm?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        loadUsersWithFilters(0);
+    });
+    
+    // Manejador de cambio en el tamaño de página
+    domElements.pageSizeSelect?.addEventListener('change', function() {
+        if (domElements.sizeInput) {
+            domElements.sizeInput.value = this.value;
+        }
+        loadUsersWithFilters(0);
+    });
+    
+    // Manejador de limpieza de filtros
+    domElements.clearFiltersBtn?.addEventListener('click', function() {
+        if (domElements.filterIdentification) {
+            domElements.filterIdentification.value = '';
+        }
+        if (domElements.filterType) {
+            domElements.filterType.value = '';
+        }
+        if (domElements.currentPageInput) {
+            domElements.currentPageInput.value = '0';
+        }
+        loadUsersWithFilters(0);
+    });
+    
+    // Función de confirmación para eliminar usuario
+    async function confirmDelete(event, button) {
         event.preventDefault();
         const form = button.closest('form');
-        if (!form) return;
         
-        Swal.fire({
+        const { isConfirmed } = await Swal.fire({
             title: '¿Eliminar usuario?',
             text: "Esta acción no se puede deshacer",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            cancelButtonColor: '#6f7e14',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
             reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
         });
+        
+        if (!isConfirmed) return;
+        
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                await Swal.fire({
+                    title: 'Eliminado!',
+                    text: 'El usuario ha sido eliminado.',
+                    icon: 'success'
+                });
+                // Recargar tabla manteniendo la página actual
+                const currentPage = domElements.currentPageInput?.value || '0';
+                loadUsersWithFilters(parseInt(currentPage));
+            } else {
+                throw new Error(data.message || 'No se pudo eliminar el usuario');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message || 'Ocurrió un error al eliminar el usuario.',
+                icon: 'error'
+            });
+        }
     }
+    
+
 });
