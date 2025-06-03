@@ -1,0 +1,208 @@
+
+package cr.ac.una.perezoso.controller;
+
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+/**
+ *
+ * @author dayan
+ */
+public class ControllerMaintenance {
+    
+     @Autowired
+    private MaintenanceService ms;
+    
+ @GetMapping("")
+public String viewList(Model model,
+                       @RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "3") int size) {
+
+    Pageable pageable = PageRequest.of(page, size, Sort.by("maintenanceDate").descending());
+    Page<Maintenance> pagedResult = ms.getPaginatedList(pageable);
+
+    model.addAttribute("listM", pagedResult.getContent());
+    model.addAttribute("currentPage", page);
+    model.addAttribute("totalPages", pagedResult.getTotalPages());
+
+    return "index";
+}
+
+  
+  @GetMapping("maintenance/Form")
+  public String form(){
+    return "create";
+  }
+  
+  @PostMapping("maintenance/createMaintenance")
+public String saveMaintenance(
+    @RequestParam("maintenanceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maintenanceDate,
+    @RequestParam("maintenanceType") String maintenanceType,
+    @RequestParam("description") String description,
+    @RequestParam("priorities") String priorities,
+    @RequestParam("state") String state,
+    @RequestParam("assignedPersonal") String assignedPersonal,
+    @RequestParam("location") String location,
+    Model model) {
+
+    Logic logic = new Logic();
+
+    if ( !logic.validateWord(maintenanceType) || 
+        !logic.checkStrings(description) || !logic.validateWord(priorities) || 
+        !logic.validateWord(state) || !logic.validateWord(assignedPersonal) || 
+        !logic.checkStrings(location)) {
+
+        model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
+        return "create";
+    }else if(!logic.validateLocalDate(maintenanceDate)){
+         model.addAttribute("error", "La fecha no puede ser anterior a hoy.");
+    
+    }
+
+    try {
+        Maintenance maintenance = new Maintenance(maintenanceDate, maintenanceType, description, priorities, state, assignedPersonal, location);
+        ms.save(maintenance);
+        model.addAttribute("message", "Mantenimiento agregado correctamente.");
+    } catch (Exception e) {
+        model.addAttribute("error", "Mantenimiento no creado. Intente de nuevo.");
+    }
+
+    return "create";
+}
+
+
+
+@GetMapping("maintenance/FormUpdate")
+public String showUpdateForm(@RequestParam("id") int id, Model model) {
+    Maintenance maintenance = ms.getById(id);
+    
+    if (maintenance == null) {
+        model.addAttribute("alertTitle", "Error");
+        model.addAttribute("alertMessage", "Mantenimiento no encontrado con ID: " + id);
+        model.addAttribute("alertType", "error");
+        return "updateMaintenance"; 
+    }
+    
+    model.addAttribute("maintenance", maintenance);
+    return "updateMaintenance";
+}
+
+@PostMapping("maintenance/updateM")
+public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maintenance, 
+                              BindingResult result,
+                              Model model) {
+    
+    
+    if (result.hasErrors()) {
+        model.addAttribute("alertTitle", "Error");
+        model.addAttribute("alertMessage", "Datos inválidos en el formulario");
+        model.addAttribute("alertType", "error");
+        return "updateMaintenance";
+    }
+    
+    try {
+        
+        ms.save(maintenance);
+        
+       
+        model.addAttribute("alertTitle", "¡Éxito!");
+        model.addAttribute("alertMessage", "Mantenimiento actualizado correctamente");
+        model.addAttribute("alertType", "success");
+        
+       
+        Maintenance updatedMaintenance = ms.getById(maintenance.getId());
+        model.addAttribute("maintenance", updatedMaintenance);
+        
+    } catch (Exception e) {
+      
+        model.addAttribute("alertTitle", "Error");
+        model.addAttribute("alertMessage", "No se pudo actualizar: " + e.getMessage());
+        model.addAttribute("alertType", "error");
+    }
+    
+    return "updateMaintenance";
+}
+   
+ @GetMapping("maintenance/remove")
+public String deleteMaintenance(@RequestParam("id") int id) {
+    ms.delete(id); 
+    return "redirect:maintenance"; 
+}
+    @GetMapping("maintenance/detalleMantenimiento")
+    public String showMaintenanceDetails(@RequestParam("id") int id, Model model) {
+       
+        Maintenance maintenance = ms.getById(id);
+        
+      
+        if (maintenance == null) {
+            throw new IllegalArgumentException("Mantenimiento no encontrado con ID: " + id);
+        }
+        
+        
+        model.addAttribute("maintenance", maintenance);
+        
+       
+        return "maintenanceDetails"; 
+    }
+    
+    
+ @GetMapping("maintenance/filterType")
+public String filterByType(@RequestParam(required = false) String type, Model model) {
+    try {
+        List<Maintenance> results = (type == null || type.isEmpty())
+                ? ms.getAll()
+                : ms.findByType(type);
+
+        model.addAttribute("maintenances", results);
+        model.addAttribute("selectedType", type);
+        model.addAttribute("types", ms.getAllTypes());
+
+        model.addAttribute("filterMessage",
+                (type == null || type.isEmpty())
+                        ? "Mostrando todos los mantenimientos"
+                        : String.format("Filtrado por tipo: %s (%d resultados)", type, results.size()));
+
+    } catch (Exception e) {
+        model.addAttribute("error", "Error al filtrar por tipo: " + e.getMessage());
+    }
+    return "byType";
+}
+
+
+   @GetMapping("maintenance/filterState")
+public String filterByState(@RequestParam(required = false) String state,
+                            Model model) {
+    try {
+        List<Maintenance> results = (state == null || state.isEmpty())
+                ? ms.getAll()
+                : ms.findByState(state);
+
+        model.addAttribute("maintenances", results);
+        model.addAttribute("selectedState", state);
+        model.addAttribute("availableStates", ms.getAllStates());
+        model.addAttribute("filterMessage",
+                state == null || state.isEmpty()
+                        ? "Mostrando todos los mantenimientos"
+                        : String.format("Filtrado por estado: %s (%d resultados)", state, results.size()));
+    } catch (Exception e) {
+        model.addAttribute("error", "Error al filtrar por estado: " + e.getMessage());
+    }
+    return "byState";
+}
+
+}
+
+
+    
+
+
+    
+

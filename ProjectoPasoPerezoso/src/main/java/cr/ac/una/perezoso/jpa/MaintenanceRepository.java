@@ -1,0 +1,18 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
+package cr.ac.una.perezoso.jpa;
+
+import cr.ac.una.perezoso.domain.Maintenance;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+/**
+ *
+ * @author dayan
+ */
+public interface MaintenanceRepository extends JpaRepository<Maintenance, Integer>,JpaSpecificationExecutor<Maintenance>{
+    List<Maintenance> findByMaintenanceTypeContainingIgnoreCase(String type);
+    List<Maintenance> findByStateIgnoreCase(String state);
+}
