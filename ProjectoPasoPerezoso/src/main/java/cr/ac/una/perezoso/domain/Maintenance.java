@@ -8,6 +8,6 @@ package cr.ac.una.perezoso.domain;
  *
  * @author corra
  */
-public class Mantenance {
+public class Maintenance {
     
 }
