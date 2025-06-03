@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package cr.ac.una.perezoso.service;
 
 import cr.ac.una.perezoso.domain.Maintenance;
 import cr.ac.una.perezoso.jpa.MaintenanceRepository;
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @author dayan
  */
 @Service
-public class MaintenanceService implements CRUD<Maintenance> {
+public class MaintenanceService implements CRUD<Maintenance, Integer> {
   @Autowired  
   private MaintenanceRepository mr;
 
@@ -83,6 +81,29 @@ public List<String> getAllStates() {
             .distinct()
             .collect(Collectors.toList());
 }
+
+   
+
+
+    @Override
+    public boolean existsById(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Object getAll(Pageable pageable) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void delete(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Maintenance getById(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
 
 

@@ -19,10 +19,6 @@ public interface CRUD<T, ID> {//clase generica
     public List<T> getAll();
     public T getById(ID id);
     public void update(T t);
-   List<T> findByType(String type);
-
-    List<T> findByState(String state);
-    
     // Nuevos métodos para paginación
     Page<T> getAll(Pageable pageable);
     boolean existsById(ID id);
