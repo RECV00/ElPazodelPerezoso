@@ -46,13 +46,13 @@ public String viewList(Model model,
     model.addAttribute("currentPage", page);
     model.addAttribute("totalPages", pagedResult.getTotalPages());
 
-    return "index";
+    return "HTMLMaintenance/index";
 }
 
   
   @GetMapping("maintenance/Form")
   public String form(){
-    return "create";
+    return "HTMLMaintenance/create";
   }
   
   @PostMapping("maintenance/createMaintenance")
@@ -88,7 +88,7 @@ public String saveMaintenance(
         model.addAttribute("error", "Mantenimiento no creado. Intente de nuevo.");
     }
 
-    return "create";
+    return "HTMLMaintenance/create";
 }
 
 
@@ -101,11 +101,11 @@ public String showUpdateForm(@RequestParam("id") int id, Model model) {
         model.addAttribute("alertTitle", "Error");
         model.addAttribute("alertMessage", "Mantenimiento no encontrado con ID: " + id);
         model.addAttribute("alertType", "error");
-        return "updateMaintenance"; 
+        return "HTMLMaintenance/updateMaintenance"; 
     }
     
     model.addAttribute("maintenance", maintenance);
-    return "updateMaintenance";
+    return "HTMLMaintenance/updateMaintenance";
 }
 
 @PostMapping("maintenance/updateM")
@@ -118,7 +118,7 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
         model.addAttribute("alertTitle", "Error");
         model.addAttribute("alertMessage", "Datos inválidos en el formulario");
         model.addAttribute("alertType", "error");
-        return "updateMaintenance";
+        return "HTMLMaintenance/updateMaintenance";
     }
     
     try {
@@ -141,13 +141,13 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
         model.addAttribute("alertType", "error");
     }
     
-    return "updateMaintenance";
+    return "HTMLMaintenance/updateMaintenance";
 }
    
  @GetMapping("maintenance/remove")
 public String deleteMaintenance(@RequestParam("id") int id) {
     ms.delete(id); 
-    return "redirect:maintenance"; 
+    return "redirect:HTMLMaintenance/maintenance"; 
 }
     @GetMapping("maintenance/detalleMantenimiento")
     public String showMaintenanceDetails(@RequestParam("id") int id, Model model) {
@@ -163,7 +163,7 @@ public String deleteMaintenance(@RequestParam("id") int id) {
         model.addAttribute("maintenance", maintenance);
         
        
-        return "maintenanceDetails"; 
+        return "HTMLMaintenance/maintenanceDetails"; 
     }
     
     
@@ -186,7 +186,7 @@ public String filterByType(@RequestParam(required = false) String type, Model mo
     } catch (Exception e) {
         model.addAttribute("error", "Error al filtrar por tipo: " + e.getMessage());
     }
-    return "byType";
+    return "HTMLMaintenance/byType";
 }
 
 
@@ -208,7 +208,7 @@ public String filterByState(@RequestParam(required = false) String state,
     } catch (Exception e) {
         model.addAttribute("error", "Error al filtrar por estado: " + e.getMessage());
     }
-    return "byState";
+    return "HTMLMaintenance/byState";
 }
 
 }

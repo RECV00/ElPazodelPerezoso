@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Filtro por Estado de Mantenimiento</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('/imag.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        header {
+            background-color: rgba(52, 58, 64, 0.8);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(52, 58, 64, 0.8);
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        .filter-box {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 10px 5px 0 0;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: rgba(40, 167, 69, 0.8);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: rgba(40, 167, 69, 1);
+        }
+
+        .btn-secondary {
+            background-color: rgba(108, 117, 125, 0.8);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(108, 117, 125, 1);
+        }
+
+        .btn-danger {
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(220, 53, 69, 1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #6f7e14;
+            color: white;
+        }
+
+        .state-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .state-pendiente { background: #fff3cd; color: #856404; }
+        .state-proceso { background: #cce5ff; color: #004085; }
+        .state-terminada { background: #d4edda; color: #155724; }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Filtro por Estado de Mantenimiento</h1>
+</header>
+
+<div class="container">
+    <div class="filter-box">
+        <form th:action="@{maintenance/filterState}" method="get">
+            <label for="state">Seleccione un estado:</label>
+            <select id="state" name="state">
+                <option value="">Todos los estados</option>
+                <option th:each="estado : ${availableStates}"
+                        th:value="${estado}"
+                        th:text="${estado}"
+                        th:selected="${selectedState == estado}"></option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a th:href="@{maintenance/filterState}" class="btn btn-secondary">Limpiar</a>
+            <a href="/" class="btn btn-danger">Salir</a>
+        </form>
+
+        <p th:text="${filterMessage}" style="margin-top: 10px; color: white;"></p>
+    </div>
+
+    <div th:if="${maintenances != null and !maintenances.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${maintenances}">
+                <td th:text="${m.id}"></td>
+                <td th:text="${m.maintenanceType}"></td>
+                <td th:text="${m.description}"></td>
+                <td>
+                    <span th:class="'state-badge state-' + ${m.state.toLowerCase().replace(' ', '-')}"
+                          th:text="${m.state}"></span>
+                </td>
+                <td th:text="${#temporals.format(m.maintenanceDate, 'dd/MM/yyyy')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${maintenances != null and maintenances.isEmpty()}" class="no-results">
+        <p th:text="${filterMessage}"></p>
+    </div>
+</div>
+
+<footer>
+    <p>Sistema de Gestión de Mantenimientos</p>
+</footer>
+
+<script th:if="${error}">
+    Swal.fire({
+        title: 'Error',
+        text: [[${error}]],
+        icon: 'error'
+    });
+</script>
+</body>
+</html>
