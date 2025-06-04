@@ -7,6 +7,7 @@ package cr.ac.una.perezoso.jpa;
 import cr.ac.una.perezoso.domain.Booking;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,9 +20,32 @@ import org.springframework.data.domain.Pageable;
  */
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer>{
-    List<Booking> findByReserveStatus(String status);
+    
+     @Query("SELECT b FROM Booking b " +
+           "LEFT JOIN FETCH b.client " +
+           "LEFT JOIN FETCH b.cabin " +
+           "LEFT JOIN FETCH b.food " +
+           "LEFT JOIN FETCH b.transportation " +
+           "LEFT JOIN FETCH b.tour " +
+           "LEFT JOIN FETCH b.payment " +
+           "WHERE b.id_booking = :id")
+    Optional<Booking> findByIdWithDetails(@Param("id") int id);
+    
+    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.food WHERE b.id = :id")
+    Booking findByIdWithFood(@Param("id") Long id);
+    @Query("SELECT b FROM Booking b JOIN b.client c WHERE c.identification = :identification")
+    Page<Booking> findByClientIdentification(@Param("identification") String identification, Pageable pageable);
+      Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identification, Pageable pageable);
+    
+    // Buscar por estado (búsqueda parcial insensible a mayúsculas)
+    Page<Booking> findByReserveStatusContainingIgnoreCase(String status, Pageable pageable);
+    
+    // Buscar por rango de fechas
+    Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
+    // Buscar por estado
     Page<Booking> findByReserveStatus(String status, Pageable pageable);
     
+    List<Booking> findByReserveStatus(String status);
     // Find by date range
     @Query("SELECT b FROM Booking b WHERE " +
            "(b.checkInDate BETWEEN :startDate AND :endDate) OR " +
@@ -66,7 +90,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
 //    List<Booking> findByTransportationId(@Param("id_transportation") Integer transportationId);
 //    
     // Find by payment status
-    @Query("SELECT b FROM Booking b JOIN b.payment p WHERE p.paymentStatus = :status")
+    @Query("SELECT b FROM Booking b JOIN b.payment p WHERE p.statePayment = :status")
     List<Booking> findByPaymentStatus(@Param("status") String status);
     
     // Check availability for a cabin in a date range
@@ -83,12 +107,12 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     Page<Booking> findByCabinId(@Param("cabinId") Integer cabinId, Pageable pageable);
     
-    @Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
-    Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
-    
-    @Query("SELECT b FROM Booking b WHERE b.transportation.id_transportation = :vehicleId")
-    Page<Booking> findByVehicleId(@Param("vehicleId") Integer vehicleId, Pageable pageable);
-    
+   // Descomentar y actualizar estos métodos en BookingRepository
+@Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
+Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
+
+@Query("SELECT b FROM Booking b WHERE b.transportation.id_transportation = :vehicleId")
+Page<Booking> findByVehicleId(@Param("vehicleId") Integer vehicleId, Pageable pageable);
     @Query("SELECT b FROM Booking b WHERE b.food.id_food = :foodId")
     Page<Booking> findByFoodId(@Param("foodId") Integer foodId, Pageable pageable);
     

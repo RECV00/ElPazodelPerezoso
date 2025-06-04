@@ -18,17 +18,18 @@
         <!-- Filtros -->
         <div class="filters-section">
             <!-- Filtro por cédula de cliente -->
+                      
             <div class="filter-form">
                 <label for="clientId">Filtrar por Cédula Cliente:</label>
                 <input type="text" id="clientId" name="clientId" placeholder="Cédula del cliente"
-                       oninput="filterByClient()">
+                       oninput="filtrarPorCliente()">
                 <span id="client-filter-loading" class="loading-spinner" style="display: none;"></span>
             </div>
-            
+
             <!-- Filtro por estado -->
             <div class="filter-form">
                 <label for="status">Filtrar por Estado:</label>
-                <select id="status" name="status" onchange="filterByStatus()">
+                <select id="status" name="status" onchange="filtrarPorEstado()">
                     <option value="">Todos</option>
                     <option value="Pendiente">Pendiente</option>
                     <option value="Confirmada">Confirmada</option>
@@ -36,18 +37,20 @@
                 </select>
                 <span id="status-filter-loading" class="loading-spinner" style="display: none;"></span>
             </div>
-            
+
             <!-- Filtro por rango de fechas -->
             <div class="filter-form">
                 <label>Filtrar por Fechas:</label>
-                <input type="date" id="startDate" name="startDate" onchange="validateDateRange()">
+                <input type="date" id="startDate" name="startDate" onchange="validarRangoFechas()">
                 <span>a</span>
-                <input type="date" id="endDate" name="endDate" onchange="validateDateRange()">
+                <input type="date" id="endDate" name="endDate" onchange="validarRangoFechas()">
                 <span id="date-filter-loading" class="loading-spinner" style="display: none;"></span>
                 <span id="date-error" class="error-message" style="display: none;"></span>
             </div>
-        </div>
-        
+
+<!-- Botón para reiniciar filtros (opcional) 
+<button onclick="reiniciarFiltros()" class="button reset-btn">Reiniciar Filtros</button>
+        -->
         <!-- Botones de acción -->
         <div class="action-buttons">
             <a th:href="@{/booking/new}" class="button add-btn">Nueva Reserva</a>
@@ -86,33 +89,37 @@
                                 <strong th:text="${clientNames.get(booking.client.id_user)}"></strong>
                             </div>
                             <div th:unless="${booking.client != null}">
-                                <!--Cliente no asignado-->
+                                Cliente no asignado
                             </div>
                         </td>
                         <td>
                             <div th:if="${booking.cabin != null}">
-                                <strong th:text="${cabinNames.get(booking.cabin.cabinID)}"></strong>
+                                <!--<strong>Cabaña:</strong>--> 
+                                <span th:text="${cabinNames.get(booking.cabin.cabinID)}"></span>
                             </div>
                             <div th:unless="${booking.cabin != null}">
-                                <!--Sin cabaña asignada-->
+                                Sin cabaña asignada
                             </div>
                         </td>
-                        <td>
-                            <div th:if="${booking.additionalServices}">
-                                <div th:if="${booking.food != null}">
-                                    <strong>Comida:</strong> 
-                                    <span th:text="${booking.food.name}"></span>
-                                </div>
-                                <div th:if="${booking.transportation != null}">
-                                    <strong>Transporte:</strong> 
-                                    <span th:text="${booking.transportation.driverName}"></span>
-                                </div>
-                                <div th:if="${booking.tour != null}">
-                                    <strong>Tour:</strong> 
-                                    <span th:text="${booking.tour.nameTour}"></span>
-                                </div>
+                        <td class="services-container">
+                            <!-- Comida -->
+                            <div th:if="${booking.food != null}">
+                                <strong>Comida:</strong> 
+                                <span th:text="${foodNames.get(booking.food.id_food)}"></span>
                             </div>
-                            <span th:unless="${booking.additionalServices}">No</span>
+                            <!-- Transporte -->
+                            <div th:if="${booking.transportation != null}">
+                                <strong>Transporte:</strong> 
+                                <span th:text="${vehicleNames.get(booking.transportation.id_transportation)}"></span>
+                            </div>
+                            <!-- Tour -->
+                            <div th:if="${booking.tour != null}">
+                                <strong>Tour:</strong> 
+                                <span th:text="${tourNames.get(booking.tour.id_tour)}"></span>
+                            </div>
+                            <span th:if="${booking.food == null and booking.transportation == null and booking.tour == null}">
+                                Sin servicios adicionales
+                            </span>
                         </td>
                         <td>
                             <span th:text="${booking.reserveStatus}" 

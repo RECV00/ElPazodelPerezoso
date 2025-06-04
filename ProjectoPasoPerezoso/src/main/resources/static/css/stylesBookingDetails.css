@@ -1,0 +1,218 @@
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.booking-details-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.details-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    color: #333;
+}
+
+.service-item {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.payments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.payments-table th, .payments-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.payments-table th {
+    background-color: #f5f5f5;
+}
+
+.total-row {
+    text-align: right;
+    font-size: 1.1em;
+}
+
+.balance-label {
+    margin-left: 30px;
+}
+
+.financial-summary .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    font-size: 1.1em;
+    border-top: 2px solid #333;
+    margin-top: 10px;
+    padding-top: 15px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+/* Estilos para los badges */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.status-badge.pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.confirmada {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.cancelada {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.badge.premium-badge {
+    background-color: #d4b8ff;
+    color: #4b0082;
+}
+
+.badge.standard-badge {
+    background-color: #b8e0ff;
+    color: #005b96;
+}
+
+/* Estilos para los botones */
+.button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.back-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.back-btn:hover {
+    background-color: #5a6268;
+}
+
+.edit-btn {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #138496;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.payment-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.payment-btn:hover {
+    background-color: #218838;
+}
+
+.view-btn {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 5px 10px;
+    font-size: 0.85em;
+}
+
+.view-btn:hover {
+    background-color: #e0a800;
+}
+
+/* Alertas */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

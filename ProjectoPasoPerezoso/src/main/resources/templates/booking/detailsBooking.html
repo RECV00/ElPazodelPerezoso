@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles de Reserva</title>
+    <link th:href="@{/css/stylesBookingDetails.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Detalles de la Reserva</h1>
+        
+        <div class="back-button">
+            <a th:href="@{/booking/listaReservas}" class="button back-btn">Volver a la lista</a>
+        </div>
+        
+        <!-- Mensajes de éxito/error -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        
+        <div class="booking-details-container">
+            <!-- Sección de información básica -->
+            <div class="details-section">
+                <h2>Información Básica</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Código de Reserva:</span>
+                        <span class="detail-value" th:text="${booking.id_booking}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Estado:</span>
+                        <span class="detail-value status-badge" th:text="${booking.reserveStatus}" 
+                              th:classappend="${booking.reserveStatus.toLowerCase()}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tipo:</span>
+                        <span class="detail-value badge" th:text="${booking.bookingType}" 
+                              th:classappend="${booking.bookingType == 'Premium' ? 'premium-badge' : 'standard-badge'}"></span>
+                    </div>
+                   
+                </div>
+            </div>
+            
+            <!-- Sección de fechas y huéspedes -->
+            <div class="details-section">
+                <h2>Fechas y Huéspedes</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Fecha de Entrada:</span>
+                        <span class="detail-value" th:text="${#temporals.format(booking.checkInDate, 'dd/MM/yyyy')}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Fecha de Salida:</span>
+                        <span class="detail-value" th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy')}"></span>
+                    </div>
+                    <span class="detail-value" 
+                        th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(booking.checkInDate, booking.checkOutDate)}">
+                    </span>
+                    <div class="detail-item">
+                        <span class="detail-label">Número de Huéspedes:</span>
+                        <span class="detail-value" th:text="${booking.numberGuests}"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección del cliente -->
+            <div class="details-section" th:if="${booking.client != null}">
+                <h2>Información del Cliente</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Nombre:</span>
+                        <span class="detail-value" th:text="${booking.client.name + ' ' + booking.client.last_name}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Cédula:</span>
+                        <span class="detail-value" th:text="${booking.client.identification}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Teléfono:</span>
+                        <span class="detail-value" th:text="${booking.client.phone}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Email:</span>
+                        <span class="detail-value" th:text="${booking.client.email}"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de la cabaña -->
+            <div class="details-section" th:if="${booking.cabin != null}">
+                <h2>Información de la Cabaña</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Nombre:</span>
+                        <span class="detail-value" th:text="${booking.cabin.name}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Capacidad:</span>
+                        <span class="detail-value" th:text="${booking.cabin.capacity}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Descripción:</span>
+                        <span class="detail-value" th:text="${booking.cabin.description}"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Precio por Noche:</span>
+                        <span class="detail-value" th:text="${'₡' + #numbers.formatDecimal(booking.cabin.pricePerNight, 0, 'COMMA', 2, 'POINT')}"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de servicios adicionales -->
+            <div class="details-section">
+                <h2>Servicios Adicionales</h2>
+                
+                <!-- Comida -->
+                <div class="service-item" th:if="${booking.food != null}">
+                    <h3>Servicio de Comida</h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Menú Seleccionado:</span>
+                            <span class="detail-value" th:text="${booking.food.selectedMenu}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Precio:</span>
+                            <!--<span class="detail-value" th:text="${'₡' + #numbers.formatDecimal(booking.food.dishe.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Fecha de Servicio:</span>
+                            <span class="detail-value" th:text="${#temporals.format(booking.food.dateService, 'dd/MM/yyyy')}"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Transporte -->
+                <div class="service-item" th:if="${booking.transportation != null}">
+                    <h3>Servicio de Transporte</h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Vehículo:</span>
+                            <span class="detail-value" th:text="${booking.transportation.plate}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Conductor:</span>
+                            <span class="detail-value" th:text="${booking.transportation.driver}"></span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <!-- Tour -->
+                <div class="service-item" th:if="${booking.tour != null}">
+                    <h3>Servicio de Tour</h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Nombre del Tour:</span>
+                            <span class="detail-value" th:text="${booking.tour.nameTour}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Descripción:</span>
+                            <span class="detail-value" th:text="${booking.tour.description}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Fecha del Tour:</span>
+                            <span class="detail-value" th:text="${#temporals.format(booking.tour.date, 'dd/MM/yyyy')}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Precio:</span>
+                            <span class="detail-value" th:text="${'₡' + #numbers.formatDecimal(booking.tour.price, 0, 'COMMA', 2, 'POINT')}"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${booking.food == null and booking.transportation == null and booking.tour == null}">
+                    <p>No se han agregado servicios adicionales a esta reservación.</p>
+                </div>
+            </div>
+            
+            <!-- Sección de pagos -->
+            <div class="details-section">
+                <h2>Información de Pagos</h2>
+                <!--<div th:if="${booking.payment != null and !booking.payment.isEmpty()}">-->
+                    <table class="payment-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Método</th>
+                                <th>Estado</th>
+                                <th>Comprobante</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="payment : ${booking.payment}">
+                                <td th:text="${#temporals.format(payment.dateTransfer, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${'₡' + #numbers.formatDecimal(payment.amount, 0, 'COMMA', 2, 'POINT')}"></td>
+                                <td th:text="${payment.methodPayment}"></td>
+                                <td>
+                                    <span class="status-badge" th:text="${payment.statePayment}" 
+                                          th:classappend="${payment.statePayment.toLowerCase()}"></span>
+                                </td>
+                                <td>
+                                    <a th:if="${payment.receipt != null}" 
+                                       th:href="@{'/uploads/payment/' + ${payment.receipt}}" 
+                                       target="_blank" class="button view-btn">Ver</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="total-row">
+                                    <strong>Total Pagado:</strong>
+                                    <span th:text="${'₡' + #numbers.formatDecimal(booking.totalPaid, 0, 'COMMA', 2, 'POINT')}"></span>
+                                    <strong class="balance-label">Saldo Pendiente:</strong>
+                                    <!--<span th:text="${'₡' + #numbers.formatDecimal(booking.totalPrice - booking.totalPaid, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div th:if="${booking.payment == null or booking.payment.isEmpty()}">
+                    <p>No se han registrado pagos para esta reservación.</p>
+                </div>
+            </div>
+            
+            <!-- Sección de resumen financiero -->
+            <div class="details-section financial-summary">
+                <h2>Resumen Financiero</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-label">Subtotal Cabaña:</span>
+                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.cabinSubtotal, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    </div>
+                    <div class="summary-item" th:if="${booking.food != null}">
+                        <span class="summary-label">Servicio de Comida:</span>
+                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.food.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    </div>
+                    <div class="summary-item" th:if="${booking.transportation != null}">
+                        <span class="summary-label">Servicio de Transporte:</span>
+                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.transportation.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    </div>
+                    <div class="summary-item" th:if="${booking.tour != null}">
+                        <span class="summary-label">Servicio de Tour:</span>
+                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.tour.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Impuestos:</span>
+                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.taxes, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    </div>
+                    <div class="summary-item total">
+                        <span class="summary-label">Total Reservación:</span>
+                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <a th:href="@{/booking/edit/{id}(id=${booking.id_booking})}" class="button edit-btn">Editar Reserva</a>
+                <a th:href="@{/booking/delete/{id}(id=${booking.id_booking})}" 
+                   class="button delete-btn" 
+                   onclick="return confirmDelete(event, this.href)">Eliminar Reserva</a>
+                <a th:href="@{/payment/new/{bookingId}(bookingId=${booking.id_booking})}" class="button payment-btn">Registrar Pago</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Función para confirmar eliminación
+        function confirmDelete(event, deleteUrl) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+            return false;
+        }
+    </script>
+</body>
+</html>

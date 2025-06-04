@@ -39,6 +39,9 @@ public class SecurityConfig {
                 .requestMatchers("/employee/**").hasRole("EMPLOYEE")
                 .requestMatchers("/client/**").hasRole("CLIENT")
                 .requestMatchers("/booking/**").permitAll()
+                .requestMatchers("/tour/**").permitAll()
+                .requestMatchers("/payment/**").permitAll()
+                .requestMatchers("/food/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

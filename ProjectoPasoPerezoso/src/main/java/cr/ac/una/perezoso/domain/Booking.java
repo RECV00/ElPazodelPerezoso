@@ -70,7 +70,7 @@ public class Booking {
     @JoinColumn(name = "id_vehicle")
     private Transportation transportation;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_food")
     private Food food;
     
@@ -79,6 +79,7 @@ public class Booking {
     private PaymentManagement payment;
 
 
+//    private double taxes;
     public Booking() {
     }
 
@@ -103,7 +104,9 @@ public class Booking {
         this.payment = payment;
     }
 
-    // Getters y setters
+ 
+    
+    
     public int getId_booking() {
         return id_booking;
     }
@@ -224,6 +227,7 @@ public class Booking {
         this.payment = payment;
     }
     
+  
     @Override
     public String toString() {
         return "Booking{" + "id_booking=" + id_booking + ", checkInDate=" + checkInDate 
@@ -278,4 +282,6 @@ public class Booking {
 //            throw new IllegalArgumentException("El estado de la reservación es obligatorio");
 //        }
 //    }
+
+    
 }

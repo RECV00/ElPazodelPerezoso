@@ -10,6 +10,7 @@ package cr.ac.una.perezoso.service;
 //import cr.ac.una.perezoso.domain.Employee;
 import cr.ac.una.perezoso.domain.Booking;
 import cr.ac.una.perezoso.domain.Client;
+import cr.ac.una.perezoso.domain.Dishe;
 import cr.ac.una.perezoso.jpa.BookingRepository;
 import cr.ac.una.perezoso.jpa.UserRepository;
 //import jakarta.transaction.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
@@ -31,7 +33,7 @@ import org.springframework.data.domain.PageRequest;
 @Service
 public class BookingService {
    
- private final BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final CabinService cabinService;
     private final TourService tourService;
@@ -258,4 +260,38 @@ public class BookingService {
     public Page<Booking> getReservationsByStatus(String status, Pageable pageable) {
         return bookingRepository.findByReserveStatus(status, pageable);
     }
+    
+    
+    public Optional<Booking> getReservationWithDetails(int id) {
+    return bookingRepository.findByIdWithDetails(id);
+}
+
+//public double calculateTotalPrice(Booking booking) {
+//    double total = 0;
+//    
+//    // Precio de la cabaña
+//    if (booking.getCabin() != null) {
+//        long nights = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
+//        total += booking.getCabin().getPricePerNight() * nights;
+//    }
+//    
+//    // Servicios adicionales
+//    if (booking.getFood() != null && booking.getFood().getDishes() != null) {
+//    for (var dish : booking.getFood().getDihes()) {
+//        total += dish.getPrice();
+//    }
+//}
+//    if (booking.getTransportation() != null) {
+//        total += 20000; // Valor fijo para transporte
+//    }
+//    if (booking.getTour() != null) {
+//        total += booking.getTour().getPrice();
+//    }
+//    
+//    // Impuestos (13%)
+//    double taxes = total * 0.13;
+//    booking.setTaxes(taxes);
+//    
+//    return total + taxes;
+//}
 }

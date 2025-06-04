@@ -7,11 +7,13 @@ package cr.ac.una.perezoso.controller;
 import cr.ac.una.perezoso.domain.Booking;
 import cr.ac.una.perezoso.jpa.BookingRepository;
 import cr.ac.una.perezoso.service.BookingService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,10 +39,11 @@ public class BookingController {
     private  BookingService bookingService;
     private  BookingRepository bookingRepository;
 
-    public BookingController(BookingService bookingService) {
+    @Autowired
+    public BookingController(BookingService bookingService, BookingRepository bookingRepository) {
         this.bookingService = bookingService;
+        this.bookingRepository = bookingRepository;
     }
-
   
     @GetMapping("/listaReservas")
 //    public String showBookings(
@@ -107,7 +110,7 @@ public String showBookings(
             }
             
             // Obtener nombre de la cabaña
-            if (booking.getCabin() != null && !cabinNames.containsKey(booking.getCabin().getCabinID())) {
+           if (booking.getCabin() != null && !cabinNames.containsKey(booking.getCabin().getCabinID())) {
                 cabinNames.put(booking.getCabin().getCabinID(), booking.getCabin().getName());
             }
             
@@ -155,35 +158,54 @@ public String showBookings(
     
     return "booking/listBooking";
 }
-    @GetMapping("/search")
-    public String searchBookings(
-            @RequestParam(required = false) String clientId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Model model,
-            HttpServletRequest request) {
-        
-        List<Booking> bookings;
+@GetMapping("/search")
+public String searchBookings(
+        @RequestParam(required = false) String clientId,
+        @RequestParam(required = false) String status,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        Model model,
+        HttpServletRequest request) {
+    
+    try {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Booking> bookingPage;
         
         if (clientId != null && !clientId.isEmpty()) {
-            bookings = bookingService.getReservationsByClientIdentification(clientId);
+            // Buscar por cédula del cliente
+            bookingPage = bookingRepository.findByClient_IdentificationContainingIgnoreCase(clientId, pageable);
         } else if (status != null && !status.isEmpty()) {
-            bookings = bookingService.searchReservationsByStatus(status);
+            // Buscar por estado
+            bookingPage = bookingRepository.findByReserveStatusContainingIgnoreCase(status, pageable);
         } else if (startDate != null && endDate != null) {
-            bookings = bookingService.searchReservationsByDateRange(startDate, endDate);
+            // Buscar por rango de fechas (usando checkInDate)
+            bookingPage = bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
         } else {
-            bookings = bookingService.getAllReservations(PageRequest.of(0, 10)).getContent();
+            // Mostrar todas las reservaciones
+            bookingPage = bookingRepository.findAll(pageable);
         }
         
-        model.addAttribute("bookings", bookings);
-        loadRelatedData(model, bookings);
+        // Cargar datos relacionados
+        loadRelatedData(model, bookingPage.getContent());
         
-        if (isAjaxRequest(request)) {
-            return "booking/listBooking :: #bookings-table";
-        }
-        return "booking/listBooking"; 
+        // Agregar atributos al modelo
+        model.addAttribute("bookings", bookingPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", bookingPage.getTotalPages());
+        model.addAttribute("pageSize", size);
+        
+    } catch (Exception e) {
+        model.addAttribute("errorMessage", "Error al cargar las reservaciones: " + e.getMessage());
     }
+    
+    // Devolver fragmento HTML si es AJAX
+    if (isAjaxRequest(request)) {
+        return "booking/listBooking :: #bookings-container";
+    }
+    return "booking/listBooking";
+}
 
     @GetMapping("/new")
     public String showBookingForm(Model model) {
@@ -241,33 +263,85 @@ public String showBookings(
         return "redirect:/booking/listaReservas";
     }
 
-    private void loadRelatedData(Model model, List<Booking> bookings) {
-        Map<Integer, String> clientNames = new HashMap<>();
-        Map<Integer, String> cabinNames = new HashMap<>();
-        Map<Integer, String> tourNames = new HashMap<>();
-        
-        bookings.forEach(booking -> {
-            if (booking.getClient() != null) {
-                clientNames.put(booking.getClient().getId_user(), 
-                    booking.getClient().getName() + " " + booking.getClient().getLast_name());
-            }
-            if (booking.getCabin() != null) {
-                cabinNames.put(booking.getCabin().getCabinID(), booking.getCabin().getName());
-            }
-            if (booking.getTour() != null) {
-                tourNames.put(booking.getTour().getId_tour(), booking.getTour().getNameTour());
-            }
-        });
-        
-        model.addAttribute("clientNames", clientNames);
-        model.addAttribute("cabinNames", cabinNames);
-        model.addAttribute("tourNames", tourNames);
-    }
+   private void loadRelatedData(Model model, List<Booking> bookings) {
+    Map<Integer, String> clientNames = new HashMap<>();
+    Map<Integer, String> cabinNames = new HashMap<>();
+    Map<Integer, String> tourNames = new HashMap<>();
+    Map<Integer, String> vehicleNames = new HashMap<>();
+    Map<Integer, String> foodNames = new HashMap<>();
+    Map<Integer, String> clientIdentifications = new HashMap<>();
+    
+    bookings.forEach(booking -> {
+        if (booking.getClient() != null) {
+            clientNames.put(booking.getClient().getId_user(), 
+                booking.getClient().getName() + " " + booking.getClient().getLast_name());
+        }
+        if (booking.getCabin() != null) {
+            cabinNames.put(booking.getCabin().getCabinID(), booking.getCabin().getName());
+        }
+        if (booking.getTour() != null) {
+            tourNames.put(booking.getTour().getId_tour(), booking.getTour().getNameTour());
+        }
+        if (booking.getTransportation() != null) {
+            vehicleNames.put(booking.getTransportation().getId_transportation(),
+                booking.getTransportation().getPlate() + " " + booking.getTransportation().getDriver());
+        }
+        if (booking.getFood() != null) {
+            foodNames.put(booking.getFood().getId_food(), booking.getFood().getSelectedMenu());
+        }
+         if (booking.getClient() != null) {
+            clientNames.put(booking.getClient().getId_user(), 
+                booking.getClient().getName() + " " + booking.getClient().getLast_name());
+            clientIdentifications.put(booking.getClient().getId_user(), 
+                booking.getClient().getIdentification());
+        }
+    });
+    
+    model.addAttribute("clientNames", clientNames);
+    model.addAttribute("cabinNames", cabinNames);
+    model.addAttribute("tourNames", tourNames);
+    model.addAttribute("vehicleNames", vehicleNames);
+    model.addAttribute("foodNames", foodNames);
+    model.addAttribute("clientIdentifications", clientIdentifications);
+}
 
     private boolean isAjaxRequest(HttpServletRequest request) {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
     
+    
+    
+    @GetMapping("/details/{id}")
+public String showBookingDetails(@PathVariable int id, Model model) {
+    try {
+        // Obtener la reserva con todos los datos relacionados
+        Booking booking = bookingService.getReservationWithDetails(id)
+            .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada"));
+        
+        // Calcular totales
+//        double totalPaid = booking.getPayment().stream()
+//            .filter(p -> "Completado".equals(p.getStatus()))
+//            .mapToDouble(Payment::getAmount)
+//            .sum();
+        double totalPaid=34000.34;
+        double totalPrice = 300000;
+//                bookingService.calculateTotalPrice(booking);
+        
+        // Agregar atributos al modelo
+        model.addAttribute("booking", booking);
+        model.addAttribute("totalPaid", totalPaid);
+        model.addAttribute("totalPrice", totalPrice);
+        
+    } catch (EntityNotFoundException e) {
+        model.addAttribute("error", e.getMessage());
+        return "redirect:/booking/listaReservas";
+    } catch (Exception e) {
+        model.addAttribute("error", "Error al cargar los detalles: " + e.getMessage());
+        return "redirect:/booking/listaReservas";
+    }
+    
+    return "booking/detailsBooking";
+}
 //    return "bookings/listBooking :: #bookings-table"; // For AJAX
 //return "bookings/listBooking"; // For normal
 }
