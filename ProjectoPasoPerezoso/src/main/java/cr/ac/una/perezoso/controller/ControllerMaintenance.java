@@ -28,13 +28,13 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author dayan
  */
 @Controller
-@RequestMapping("maintenance")
+@RequestMapping("/maintenance")
 public class ControllerMaintenance {
     
      @Autowired
     private MaintenanceService ms;
-    
- @GetMapping("")
+    ///maintenance/list
+ @GetMapping("/list")
 public String viewList(Model model,
                        @RequestParam(defaultValue = "0") int page,
                        @RequestParam(defaultValue = "3") int size) {
