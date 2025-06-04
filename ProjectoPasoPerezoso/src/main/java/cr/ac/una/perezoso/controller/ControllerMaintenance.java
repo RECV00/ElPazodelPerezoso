@@ -46,7 +46,7 @@ public String viewList(Model model,
     model.addAttribute("currentPage", page);
     model.addAttribute("totalPages", pagedResult.getTotalPages());
 
-    return "/HTMLMaintenance/index";
+    return "HTMLMaintenance/index";
 }
 
   

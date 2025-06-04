@@ -16,7 +16,7 @@ import java.time.LocalDate;
  * @author dayan
  */
 @Entity
-@Table(name="tmaintenancetable")
+@Table(name="tb_maintenance")
 public class Maintenance {
      @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
