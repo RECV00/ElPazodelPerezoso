@@ -3,6 +3,7 @@ package cr.ac.una.perezoso.controller;
 
 import cr.ac.una.perezoso.business.Logic;
 import cr.ac.una.perezoso.domain.Maintenance;
+import cr.ac.una.perezoso.domain.Tour;
 import cr.ac.una.perezoso.service.MaintenanceService;
 //import java.awt.print.Pageable;
 import org.springframework.data.domain.Sort;
@@ -50,12 +51,12 @@ public String viewList(Model model,
 }
 
   
-  @GetMapping("/maintenance/Form")
+  @GetMapping("/Form")
   public String form(){
     return "/HTMLMaintenance/create";
   }
   
-  @PostMapping("/maintenance/createMaintenance")
+  @PostMapping("/createMaintenance")
 public String saveMaintenance(
     @RequestParam("maintenanceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maintenanceDate,
     @RequestParam("maintenanceType") String maintenanceType,
@@ -93,7 +94,7 @@ public String saveMaintenance(
 
 
 
-@GetMapping("/maintenance/FormUpdate")
+@GetMapping("maintenance/FormUpdate")
 public String showUpdateForm(@RequestParam("id") int id, Model model) {
     Maintenance maintenance = ms.getById(id);
     
@@ -144,10 +145,10 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
     return "/HTMLMaintenance/updateMaintenance";
 }
    
- @GetMapping("/maintenance/remove")
+ @GetMapping("/remove")
 public String deleteMaintenance(@RequestParam("id") int id) {
     ms.delete(id); 
-    return "redirect:/HTMLMaintenance/maintenance"; 
+    return "redirect:/HTMLMaintenance/index"; 
 }
     @GetMapping("/maintenance/detalleMantenimiento")
     public String showMaintenanceDetails(@RequestParam("id") int id, Model model) {
@@ -167,7 +168,7 @@ public String deleteMaintenance(@RequestParam("id") int id) {
     }
     
     
- @GetMapping("/maintenance/filterType")
+ @GetMapping("/filterType")
 public String filterByType(@RequestParam(required = false) String type, Model model) {
     try {
         List<Maintenance> results = (type == null || type.isEmpty())
@@ -190,7 +191,7 @@ public String filterByType(@RequestParam(required = false) String type, Model mo
 }
 
 
-   @GetMapping("/maintenance/filterState")
+   @GetMapping("/filterState")
 public String filterByState(@RequestParam(required = false) String state,
                             Model model) {
     try {
