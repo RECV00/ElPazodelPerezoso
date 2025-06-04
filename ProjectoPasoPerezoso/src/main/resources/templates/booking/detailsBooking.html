@@ -53,10 +53,13 @@
                         <span class="detail-label">Fecha de Salida:</span>
                         <span class="detail-value" th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy')}"></span>
                     </div>
-                    <span class="detail-value" 
-                        th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(booking.checkInDate, booking.checkOutDate)}">
-                    </span>
                     <div class="detail-item">
+                        <span class="detail-label">Noches:</span>
+                        <span class="detail-value" 
+                              th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(booking.checkInDate, booking.checkOutDate)}">
+                        </span>
+                    </div>
+                        <div class="detail-item">
                         <span class="detail-label">Número de Huéspedes:</span>
                         <span class="detail-value" th:text="${booking.numberGuests}"></span>
                     </div>
@@ -176,92 +179,74 @@
                 </div>
             </div>
             
-            <!-- Sección de pagos -->
+<!--             Sección de pagos 
             <div class="details-section">
                 <h2>Información de Pagos</h2>
-                <!--<div th:if="${booking.payment != null and !booking.payment.isEmpty()}">-->
-                    <table class="payment-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Monto</th>
-                                <th>Método</th>
-                                <th>Estado</th>
-                                <th>Comprobante</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="payment : ${booking.payment}">
-                                <td th:text="${#temporals.format(payment.dateTransfer, 'dd/MM/yyyy')}"></td>
-                                <td th:text="${'₡' + #numbers.formatDecimal(payment.amount, 0, 'COMMA', 2, 'POINT')}"></td>
-                                <td th:text="${payment.methodPayment}"></td>
-                                <td>
-                                    <span class="status-badge" th:text="${payment.statePayment}" 
-                                          th:classappend="${payment.statePayment.toLowerCase()}"></span>
-                                </td>
-                                <td>
-                                    <a th:if="${payment.receipt != null}" 
-                                       th:href="@{'/uploads/payment/' + ${payment.receipt}}" 
-                                       target="_blank" class="button view-btn">Ver</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="5" class="total-row">
-                                    <strong>Total Pagado:</strong>
-                                    <span th:text="${'₡' + #numbers.formatDecimal(booking.totalPaid, 0, 'COMMA', 2, 'POINT')}"></span>
-                                    <strong class="balance-label">Saldo Pendiente:</strong>
-                                    <!--<span th:text="${'₡' + #numbers.formatDecimal(booking.totalPrice - booking.totalPaid, 0, 'COMMA', 2, 'POINT')}"></span>-->
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+
+                <div th:if="${booking.payment != null and !booking.payment.isEmpty()}">
+                    <div class="details-grid" th:each="payment : ${booking.payment}">
+                        <div class="detail-item">
+                            <span class="detail-label">Fecha:</span>
+                            <span class="detail-value" th:text="${#temporals.format(payment.dateTransfer, 'dd/MM/yyyy')}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Monto:</span>
+                            <span class="detail-value" th:text="${'₡' + #numbers.formatDecimal(payment.transactionAmount, 0, 'COMMA', 2, 'POINT')}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Método:</span>
+                            <span class="detail-value" th:text="${payment.methodPayment}"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Estado:</span>
+                            <span class="detail-value status-badge" 
+                                  th:text="${payment.statePayment}"
+                                  th:classappend="${payment.statePayment.toLowerCase()}"></span>
+                        </div>
+                        <div class="detail-item" th:if="${payment.receipt != null}">
+                            <span class="detail-label">Comprobante:</span>
+                            <a th:href="@{'/uploads/payment/' + ${payment.receipt}}" 
+                               target="_blank" class="button view-btn">Ver comprobante</a>
+                        </div>
+                    </div>
                 </div>
+
                 <div th:if="${booking.payment == null or booking.payment.isEmpty()}">
                     <p>No se han registrado pagos para esta reservación.</p>
                 </div>
-            </div>
+            </div>-->
             
             <!-- Sección de resumen financiero -->
-            <div class="details-section financial-summary">
+<!--            <div class="details-section financial-summary">
                 <h2>Resumen Financiero</h2>
                 <div class="summary-grid">
                     <div class="summary-item">
                         <span class="summary-label">Subtotal Cabaña:</span>
-                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.cabinSubtotal, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        <span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.cabinSubtotal, 0, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                     <div class="summary-item" th:if="${booking.food != null}">
                         <span class="summary-label">Servicio de Comida:</span>
-                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.food.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        <span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.food.price, 0, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                     <div class="summary-item" th:if="${booking.transportation != null}">
                         <span class="summary-label">Servicio de Transporte:</span>
-                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.transportation.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        <span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.transportation.price, 0, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                     <div class="summary-item" th:if="${booking.tour != null}">
                         <span class="summary-label">Servicio de Tour:</span>
-                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.tour.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        <span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.tour.price, 0, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">Impuestos:</span>
-                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.taxes, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        <span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.taxes, 0, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                     <div class="summary-item total">
                         <span class="summary-label">Total Reservación:</span>
-                        <!--<span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                        <span class="summary-value" th:text="${'₡' + #numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                 </div>
-            </div>
+            </div>-->
             
-            <!-- Botones de acción -->
-            <div class="action-buttons">
-                <a th:href="@{/booking/edit/{id}(id=${booking.id_booking})}" class="button edit-btn">Editar Reserva</a>
-                <a th:href="@{/booking/delete/{id}(id=${booking.id_booking})}" 
-                   class="button delete-btn" 
-                   onclick="return confirmDelete(event, this.href)">Eliminar Reserva</a>
-                <a th:href="@{/payment/new/{bookingId}(bookingId=${booking.id_booking})}" class="button payment-btn">Registrar Pago</a>
-            </div>
         </div>
     </div>
     
