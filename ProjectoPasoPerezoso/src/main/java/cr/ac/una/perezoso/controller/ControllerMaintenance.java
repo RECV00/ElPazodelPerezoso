@@ -46,16 +46,16 @@ public String viewList(Model model,
     model.addAttribute("currentPage", page);
     model.addAttribute("totalPages", pagedResult.getTotalPages());
 
-    return "HTMLMaintenance/index";
+    return "/HTMLMaintenance/index";
 }
 
   
-  @GetMapping("maintenance/Form")
+  @GetMapping("/maintenance/Form")
   public String form(){
     return "/HTMLMaintenance/create";
   }
   
-  @PostMapping("maintenance/createMaintenance")
+  @PostMapping("/maintenance/createMaintenance")
 public String saveMaintenance(
     @RequestParam("maintenanceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate maintenanceDate,
     @RequestParam("maintenanceType") String maintenanceType,
@@ -93,7 +93,7 @@ public String saveMaintenance(
 
 
 
-@GetMapping("maintenance/FormUpdate")
+@GetMapping("/maintenance/FormUpdate")
 public String showUpdateForm(@RequestParam("id") int id, Model model) {
     Maintenance maintenance = ms.getById(id);
     
@@ -108,7 +108,7 @@ public String showUpdateForm(@RequestParam("id") int id, Model model) {
     return "/HTMLMaintenance/updateMaintenance";
 }
 
-@PostMapping("maintenance/updateM")
+@PostMapping("/maintenance/updateM")
 public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maintenance, 
                               BindingResult result,
                               Model model) {
@@ -144,12 +144,12 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
     return "/HTMLMaintenance/updateMaintenance";
 }
    
- @GetMapping("maintenance/remove")
+ @GetMapping("/maintenance/remove")
 public String deleteMaintenance(@RequestParam("id") int id) {
     ms.delete(id); 
     return "redirect:/HTMLMaintenance/maintenance"; 
 }
-    @GetMapping("maintenance/detalleMantenimiento")
+    @GetMapping("/maintenance/detalleMantenimiento")
     public String showMaintenanceDetails(@RequestParam("id") int id, Model model) {
        
         Maintenance maintenance = ms.getById(id);
@@ -167,7 +167,7 @@ public String deleteMaintenance(@RequestParam("id") int id) {
     }
     
     
- @GetMapping("maintenance/filterType")
+ @GetMapping("/maintenance/filterType")
 public String filterByType(@RequestParam(required = false) String type, Model model) {
     try {
         List<Maintenance> results = (type == null || type.isEmpty())
@@ -190,7 +190,7 @@ public String filterByType(@RequestParam(required = false) String type, Model mo
 }
 
 
-   @GetMapping("maintenance/filterState")
+   @GetMapping("/maintenance/filterState")
 public String filterByState(@RequestParam(required = false) String state,
                             Model model) {
     try {
