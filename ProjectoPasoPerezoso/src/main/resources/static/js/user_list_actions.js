@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Cache de elementos DOM - VERSIÓN COMPLETA
+    // Cache de elementos DOM
     const domElements = {
         newUserBtn: document.getElementById('newUserBtn'),
         filterForm: document.getElementById('filterForm'),
-        pageSizeSelect: document.getElementById('pageSizeSelect'),
         clearFiltersBtn: document.getElementById('clearFiltersBtn'),
         usersTableBody: document.getElementById('usersTableBody'),
-        tableSection: document.querySelector('.table-section'), // Añadido
-        tableContent: document.querySelector('.table-responsive'), // Añadido
+        tableContent: document.getElementById('tableContent'),
+        tableLoader: document.getElementById('tableLoader'),
         currentPageInput: document.querySelector('input[name="page"]'),
         sizeInput: document.querySelector('input[name="size"]'),
-        totalUsersSpan: document.getElementById('totalUsers'), // Añadido
-        filterIdentification: document.getElementById('filterIdentification'), // Añadido
-        filterType: document.getElementById('filterType') // Añadido
+        totalUsersSpan: document.getElementById('totalUsers'),
+        filterIdentification: document.getElementById('filterIdentification'),
+        filterType: document.getElementById('filterType'),
+        paginationContainer: document.querySelector('.pagination-container')
     };
 
     // Manejar clic en "Nuevo Usuario"
@@ -47,34 +47,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const page = url.searchParams.get('page');
             loadUsersWithFilters(page);
         }
-        
-//        // Ver detalles (evita que se recargue la página)
-//        if (viewBtn) {
-//            e.preventDefault();
-//            // loadFormInModal(viewBtn.closest('a').href); // Descomenta si quieres cargar en modal
-//        }
     });
     
     async function loadUsersWithFilters(page = 0) {
         try {
-            // Actualizar página actual en el formulario
-            if (domElements.currentPageInput) {
-                domElements.currentPageInput.value = page;
-            }
-            
-            // Mostrar loader
-            if (domElements.tableSection) {
-                domElements.tableSection.innerHTML = `
-                    <div class="loader">Cargando usuarios...</div>
-                `;
+            // Mostrar loader con transición suave
+            if (domElements.tableContent && domElements.tableLoader) {
+                domElements.tableContent.style.opacity = '0.7';
+                domElements.tableContent.style.transition = 'opacity 0.3s ease';
+                domElements.tableLoader.style.display = 'flex';
             }
             
             // Construir parámetros
             const params = new URLSearchParams();
             params.append('page', page);
-            params.append('size', domElements.sizeInput?.value || '4');
+            params.append('size', domElements.sizeInput?.value || '10');
             
-            // Agregar filtros si existen
             if (domElements.filterIdentification?.value) {
                 params.append('identification', domElements.filterIdentification.value);
             }
@@ -82,22 +70,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 params.append('type', domElements.filterType.value);
             }
             
-            console.log('Enviando parámetros:', params.toString()); // Para depuración
-            
             // Configurar headers para AJAX
-            const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+            const headers = { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'Cache-Control': 'no-cache'
+            };
             
             // Realizar petición
-            const response = await fetch(`/admin/list?${params.toString()}`, { headers });
+            const response = await fetch(`/admin/list?${params.toString()}`, { 
+                headers,
+                cache: 'no-store'
+            });
             
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
             
             const html = await response.text();
-            updateUIWithResponse(html);
+            
+            // Ocultar loader y mostrar contenido con transición
+            if (domElements.tableContent && domElements.tableLoader) {
+                domElements.tableContent.style.opacity = '0';
+                setTimeout(() => {
+                    updateUIWithResponse(html);
+                    domElements.tableContent.style.opacity = '1';
+                    domElements.tableLoader.style.display = 'none';
+                }, 300);
+            } else {
+                updateUIWithResponse(html);
+            }
         } catch (error) {
             console.error('Error al cargar usuarios:', error);
+            if (domElements.tableContent && domElements.tableLoader) {
+                domElements.tableContent.style.opacity = '1';
+                domElements.tableLoader.style.display = 'none';
+            }
             showErrorMessage(error.message);
         }
     }
@@ -106,16 +113,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Opción 1: Actualizar solo el cuerpo de la tabla
+        // Actualizar el cuerpo de la tabla
         const newTableBody = doc.getElementById('usersTableBody');
         if (newTableBody && domElements.usersTableBody) {
             domElements.usersTableBody.innerHTML = newTableBody.innerHTML;
         }
         
-        // Opción 2: Actualizar toda la sección de tabla (incluyendo paginación)
-        const newTableSection = doc.querySelector('.table-section');
-        if (newTableSection && domElements.tableSection) {
-            domElements.tableSection.innerHTML = newTableSection.innerHTML;
+        // Actualizar paginación
+        const newPagination = doc.querySelector('.pagination-container');
+        if (newPagination && domElements.paginationContainer) {
+            domElements.paginationContainer.innerHTML = newPagination.innerHTML;
         }
         
         // Actualizar el contador total
@@ -136,13 +143,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function showErrorMessage(message) {
-        if (domElements.tableSection) {
-            domElements.tableSection.innerHTML = `
+        if (domElements.tableContent) {
+            const errorHtml = `
                 <div class="error-message">
                     <i class="fas fa-exclamation-triangle"></i>
                     ${message || 'Error al cargar los usuarios'}
                 </div>
             `;
+            domElements.tableContent.insertAdjacentHTML('afterbegin', errorHtml);
         }
     }
     
@@ -152,25 +160,11 @@ document.addEventListener('DOMContentLoaded', function() {
         loadUsersWithFilters(0);
     });
     
-    // Manejador de cambio en el tamaño de página
-    domElements.pageSizeSelect?.addEventListener('change', function() {
-        if (domElements.sizeInput) {
-            domElements.sizeInput.value = this.value;
-        }
-        loadUsersWithFilters(0);
-    });
-    
     // Manejador de limpieza de filtros
     domElements.clearFiltersBtn?.addEventListener('click', function() {
-        if (domElements.filterIdentification) {
-            domElements.filterIdentification.value = '';
-        }
-        if (domElements.filterType) {
-            domElements.filterType.value = '';
-        }
-        if (domElements.currentPageInput) {
-            domElements.currentPageInput.value = '0';
-        }
+        if (domElements.filterIdentification) domElements.filterIdentification.value = '';
+        if (domElements.filterType) domElements.filterType.value = '';
+        if (domElements.currentPageInput) domElements.currentPageInput.value = '0';
         loadUsersWithFilters(0);
     });
     
@@ -228,5 +222,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-
+//    // Función para cargar formularios en modal (si existe)
+//    function loadFormInModal(url) {
+//        if (typeof loadModalContent === 'function') {
+//            loadModalContent(url);
+//        } else {
+//            window.location.href = url;
+//        }
+//    }
 });

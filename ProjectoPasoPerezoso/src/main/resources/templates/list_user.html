@@ -42,7 +42,7 @@
                     <input type="text" id="filterIdentification" name="identification" 
                            th:value="${identificationFilter}" 
                            placeholder="Ingrese identificación..." class="filter-input">
-                    <!--<button type="submit" class="filter-btn"><i class="fas fa-search"></i> Buscar</button>-->
+                   
                     <button type="button" id="clearFiltersBtn" class="filter-btn clear-btn">
                         <i class="fas fa-broom"></i> Limpiar
                     </button>
@@ -68,7 +68,7 @@
                 <span th:text="${error}"></span>
             </div>
             
-            <div class="table-responsive">
+            <!--<div class="table-responsive">-->
                 <table class="user-table" aria-describedby="tableDescription">
                     <caption id="tableDescription" class="sr-only">Listado de usuarios registrados en el sistema</caption>
                     <thead>
@@ -122,21 +122,12 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            <!--</div>-->
             
-                 <nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
-<!--    <div class="pagination-info">
-        Mostrando <span th:text="${users.size()}"></span> de 
-        <span th:text="${totalItems}"></span> usuarios
-        <span th:if="${identificationFilter != null && !identificationFilter.isEmpty()}">
-            | Filtrados por identificación: <strong th:text="${identificationFilter}"></strong>
-        </span>
-        <span th:if="${typeFilter != null && !typeFilter.isEmpty()}">
-            | Filtrados por tipo: <strong th:text="${typeFilter}"></strong>
-        </span>
-    </div>-->
+                 <!--<nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">-->
+
     
-    <div class="pagination-wrapper">
+    <div  class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
         <ul class="pagination">
             <li th:classappend="${currentPage == 0} ? 'disabled'">
                 <a th:href="@{/admin/list(page=${currentPage - 1}, size=${size}, 
@@ -170,18 +161,9 @@
             </li>
         </ul>
         
-<!--        <div class="page-size-selector">
-            <label for="pageSizeSelect">Mostrar:</label>
-            <select id="pageSizeSelect">
-                <option value="5" th:selected="${size == 5}">5</option>
-                <option value="10" th:selected="${size == 10}">10</option>
-                <option value="20" th:selected="${size == 20}">20</option>
-                <option value="50" th:selected="${size == 50}">50</option>
-            </select>
-            <span>por página</span>
-        </div>-->
+
     </div>
-</nav>
+<!--</nav>-->
         </section>
     </main>
 
