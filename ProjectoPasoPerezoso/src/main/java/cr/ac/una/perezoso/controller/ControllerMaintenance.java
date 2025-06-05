@@ -35,21 +35,7 @@ public class ControllerMaintenance {
     
      @Autowired
     private MaintenanceService ms;
-    ///maintenance/list
- /*@GetMapping("/list")
-public String viewList(Model model,
-                       @RequestParam(defaultValue = "0") int page,
-                       @RequestParam(defaultValue = "3") int size) {
-
-    Pageable pageable = PageRequest.of(page, size, Sort.by("maintenanceDate").descending());
-    Page<Maintenance> pagedResult = ms.getAll((org.springframework.data.domain.Pageable) pageable);
-
-    model.addAttribute("listM", pagedResult.getContent());
-    model.addAttribute("currentPage", page);
-    model.addAttribute("totalPages", pagedResult.getTotalPages());
-
-    return "/HTMLMaintenance/index";
-}*/
+ 
      
      
      @GetMapping("/list")

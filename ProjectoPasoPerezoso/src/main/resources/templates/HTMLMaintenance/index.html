@@ -192,17 +192,17 @@
 
 <!-- Paginación -->
 <div class="pagination" th:if="${totalPages > 1}">
-    <a th:if="${currentPage > 0}" th:href="@{/list(page=0)}">&laquo; Primero</a>
+    <a th:if="${currentPage > 0}" th:href="@{/maintenance/list(page=0)}">&laquo; Primero</a>
 
-    <a th:if="${currentPage > 0}" th:href="@{/list(page=${currentPage - 1})}">&lsaquo; Anterior</a>
+    <a th:if="${currentPage > 0}" th:href="@{/maintenance/list(page=${currentPage - 1})}">&lsaquo; Anterior</a>
 
     <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-        <a th:if="${i != currentPage}" th:href="@{/list(page=${i})}" th:text="${i + 1}"></a>
+        <a th:if="${i != currentPage}" th:href="@{/maintenance/list(page=${i})}" th:text="${i + 1}"></a>
         <span th:if="${i == currentPage}" class="active" th:text="${i + 1}"></span>
     </span>
 
-    <a th:if="${currentPage < totalPages - 1}" th:href="@{/list(page=${currentPage + 1})}">Siguiente &rsaquo;</a>
-    <a th:if="${currentPage < totalPages - 1}" th:href="@{/list(page=${totalPages - 1})}">Última &raquo;</a>
+    <a th:if="${currentPage < totalPages - 1}" th:href="@{/maintenance/list(page=${currentPage + 1})}">Siguiente &rsaquo;</a>
+    <a th:if="${currentPage < totalPages - 1}" th:href="@{/maintenance/list(page=${totalPages - 1})}">Última &raquo;</a>
 </div>
 
 <div id="modalUpdate" class="modal">
