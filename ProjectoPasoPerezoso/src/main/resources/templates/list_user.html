@@ -9,18 +9,18 @@
     <link rel="stylesheet" href="/css/modal_styles.css">
     <link rel="stylesheet" href="/css/styles_form.css">
     <link rel="stylesheet" href="/css/styles_form_edit.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
-
+    
+    
 
     <main class="user-container">
         
         <header class="page-header">
-        <h1>Listado de Usuarios</h1>
-        
+           <h1>Listado de Usuarios</h1>
         </header>
         
         <div class="user-actions-top">
@@ -32,39 +32,43 @@
             </span>
         </div>
         
-        <!-- Sección de filtros modificada para filtrado en tiempo real -->
         <section class="filter-section" aria-label="Filtros de búsqueda">
-            <div class="filter-form">
-                <input type="hidden" id="currentPage" th:value="${currentPage}">
-                <input type="hidden" id="pageSize" th:value="${size}">
+            <form id="filterForm" method="get" class="filter-form">
+                <input type="hidden" name="page" id="currentPage" th:value="${currentPage}">
+                <input type="hidden" name="size" id="pageSize" th:value="${size}">
                 
                 <div class="filter-group">
                     <label for="filterIdentification"><i class="fas fa-id-card"></i> Identificación:</label>
-                    <input type="text" id="filterIdentification" 
+                    <input type="text" id="filterIdentification" name="identification" 
                            th:value="${identificationFilter}" 
                            placeholder="Ingrese identificación..." class="filter-input">
+                   
+                    <button type="button" id="clearFiltersBtn" class="filter-btn clear-btn">
+                        <i class="fas fa-broom"></i> Limpiar
+                    </button>
                 </div>
                 
                 <div class="filter-group">
                     <label for="filterType"><i class="fas fa-users"></i> Tipo de usuario:</label>
-                    <select id="filterType" class="filter-select">
+                    <select id="filterType" name="type" class="filter-select">
                         <option value="">Todos los tipos</option>
                         <option value="ADMIN" th:selected="${typeFilter == 'ADMIN'}">Administrador</option>
                         <option value="EMPLOYEE" th:selected="${typeFilter == 'EMPLOYEE'}">Empleado</option>
                         <option value="CLIENT" th:selected="${typeFilter == 'CLIENT'}">Cliente</option>
                     </select>
+                    <button type="submit" class="filter-btn"><i class="fas fa-filter"></i> Filtrar</button>
                 </div>
-                
-                <div class="filter-group">
-                    <button type="button" id="clearFiltersBtn" class="filter-btn clear-btn">
-                        <i class="fas fa-broom"></i> Limpiar
-                    </button>
-                </div>
-            </div>
+            </form>
         </section>
         
-        <section class="table-section" aria-label="Resultados de usuarios">
-            <div class="table-responsive">
+        <section class="table-section" aria-label="Resultados de usuarios" id="tableSection">
+           
+             <div th:if="${error}" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${error}"></span>
+            </div>
+            
+            <!--<div class="table-responsive">-->
                 <table class="user-table" aria-describedby="tableDescription">
                     <caption id="tableDescription" class="sr-only">Listado de usuarios registrados en el sistema</caption>
                     <thead>
@@ -79,13 +83,12 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <!-- Datos iniciales cargados por Thymeleaf -->
                         <tr th:if="${#lists.isEmpty(users)}">
                             <td colspan="7" class="text-center no-users">
                                 <i class="fas fa-info-circle"></i> No se encontraron usuarios registrados
                             </td>
                         </tr>
-
+                        
                         <tr th:each="user : ${users}" th:object="${user}">
                             <td th:text="*{id_user}">1</td>
                             <td>
@@ -119,29 +122,48 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            <!--</div>-->
             
-            <nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
-                <div class="pagination-info">
-                    Mostrando <span th:text="${users.size()}"></span> de 
-                    <span th:text="${totalItems}"></span> usuarios
-                </div>
-                
-                <ul class="pagination" id="paginationControls">
-                    <!-- La paginación se actualizará dinámicamente via JavaScript -->
-                </ul>
-                
-                <div class="page-size-selector">
-                    <label for="pageSizeSelect">Mostrar:</label>
-                    <select id="pageSizeSelect">
-                        <option value="4" th:selected="${size == 4}">4</option>
-                        <option value="10" th:selected="${size == 10}">10</option>
-                        <option value="20" th:selected="${size == 20}">20</option>
-                        <option value="50" th:selected="${size == 50}">50</option>
-                    </select>
-                    <span>por página</span>
-                </div>
-            </nav>
+                 <!--<nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">-->
+
+    
+    <div  class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
+        <ul class="pagination">
+            <li th:classappend="${currentPage == 0} ? 'disabled'">
+                <a th:href="@{/admin/list(page=${currentPage - 1}, size=${size}, 
+                          identification=${identificationFilter}, 
+                          type=${typeFilter})}"
+                   aria-label="Página anterior">
+                    &lsaquo;
+                </a>
+            </li>
+            
+            <li th:each="i : ${#numbers.sequence(
+                (currentPage > 1 ? currentPage - 1 : 0),
+                (currentPage < totalPages - 2 ? currentPage + 1 : totalPages - 1)
+            )}" 
+                th:classappend="${i == currentPage} ? 'active'">
+                <a th:href="@{/admin/list(page=${i}, size=${size}, 
+                          identification=${identificationFilter}, 
+                          type=${typeFilter})}"
+                   th:text="${i + 1}"
+                   th:aria-current="${i == currentPage} ? 'page' : false">
+                </a>
+            </li>
+            
+            <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a th:href="@{/admin/list(page=${currentPage + 1}, size=${size}, 
+                          identification=${identificationFilter}, 
+                          type=${typeFilter})}"
+                   aria-label="Página siguiente">
+                    &rsaquo;
+                </a>
+            </li>
+        </ul>
+        
+
+    </div>
+<!--</nav>-->
         </section>
     </main>
 
