@@ -12,10 +12,14 @@ import cr.ac.una.perezoso.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -220,14 +225,19 @@ public String detalleUsuario(@PathVariable int id, Model model) {
 }
     
     @PostMapping("/eliminar/{id}")
-    public String eliminarUsuario(@PathVariable int id) {
-        try {
-            userService.delete(id);
-        } catch (Exception e) {
-            // Loggear el error
-        }
-        return "redirect:/admin/list";
+@ResponseBody
+public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable Integer id) {
+    Map<String, Object> response = new HashMap<>();
+    try {
+        userService.delete(id);
+        response.put("success", true);
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        response.put("success", false);
+        response.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+}
 
     // Métodos  privados
     private User crearUsuarioSegunTipo(String tipo, String nombre, String apellido, String cedula, 
