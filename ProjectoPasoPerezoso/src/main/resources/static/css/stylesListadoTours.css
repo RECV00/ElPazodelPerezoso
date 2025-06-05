@@ -1,25 +1,25 @@
-/*base fondo decorativa*/
+/* Base fondo decorativa */
 body {
-    background-image: url('/img/fondo.jpg'); /* Ruta de la imagen */
-    background-size: cover; /* Ajusta la imagen para cubrir todo el fondo */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    background-attachment: fixed; /* Fija la imagen para que no se desplace con el scroll */
-    font-family: Arial, sans-serif; /* Fuente principal */
-    color: white; /* Color del texto */
+    background-image: url('/img/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4; /* Color de fondo */
 }
+
 /* Barra de navegación */
 nav {
-    background-color: rgba(174, 182, 191, 0.7); /* Color original con 70% de opacidad */
+    background-color: rgba(174, 182, 191, 0.7);
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px); /* Efecto de desenfoque para mejorar la transparencia */
+    backdrop-filter: blur(5px);
 }
 
 nav .logo a {
@@ -50,172 +50,338 @@ nav .nav-links a {
 }
 
 nav .nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Fondo semi-transparente al pasar el mouse */
+    background-color: rgba(255, 255, 255, 0.2);
 }
-.container {
-    background-color: rgba(52, 58, 64, 0.8); /*Fondo nego semitransparente */
+
+/* Contenedor principal */
+.content {
+    background-color: rgba(52, 58, 64, 0.8);
     padding: 20px;
-    border-radius: 10px; /* Bordes redondeados */
-    margin: 20px auto; /* Centrar el contenedor */
-    max-width: 1200px; /* Ancho máximo */
-}
-
-h1 {
-    text-align: center;
-    color: white; /* Color del título */
-    margin-bottom: 20px;
-}
-.content h1 {
-    color: #333; /* Texto en blanco */
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-
-.content h2 {
-    color: #555;
-    font-size: 1.8em;
+    border-radius: 10px;
     margin: 20px auto;
+    max-width: 1200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-form {
+
+.content h1 {
+    color: white;
+    font-size: 2.5em;
     margin-bottom: 20px;
-    text-align: right;
+    text-align: center;
+}
+/* Contenedor superior con acciones */
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(160, 179, 32, 0.3);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-label {
-    font-weight: bold;
-    margin-right: 10px;
+/* Filtros y botones */
+.filter-container {
+    margin-bottom: 20px;
 }
 
-input[type="text"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 200px;
+.filter-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-button[type="submit"] {
-    padding: 8px 15px;
-    background-color: #6f7e14; /* VERDE OSCURO BOTON FILTRO Color de fondo del botón */
-    color: white; /* Color del texto */
+.filter-group label {
+    margin-right: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    min-width: 160px;
+    font-size: 0.95em;
+}
+
+.filter-group input {
+    padding: 10px 15px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    border-radius: 6px;
+    margin-right: 15px;
+    flex-grow: 1;
+    max-width: 300px;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.filter-group input:focus {
+    outline: none;
+    border-color: #a0b320;
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+.btn-add, .btn-reset {
+    padding: 8px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transform: scale(1);
 }
 
-button[type="submit"]:hover {
-    background-color: #a2a26e; /* BOTON FILTRO VERDE CLAROCambia el color al pasar el mouse */
-}
-.button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #a2a26e; /* VERDE CLARO Color de fondo */
-    color: white; /* Color del texto */
-    text-decoration: none;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
+.btn-add:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #b5c92c, #8a9a1a);
 }
 
-.button:hover {
-    background-color: #6f7e14; /* VERDE OSCURO BONTON DE AGREGAR Y MOSTARR Cambia el color al pasar el mouse */
+
+.btn-reset:hover {
+    ransform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #7f8c8d, #6c7a7b);
 }
-table {
+
+/* Tabla de tours */
+.tour-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+    transition: opacity 0.3s ease;
 }
 
-table th, table td {
+.tour-table th, .tour-table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #333;
 }
 
-table th {
-    background-color: #6f7e14; /* VERDE OSCURO Color de fondo del encabezado */
-    color: white; /* Color del texto */
-    font-weight: bold;
+.tour-table th {
+    background-color: #6f7e14;
+    color: white;
+    padding: 12px;
+    text-align: left;
 }
 
-table tr:hover {
-    background-color: #f5f5f5; /* Cambia el color al pasar el mouse */
-    color: black; /* Color del texto */
+.tour-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
-table td a {
-    color: #a2a26e ; /* VERDE CLARO Color de los enlaces */
+/* Botones de acción */
+.btn-edit, .btn-delete {
+     padding: 6px 12px;
+    border-radius: 4px;
     text-decoration: none;
-    margin-right: 10px;
-    color: white; /* Color del texto */
+    color: white;
+    font-size: 0.9em;
+    margin-right: 5px;
+    display: inline-block;
+    transition: opacity 0.3s;
 }
 
-table td a:hover {
-    text-decoration: underline; /* Subraya el enlace al pasar el mouse */
-}
-.button.edit {
-    background-color: #e1b822 ; /* AMARILLO Color de fondo para editar */
+.btn-edit {
+    background-color: #e1b822; /* AMARILLO */
 }
 
-.button.edit:hover {
-    background-color: #f39c12; /* Cambia el color al pasar el mouse */
+.btn-edit:hover {
+    opacity: 0.8;
+    color: white;
 }
 
-.button.delete {
-    background-color: #e74c3c; /* Color de fondo para eliminar */
+.btn-delete {
+    background-color: #e74c3c; /* ROJO */
 }
 
-.button.delete:hover {
-    background-color: #c0392b; /* Cambia el color al pasar el mouse */
+.btn-delete:hover {
+    opacity: 0.8;
+    color: white;
 }
+
+/* Paginación */
+.pagination-container {
+    background: transparent !important;
+    border-top: none !important;
+    padding: 15px 0 !important;
+    margin-top: 20px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 8px 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.page-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background-color: transparent !important;
+    border: 1px solid rgba(160, 179, 32, 0.3) !important;
+}
+
+.page-item.active .page-link {
+     background: linear-gradient(135deg, #8a9a1a, #6f7e14) !important;
+    border: none !important;
+    color: white !important;
+}
+.page-item:not(.disabled):not(.active) .page-link:hover {
+    background-color: rgba(111, 126, 20, 0.2) !important;
+    border-color: rgba(160, 179, 32, 0.5) !important;
+}
+.page-item.disabled .page-link {
+    color: rgba(255, 255, 255, 0.3) !important;
+    pointer-events: none;
+    border-color: rgba(160, 179, 32, 0.1) !important;
+}
+
+/* Flechas de navegación */
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    padding: 8px 15px;
+}
+/* Loading indicator */
+.loading-indicator {
+    display: none;
+    text-align: center;
+    padding: 15px;
+    color: #8a9a1a;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(138, 154, 26, 0.3);
+    border-radius: 50%;
+    border-top-color: #8a9a1a;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+
+/* Mensajes de alerta */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    table, thead, tbody, th, td, tr {
+    .content {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .filter-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+    
+    .tour-table, .tour-table thead, .tour-table tbody, .tour-table th, .tour-table td, .tour-table tr {
         display: block;
     }
-
-    thead tr {
+    
+    .tour-table thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
-
-    tr {
-        margin-bottom: 10px;
+    
+    .tour-table tr {
+        margin-bottom: 15px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 5px;
     }
-
-    td {
-        border: none;
+    
+    .tour-table td {
         position: relative;
         padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #eee;
     }
-
-    td:before {
+    
+    .tour-table td:before {
         position: absolute;
         left: 10px;
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
-        content: attr(data-label); /* Muestra el nombre de la columna */
+        content: attr(data-label);
         font-weight: bold;
+        color: #6f7e14;
     }
     
     nav {
         flex-direction: column;
         padding: 15px;
-        gap: 15px;
     }
     
     nav .nav-links {
-        width: 100%;
-        justify-content: space-around;
-        gap: 5px;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
     }
     
-    nav .nav-links a {
-        padding: 8px 12px;
-        font-size: 0.95em;
+    nav .nav-links li {
+        margin-left: 0;
     }
     
+     .top-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
-

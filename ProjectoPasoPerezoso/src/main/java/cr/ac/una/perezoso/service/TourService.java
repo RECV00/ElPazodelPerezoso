@@ -75,6 +75,12 @@ public class TourService implements CRUD<Tour, Integer>{
     return tourRepository.findByNameTourContainingIgnoreCase(name, pageable);
 }
      
+    
+     public Page<Tour> findByStartingPointContaining(String location, Pageable pageable) {
+        return tourRepository.findByStartingPointContainingIgnoreCase(location, pageable);
+    }
+     
+     
      @Override
     public boolean existsById(Integer id) {
         return tourRepository.existsById(id);
