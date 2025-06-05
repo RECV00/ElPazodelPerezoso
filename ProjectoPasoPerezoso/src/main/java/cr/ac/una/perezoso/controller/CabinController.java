@@ -8,7 +8,6 @@ import cr.ac.una.perezoso.data.FileUploadUtil;
 import cr.ac.una.perezoso.domain.Cabin;
 import cr.ac.una.perezoso.service.CabinService;
 import java.io.IOException;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +46,10 @@ public class CabinController {
                            @RequestParam(defaultValue = "4") int size) {
         Page<Cabin> cabinPage = cabinService.getAll(PageRequest.of(page, size));
         model.addAttribute("cabins", cabinPage.getContent());
+         model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", cabinPage.getTotalPages());
+        
+        
         return "/cabin/list_cabins";
     }
 
@@ -66,7 +71,7 @@ public class CabinController {
     }
 }
     
-    @GetMapping("/addForm")
+    @GetMapping("/add-form")
     public String getAddModal() {
         return "/cabin/add_cabin_modal :: addModal";
     }
@@ -90,7 +95,7 @@ public class CabinController {
         return "redirect:/cabins/List";
     }
       
-     @GetMapping("/updateForm")
+     @GetMapping("/edit-form")
     public String getEditModal(@RequestParam("cabinID") int cabinID, Model model) {
         Cabin cabin = cabinService.getById(cabinID);
         if (cabin == null) {
@@ -137,19 +142,23 @@ public class CabinController {
         return "redirect:/cabins/List";
     }
     
-//    @GetMapping("/confirmDelete")
-//    public String confirmDelete(@RequestParam("cabinID") int cabinID, Model model) {
-//        model.addAttribute("cabinIDToDelete", cabinID);
-//        model.addAttribute("showConfirmation", true);
-//        return "/cabin/list_cabins";
-//    }
     
-    @PostMapping("/delete")
-    public String deleteCabin(@RequestParam("cabinID") int cabinID, 
-                           RedirectAttributes redirectAttributes) {
-        cabinService.delete(cabinID);
-        redirectAttributes.addFlashAttribute("deleteSuccess", "La cabaña ha sido eliminada correctamente.");
-        return "redirect:/cabins/List";
+      @DeleteMapping("/delete/{id}")
+public String deleteCabin(@PathVariable int id, RedirectAttributes redirectAttributes) {
+    try {
+        Cabin cabin = cabinService.getById(id);
+        if (cabin == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cabaña no encontrada");
+            return "redirect:/cabins/List";
+        }
+        
+        cabinService.delete(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Cabaña eliminada correctamente");
+    } catch (Exception e) {
+        logger.error("Error al eliminar cabaña ID: " + id, e);
+        redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar cabaña: " + e.getMessage());
     }
+    return "redirect:/cabins/List";
+}
 }
 

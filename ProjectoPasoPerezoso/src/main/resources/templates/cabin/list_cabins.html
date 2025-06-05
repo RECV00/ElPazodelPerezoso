@@ -7,6 +7,8 @@
     <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
+
+    
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
@@ -23,22 +25,22 @@
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
         </div>
         
-        <div class="filter-container">         
+         <div class="filter-container">         
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" placeholder="Buscar por nombre">
-                    
+                    <input type="text" id="name" name="name" placeholder="Buscar por nombre (presiona Enter)">
+
                     <button type="button" id="resetButton" class="btn-reset">
                          <i class="fas fa-broom"></i> Limpiar
                      </button>
                 </div>
                 <div class="filter-group">
                     <label for="location">Ubicación:</label>
-                    <input type="text" id="location" name="location" placeholder="Buscar por ubicación">
-                    
+                    <input type="text" id="location" name="location" placeholder="Buscar por ubicación (presiona Enter)">
+
                 </div>
-               
+
             </div>
         </div>
         
@@ -77,16 +79,15 @@
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
     <script th:inline="javascript">
         $(document).ready(function() {
-            let filterTimeout;
             let currentPage = 0;
             
             loadCabins(0);
             
-            $('#name, #location').on('input', function() {
-                clearTimeout(filterTimeout);
-                filterTimeout = setTimeout(function() {
+            // Cambio aquí: Filtrado al presionar Enter
+            $('#name, #location').on('keypress', function(e) {
+                if (e.which === 13) { // 13 es el código de tecla para Enter
                     loadCabins(0);
-                }, 500);
+                }
             });
             
             $('#resetButton').click(function() {
@@ -166,7 +167,7 @@
                                data-cabin-image="${cabin.image}">
                                 Editar
                             </a>
-                            <a href="/cabins/delete?cabinID=${cabin.cabinID}" class="btn-delete" onclick="return confirm('¿Estás seguro que deseas eliminar esta cabaña?')">Eliminar</a>
+                            <a href="#" class="btn-delete" onclick="deleteCabin(${cabin.cabinID}); return false;">Eliminar</a>
                         </td>
                     </tr>
                 `;
@@ -252,6 +253,39 @@
         $('#editCabinForm').on('submit', function() {
             return confirm('¿Estás seguro de que deseas actualizar esta cabaña?');
         });
+        
+        
+       function deleteCabin(cabinID) {
+    if (confirm('¿Estás seguro que deseas eliminar esta cabaña?')) {
+        // Usar fetch para seguir la redirección
+        fetch('/cabins/delete/' + cabinID, {
+            method: 'DELETE',
+            redirect: 'follow' // Importante para seguir la redirección
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('danger', 'Error al eliminar la cabaña');
+        });
+    }
+
+}
+
+        // Función auxiliar para mostrar alertas
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            $('.top-actions').prepend(alertHtml);
+            setTimeout(() => $('.alert').alert('close'), 5000);
+        }
     </script>
 </body>
 </html>
