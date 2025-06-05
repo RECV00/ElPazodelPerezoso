@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +36,7 @@ public class ControllerMaintenance {
      @Autowired
     private MaintenanceService ms;
     ///maintenance/list
- @GetMapping("/list")
+ /*@GetMapping("/list")
 public String viewList(Model model,
                        @RequestParam(defaultValue = "0") int page,
                        @RequestParam(defaultValue = "3") int size) {
@@ -48,7 +49,20 @@ public String viewList(Model model,
     model.addAttribute("totalPages", pagedResult.getTotalPages());
 
     return "/HTMLMaintenance/index";
+}*/
+     
+     
+     @GetMapping("/list")
+    public String listMantenimientos(Model model, @PageableDefault(size = 5) Pageable pageable) {
+    Page<Maintenance> page = ms.getAll(pageable);
+
+    model.addAttribute("listM", page.getContent());
+    model.addAttribute("currentPage", page.getNumber());
+    model.addAttribute("totalPages", page.getTotalPages());
+
+    return "/HTMLMaintenance/index"; 
 }
+
 
   
   @GetMapping("/Form")
@@ -94,7 +108,7 @@ public String saveMaintenance(
 
 
 
-@GetMapping("maintenance/FormUpdate")
+@GetMapping("/FormUpdate")
 public String showUpdateForm(@RequestParam("id") int id, Model model) {
     Maintenance maintenance = ms.getById(id);
     
@@ -109,7 +123,7 @@ public String showUpdateForm(@RequestParam("id") int id, Model model) {
     return "/HTMLMaintenance/updateMaintenance";
 }
 
-@PostMapping("/maintenance/updateM")
+@PostMapping("/updateM")
 public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maintenance, 
                               BindingResult result,
                               Model model) {
@@ -145,12 +159,13 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
     return "/HTMLMaintenance/updateMaintenance";
 }
    
- @GetMapping("/remove")
-public String deleteMaintenance(@RequestParam("id") int id) {
+    @GetMapping("/remove")
+   public String deleteMaintenance(@RequestParam("id") int id) {
     ms.delete(id); 
-    return "redirect:/HTMLMaintenance/index"; 
-}
-    @GetMapping("/maintenance/detalleMantenimiento")
+    return "redirect:/maintenance/list";
+   }
+   
+   /* @GetMapping("/detalleMantenimiento")
     public String showMaintenanceDetails(@RequestParam("id") int id, Model model) {
        
         Maintenance maintenance = ms.getById(id);
@@ -165,7 +180,7 @@ public String deleteMaintenance(@RequestParam("id") int id) {
         
        
         return "/HTMLMaintenance/maintenanceDetails"; 
-    }
+    }*///innecesario ya que en la tabla se muestra toda la informacion
     
     
  @GetMapping("/filterType")

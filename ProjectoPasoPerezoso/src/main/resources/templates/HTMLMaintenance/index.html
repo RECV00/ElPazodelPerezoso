@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('/imag.jpeg') no-repeat center center fixed;
+            background: url('/img/imag.jpeg') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             padding: 20px;
@@ -99,7 +99,6 @@
             border-color: #007bff;
         }
 
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -175,7 +174,7 @@
     </thead>
     <tbody>
         <tr th:each="maintenance : ${listM}">
-            <td th:text="${maintenance.maintenanceDate}"></td>
+            <td th:text="${#temporals.format(maintenance.maintenanceDate, 'dd/MM/yyyy')}"></td>
             <td th:text="${maintenance.maintenanceType}"></td>
             <td th:text="${maintenance.description}"></td>
             <td th:text="${maintenance.priorities}"></td>
@@ -184,8 +183,8 @@
             <td th:text="${maintenance.location}"></td>
             <td class="actions">
                <a href="#" th:attr="data-id=${maintenance.id}" class="delete">Eliminar</a>
-                <a href="#" th:attr="data-id=${maintenance.id}" class="edit">Editar</a>
-                <a href="#" th:attr="data-id=${maintenance.id}" class="detalles">Mostrar Detalles</a>
+               <a href="#" th:attr="data-id=${maintenance.id}" class="edit">Editar</a>
+              
             </td>
         </tr>
     </tbody>
@@ -193,21 +192,22 @@
 
 <!-- Paginación -->
 <div class="pagination" th:if="${totalPages > 1}">
-    <a th:href="@{'/?page=0'}" th:if="${currentPage > 0}">&laquo; Primero</a>
+    <a th:if="${currentPage > 0}" th:href="@{/list(page=0)}">&laquo; Primero</a>
 
-    <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-       th:classappend="${i == currentPage} ? 'active'"
-       th:href="@{|/?page=${i}|}"
-       th:text="${i + 1}"></a>
+    <a th:if="${currentPage > 0}" th:href="@{/list(page=${currentPage - 1})}">&lsaquo; Anterior</a>
 
-    <a th:href="@{|/?page=${currentPage + 1}|}" th:if="${currentPage < totalPages - 1}">Siguiente &raquo;</a>
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:if="${i != currentPage}" th:href="@{/list(page=${i})}" th:text="${i + 1}"></a>
+        <span th:if="${i == currentPage}" class="active" th:text="${i + 1}"></span>
+    </span>
+
+    <a th:if="${currentPage < totalPages - 1}" th:href="@{/list(page=${currentPage + 1})}">Siguiente &rsaquo;</a>
+    <a th:if="${currentPage < totalPages - 1}" th:href="@{/list(page=${totalPages - 1})}">Última &raquo;</a>
 </div>
-
 
 <div id="modalUpdate" class="modal">
     <div class="modal-content" id="modalBody">
         <span class="cerrar">&times;</span>
-        
     </div>
 </div>
 
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const id = this.getAttribute('data-id');
 
-            fetch(`maintenance/FormUpdate?id=${id}`)
+            fetch(`/maintenance/FormUpdate?id=${id}`)
                 .then(response => {
                     if (!response.ok) throw new Error("No se pudo cargar el formulario");
                     return response.text();
@@ -257,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Confirmación al hacer clic en eliminar
     document.querySelectorAll('.delete').forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
@@ -273,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `/remove?id=${id}`;
+                    window.location.href = `/maintenance/remove?id=${id}`;
                 }
             });
         });
@@ -281,6 +280,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-
 </body>
 </html>
+

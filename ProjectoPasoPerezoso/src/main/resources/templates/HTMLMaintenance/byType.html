@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('/imag.jpeg') no-repeat center center fixed;
+             background: url('/img/imag.jpeg') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             padding: 0;
@@ -116,7 +116,7 @@
 
     <div class="container">
         <div class="filter-box">
-            <form th:action="@{maintenance/filterType}" method="get">
+            <form th:action="@{/maintenance/filterType}" method="get">
                 <label for="type">Seleccione un tipo:</label>
                 <select id="type" name="type">
                     <option value="">Todos los tipos</option>
@@ -127,7 +127,7 @@
                 </select>
 
                 <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a th:href="@{maintenance/filterType}" class="btn btn-secondary">Limpiar</a>
+                <a th:href="@{/maintenance/filterType}" class="btn btn-secondary">Limpiar</a>
                 <a href="/maintenance/list" class="btn btn-danger">Salir</a>
             </form>
             <p th:text="${filterMessage}" style="margin-top: 10px;"></p>
