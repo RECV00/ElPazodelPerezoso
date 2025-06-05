@@ -16,6 +16,7 @@ public interface CRUD<T, ID> {//clase generica
     public void save(T t);
     public void delete(ID id);
     public List<T> getAll();
+    
     public T getById(ID id);
     
     // Nuevos métodos para paginación

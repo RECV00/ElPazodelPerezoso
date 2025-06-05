@@ -20,7 +20,7 @@ import jakarta.persistence.Table;
 @Table(name = "tb_payment_management")
 public class PaymentManagement {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática del ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "id_payment") 
     private Integer idPayment;
 

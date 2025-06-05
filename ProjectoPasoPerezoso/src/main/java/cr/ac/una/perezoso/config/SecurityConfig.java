@@ -31,11 +31,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/payment/**") // Ignorar CSRF para las rutas de payment
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login","/img/**", "/css/**", "/js/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/employee/**").hasRole("EMPLOYEE")
                 .requestMatchers("/client/**").hasRole("CLIENT")
+                .requestMatchers("/payment/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
