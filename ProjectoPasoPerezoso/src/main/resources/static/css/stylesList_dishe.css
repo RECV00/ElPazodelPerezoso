@@ -205,6 +205,7 @@ nav .nav-links a:hover {
 /* Estilos para la tabla */
 .cabin-table {
     width: 100%;
+    table-layout: fixed; /* Esto hace que las columnas sigan el ancho asignado */
     border-collapse: collapse;
     margin-bottom: 20px;
     background-color: rgba(255, 255, 255, 0.1);
@@ -230,6 +231,35 @@ nav .nav-links a:hover {
     font-size: 0.95em;
     color: white;
     text-align: left;
+}
+.cabin-table th:nth-child(1), 
+.cabin-table td:nth-child(1) {
+    width: 15%; /* Nombre */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word;
+}
+.cabin-table th:nth-child(2), 
+.cabin-table td:nth-child(2) {
+    width: 25%; /* Descripción */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+
+.cabin-table th:nth-child(8), 
+.cabin-table td:nth-child(8) {
+    width: 9%; /* Acciones */
+}
+/* Estilo para la descripción */
+.description-cell {
+    max-height: 100px;
+    overflow-y: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px 12px;
+    line-height: 1.4;
 }
 .cabin-table th:not(:last-child)::after {
     content: "";

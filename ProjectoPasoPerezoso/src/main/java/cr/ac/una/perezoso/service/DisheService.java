@@ -49,8 +49,8 @@ public class DisheService implements CRUD<Dishe, Integer>{
     }
     
     // Métodos adicionales específicos para Dishe
-    public List<Dishe> getByCategory(String category) {
-        return disheRepository.findByCategory(category);
+    public Page<Dishe> findByCategory(String category,Pageable pageable) {
+        return disheRepository.findByCategory(category,pageable);
     }
     
     public List<Dishe> getAvailableDishes() {

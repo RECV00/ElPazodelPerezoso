@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="editModal">
+        <!-- Modal para editar plato -->
+        <div class="modal fade" id="editDishModal" tabindex="-1" aria-labelledby="editDishModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="editDishModalLabel">Editar Plato</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/dishes/update}" enctype="multipart/form-data" id="editDishForm" class="needs-validation" novalidate>
+                        <input type="hidden" name="disheID" id="editDishId">
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="editName" class="form-label fw-bold">Nombre del Plato:</label>
+                                        <input type="text" class="form-control" id="editName" name="name" required>
+                                        <div class="invalid-feedback">Por favor ingrese un nombre válido</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editDescription" class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
+                                        <div class="invalid-feedback">Por favor ingrese una descripción</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editPrice" class="form-label fw-bold">Precio ($):</label>
+                                        <input type="number" class="form-control" id="editPrice" name="price" step="0.01" min="0" required>
+                                        <div class="invalid-feedback">Ingrese un precio válido</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="editCategory" class="form-label fw-bold">Categoría:</label>
+                                        <select class="form-select" id="editCategory" name="category" required>
+                                            <option value="">Seleccione una categoría</option>
+                                            <option value="Entrada">Entrada</option>
+                                            <option value="Plato Principal">Plato Principal</option>
+                                            <option value="Postre">Postre</option>
+                                            <option value="Bebida">Bebida</option>
+                                            <option value="Especial">Especial del Chef</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione una categoría</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label fw-bold">Disponibilidad:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="editAvailableTrue" name="available" value="true">
+                                            <label class="form-check-label" for="editAvailableTrue">Disponible</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="editAvailableFalse" name="available" value="false">
+                                            <label class="form-check-label" for="editAvailableFalse">No Disponible</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="editPreparationTime" class="form-label fw-bold">Tiempo de Preparación (HH:MM):</label>
+                                        <input type="time" class="form-control" id="editPreparationTime" name="preparationTime" 
+                                               min="00:05" max="03:00" step="300" required>
+                                        <div class="invalid-feedback">Ingrese un tiempo válido (5 min - 3 horas)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="editImage" class="form-label fw-bold">Nueva Imagen (opcional):</label>
+                                <input type="file" class="form-control" id="editImage" name="image" accept="image/*">
+                                <small class="text-muted d-block mt-1">Formatos aceptados: JPG, PNG, GIF (Máx. 5MB)</small>
+                                <div id="currentImageContainer" class="mt-3">
+                                    <small class="text-muted d-block mb-2">Imagen actual:</small>
+                                    <img id="currentImage" src="" class="img-thumbnail d-block" style="max-width: 200px; max-height: 150px; display: none;">
+                                </div>
+                                <div class="invalid-feedback">La imagen debe ser menor a 5MB</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Actualizar Plato</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            const form = document.getElementById('editDishForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        })();
+        
+        // Validación de tamaño de imagen
+        document.getElementById('editImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file && file.size > maxSize) {
+                e.target.setCustomValidity('La imagen no debe exceder 5MB');
+                e.target.reportValidity();
+                e.target.value = '';
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+
+        // Script para manejar la carga de datos en el modal de edición
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#editDishModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var modal = $(this);
+                
+                // Cargar datos en los campos del formulario
+                modal.find('#editDishId').val(button.data('dish-id'));
+                modal.find('#editName').val(button.data('dish-name'));
+                modal.find('#editDescription').val(button.data('dish-description'));
+                modal.find('#editPrice').val(button.data('dish-price'));
+                modal.find('#editCategory').val(button.data('dish-category'));
+                modal.find('#editPreparationTime').val(button.data('dish-preparation-time'));
+                
+                // Manejar disponibilidad
+                if(button.data('dish-available') === 'true') {
+                    modal.find('#editAvailableTrue').prop('checked', true);
+                } else {
+                    modal.find('#editAvailableFalse').prop('checked', true);
+                }
+                
+                // Manejar la imagen actual
+                var imagePath = button.data('dish-image');
+                var currentImage = modal.find('#currentImage');
+                if(imagePath && imagePath.trim() !== '') {
+                    currentImage.attr('src', '/' + imagePath).show();
+                    modal.find('#currentImageContainer').show();
+                } else {
+                    currentImage.hide();
+                    modal.find('#currentImageContainer').hide();
+                }
+            });
+
+            // Resetear el modal cuando se cierra
+            $('#editDishModal').on('hidden.bs.modal', function() {
+                $(this).find('form')[0].reset();
+                $('#currentImage').hide();
+                $(this).find('.was-validated').removeClass('was-validated');
+            });
+        });
+
+        // Validación adicional para el tiempo de preparación
+        document.getElementById('editDishForm').addEventListener('submit', function(e) {
+            const timeInput = document.getElementById('editPreparationTime');
+            if(timeInput.value === '00:00') {
+                e.preventDefault();
+                timeInput.setCustomValidity('Por favor ingrese un tiempo de preparación válido');
+                timeInput.reportValidity();
+            } else {
+                timeInput.setCustomValidity('');
+            }
+        });
+        </script>
+    </div>
+</body>
+</html>

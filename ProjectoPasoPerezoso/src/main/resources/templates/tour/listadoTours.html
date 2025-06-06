@@ -1,91 +1,3 @@
-<!--<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Tours</title>
-     Incluir Font Awesome 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet" type="text/css">
-    <script>
-        // Función para confirmar la eliminación
-        function confirmDelete() {
-            return confirm("¿Estás seguro de que deseas eliminar este tour?");
-        }
-    </script>
-</head>
-<body>
-     Incluir la barra de navegación 
-    <div th:replace="~{/fragments/navbar :: navbar}"></div>
-
-    <div class="container">
-        <h1>Lista de Tours</h1>
-        
-         Formulario para filtrar tours por nombre 
-        <form action="/tours/filter" method="get">
-            <label for="nameTour">Filtrar por nombre:</label>
-            <input type="text" id="nameTour" name="nameTour">
-            <button type="submit">Filtrar</button>
-        </form>
-
-         Botones para agregar un nuevo tour y mostrar todos 
-        <button onclick="window.location.href='/tours/add'" class="button">
-           <i class="fas fa-plus-circle"></i> Agregar Nuevo Tour
-        </button>
-        <button onclick="window.location.href='/tours/'" class="button">
-            <i class="fas fa-list"></i> Mostrar Todos
-        </button>
-        
-         Tabla para mostrar los tours 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th>Fecha</th>
-                    <th>Inicio</th>
-                    <th>Duración</th>
-                    <th>Ubicación</th>
-                    <th>Multimedia</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                 Iterar sobre la lista de tours 
-                <tr th:each="tour : ${tours}">
-                    <td th:text="${tour.id_Tour}"></td>
-                    <td th:text="${tour.nameTour}"></td>
-                    <td th:text="${tour.description}"></td>
-                    <td th:text="${tour.price}"></td>
-                    <td th:text="${tour.date}"></td>
-                    <td th:text="${tour.startTime}"></td>
-                    <td th:text="${tour.duration}"></td>
-                    <td th:text="${tour.startingPoint}"></td>
-                    <td>
-                         Mostrar la imagen si existe 
-                        <img th:if="${tour.multimedia != null}" th:src="@{'/' + ${tour.multimedia}}" alt="Imagen del tour" style="width: 100px; height: auto;">
-                    </td>
-                    <td>
-                         Botón para editar un tour 
-                        <a th:href="@{/tours/edit/{id}(id=${tour.id_Tour})}" 
-                           class="button edit">
-                           <i class="fas fa-edit"></i> Editar 
-                        </a>
-
-                         Botón para eliminar un tour 
-                        <a th:href="@{/tours/delete/{id}(id=${tour.id_Tour})}" 
-                           class="button delete" onclick="return confirmDelete()">
-                            <i class="fas fa-trash-alt"></i> Eliminar 
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -136,7 +48,7 @@
             <table class="tour-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <!--<th>ID</th>-->
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Precio</th>
@@ -231,7 +143,7 @@
             tours.forEach(tour => {
                 const row = `
                     <tr>
-                        <td>${tour.id_Tour}</td>
+                        
                         <td>${tour.nameTour}</td>
                         <td>${tour.description}</td>
                         <td>$${tour.price.toFixed(2)}</td>
