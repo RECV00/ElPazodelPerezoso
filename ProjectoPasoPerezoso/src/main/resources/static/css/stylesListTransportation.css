@@ -162,6 +162,108 @@ table tr:hover {
     font-weight: bold;
 }
 
+/* Estilos para el botón de regresar */
+.back-button-container {
+    margin-bottom: 20px;
+}
+
+.button.back-btn {
+    background-color: #6c757d;
+    margin-right: 10px;
+}
+
+.button.back-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Estilos para la paginación */
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: rgba(52, 58, 64, 0.8);
+    border-radius: 8px;
+}
+
+.pagination-info {
+    color: white;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background-color: #6f7e14;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    min-width: 35px;
+    height: 35px;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+    background-color: #a2a26e;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.pagination-btn.active {
+    background-color: #a2a26e;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el selector de tamaño de página */
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.page-size-selector label {
+    color: white;
+    font-size: 0.9em;
+}
+
+.page-size-selector select {
+    padding: 6px 10px;
+    border: 1px solid #6f7e14;
+    border-radius: 4px;
+    background-color: white;
+    color: #333;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-size-selector select:hover {
+    border-color: #a2a26e;
+}
+
+.page-size-selector select:focus {
+    outline: none;
+    border-color: #a2a26e;
+    box-shadow: 0 0 0 2px rgba(111, 126, 20, 0.2);
+}
+
+/* Responsive para paginación */
 @media (max-width: 768px) {
     table, thead, tbody, th, td, tr {
         display: block;
@@ -210,4 +312,20 @@ table tr:hover {
         font-size: 0.95em;
     }
     
+    .pagination-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pagination-btn {
+        padding: 6px 10px;
+        min-width: 30px;
+        height: 30px;
+        font-size: 0.9em;
+    }
+
+    .page-size-selector {
+        flex-direction: column;
+        align-items: center;
+    }
 }

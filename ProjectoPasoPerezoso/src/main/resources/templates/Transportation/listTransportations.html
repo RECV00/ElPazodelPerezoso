@@ -10,10 +10,71 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <!-- Incluir Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesListTransportation.css}" rel="stylesheet">
-    <script>
-        function confirmDelete() {
-            return confirm("¿Estás seguro de que deseas eliminar este transporte?");
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script th:inline="javascript">
+        // Función para mostrar mensajes de éxito
+        function showSuccessMessage(message) {
+            Swal.fire({
+                title: '¡Éxito!',
+                text: message,
+                icon: 'success',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#6f7e14'
+            });
         }
+
+        // Función para confirmar eliminación
+        function confirmDelete(event) {
+            event.preventDefault();
+            const deleteUrl = event.currentTarget.getAttribute('href');
+            
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6f7e14',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+        }
+
+        // Función para confirmar edición
+        function confirmEdit(event) {
+            event.preventDefault();
+            const editUrl = event.currentTarget.getAttribute('href');
+            
+            Swal.fire({
+                title: '¿Editar transporte?',
+                text: "Serás redirigido al formulario de edición",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#6f7e14',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, editar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = editUrl;
+                }
+            });
+        }
+
+        // Mostrar mensaje de éxito si existe
+        document.addEventListener('DOMContentLoaded', function() {
+            const successMessage = /*[[${successMessage}]]*/ null;
+            if (successMessage) {
+                showSuccessMessage(successMessage);
+            }
+        });
     </script>
 </head>
 <body>
@@ -23,8 +84,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="container">
         <h1>Lista de Transportes</h1>
         
-        <!-- Mensaje de éxito -->
-        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
+        <!-- Botón de regresar -->
+        <div class="back-button-container">
+            <a href="/redirect-by-role" class="button back-btn">
+                <i class="fas fa-arrow-left"></i> Regresar
+            </a>
+        </div>
         
         <!-- Formulario para filtrar -->
         <form action="/transportation/filter" method="get" class="filter-form">
@@ -72,15 +137,85 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     </td>
                     <td th:text="${transportation.serviceDuration}"></td>
                     <td class="action-cells">
-                        <a th:href="@{/transportation/edit/{id}(id=${transportation.id})}" class="button edit-btn">
+                        <a th:href="@{/transportation/edit/{id}(id=${transportation.id})}" 
+                           class="button edit-btn" onclick="confirmEdit(event)">
                             <i class="fas fa-edit"></i> Editar</a>
                         <a th:href="@{/transportation/delete/{id}(id=${transportation.id})}" 
-                           class="button delete-btn" onclick="return confirmDelete()">
+                           class="button delete-btn" onclick="confirmDelete(event)">
                             <i class="fas fa-trash-alt"></i>Eliminar</a>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <!-- Paginación -->
+        <div class="pagination" th:if="${totalPages > 0}">
+            <div class="pagination-info">
+                Mostrando <span th:text="${transportations.size()}"></span> de 
+                <span th:text="${totalItems}"></span> registros
+                (Página <span th:text="${currentPage + 1}"></span> de 
+                <span th:text="${totalPages}"></span>)
+            </div>
+            
+            <div class="pagination-controls">
+                <!-- Primera página -->
+                <a th:if="${currentPage > 0}" 
+                   th:href="@{/transportation/listTransport(page=0, size=${pageSize})}" 
+                   class="pagination-btn" title="Primera página">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+                
+                <!-- Página anterior -->
+                <a th:if="${currentPage > 0}" 
+                   th:href="@{/transportation/listTransport(page=${currentPage - 1}, size=${pageSize})}" 
+                   class="pagination-btn" title="Página anterior">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+                
+                <!-- Números de página -->
+                <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <a th:if="${i == currentPage}" 
+                       th:href="@{/transportation/listTransport(page=${i}, size=${pageSize})}" 
+                       class="pagination-btn active" 
+                       th:text="${i + 1}"></a>
+                    <a th:if="${i != currentPage}" 
+                       th:href="@{/transportation/listTransport(page=${i}, size=${pageSize})}" 
+                       class="pagination-btn" 
+                       th:text="${i + 1}"></a>
+                </span>
+                
+                <!-- Página siguiente -->
+                <a th:if="${currentPage < totalPages - 1}" 
+                   th:href="@{/transportation/listTransport(page=${currentPage + 1}, size=${pageSize})}" 
+                   class="pagination-btn" title="Página siguiente">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                
+                <!-- Última página -->
+                <a th:if="${currentPage < totalPages - 1}" 
+                   th:href="@{/transportation/listTransport(page=${totalPages - 1}, size=${pageSize})}" 
+                   class="pagination-btn" title="Última página">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </div>
+
+            <!-- Selector de tamaño de página -->
+            <div class="page-size-selector">
+                <label for="pageSize">Registros por página:</label>
+                <select id="pageSize" onchange="changePageSize(this.value)">
+                    <option value="6" th:selected="${pageSize == 6}">6</option>
+                    <option value="12" th:selected="${pageSize == 12}">12</option>
+                    <option value="24" th:selected="${pageSize == 24}">24</option>
+                    <option value="48" th:selected="${pageSize == 48}">48</option>
+                </select>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            function changePageSize(size) {
+                window.location.href = /*[[@{/transportation/listTransport}]]*/ + '?page=0&size=' + size;
+            }
+        </script>
     </div>
 </body>
 </html>
