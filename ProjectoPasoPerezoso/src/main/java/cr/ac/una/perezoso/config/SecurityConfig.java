@@ -44,6 +44,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Deshabilitado solo para ejemplo - ajustar según necesidades
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
+
                 // Recursos estáticos
                 .requestMatchers("/", "/login", "/img/**", "/css/**", "/js/**").permitAll()
                 
@@ -63,6 +64,7 @@ public class SecurityConfig {
                 .requestMatchers("/Transportation/**").authenticated()
                 .requestMatchers("/maintenance/**").authenticated()
                 
+
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
