@@ -22,6 +22,9 @@ nav {
     align-items: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(5px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 nav .logo a {
@@ -29,6 +32,7 @@ nav .logo a {
     font-size: 1.5em;
     text-decoration: none;
     font-weight: bold;
+    letter-spacing: 1px;
 }
 
 nav .nav-links {
@@ -40,19 +44,22 @@ nav .nav-links {
 
 nav .nav-links li {
     margin-left: 20px;
+    position: relative;
 }
 
 nav .nav-links a {
     color: white;
     text-decoration: none;
     font-size: 1.1em;
-    padding: 5px 10px;
+    padding: 8px 10px;
     border-radius: 3px;
+    font-weight: 500;
     transition: background-color 0.3s;
 }
 
 nav .nav-links a:hover {
     background-color: rgba(255, 255, 255, 0.2);
+     transform: translateY(-2px);
 }
 
 /* Contenido principal */
@@ -127,15 +134,24 @@ nav .nav-links a:hover {
 }
 
 .filter-group {
+   
    margin-bottom: 15px;
     display: flex;
+    gap: 10px; /* Espacio entre elementos */
     align-items: center;
     flex-wrap: wrap;
 }
 
-/*.filter-group:last-child {
-    margin-right: 0;
-}*/
+.filter-group select {
+    width: 294px; /* Ancho más corto para el select */
+    padding: 10px 15px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 0.95em;
+}
+
 
 .filter-group label {
     margin-right: 15px;
@@ -171,8 +187,8 @@ nav .nav-links a:hover {
     margin-top: 10px;
 }
 
-.btn-filter, .btn-reset {
-    padding: 8px 16px;
+ .btn-reset {
+    padding: 10px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -182,10 +198,12 @@ nav .nav-links a:hover {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transform: scale(1);
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    white-space: nowrap; /* Evita que el texto del botón se divida en varias líneas */
 }
 
-.btn-filter:hover, .btn-reset:hover {
+.btn-reset:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     background: linear-gradient(135deg, #7f8c8d, #6c7a7b);
@@ -224,13 +242,13 @@ nav .nav-links a:hover {
     font-weight: 600;
 }
 .cabin-table th {
-    padding: 17px 29px;
+    padding: 1px 3px;
     position: relative;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.5px;
     font-size: 0.95em;
     color: white;
-    text-align: left;
+    text-align: center; 
 }
 .cabin-table th:nth-child(1), 
 .cabin-table td:nth-child(1) {
@@ -247,7 +265,7 @@ nav .nav-links a:hover {
 
 .cabin-table th:nth-child(8), 
 .cabin-table td:nth-child(8) {
-    width: 9%; /* Acciones */
+    width: 17%; /* Acciones */
 }
 /* Estilo para la descripción */
 .description-cell {
@@ -272,7 +290,7 @@ nav .nav-links a:hover {
 }
 
 .cabin-table td {
-    padding: 14px 20px;
+    padding: 5px 2px;
     border-bottom: 1px solid rgba(160, 179, 32, 0.1);
     vertical-align: middle;
     transition: all 0.2s ease;
@@ -280,15 +298,9 @@ nav .nav-links a:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     color: white;
+    text-align: center; 
 }
 
-/*.cabin-table tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.cabin-table tr:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-}*/
 
 .cabin-table tbody tr {
     background-color: rgba(255, 255, 255, 0.03);
@@ -372,30 +384,50 @@ nav .nav-links a:hover {
     padding: 8px 15px;
 }
 
-/* Estilos para botones de acción */
-.btn-edit, .btn-delete {
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    color: white;
-    font-size: 0.9em;
-    margin-right: 5px;
-    display: inline-block;
-    transition: opacity 0.3s;
+.dishe-actions {
+    /*display: flex;*/
+    gap: 18px;
+    justify-content: center;
 }
 
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+.action-btn i {
+    font-size: 14px;
+}
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important;
+}
+
+
 .btn-edit {
-    background-color: #e1b822;
+   background: linear-gradient(135deg, #d1b52a, #b59d22);
 }
 
 .btn-delete {
-    background-color: #e74c3c;
+   background: linear-gradient(135deg, #e74c3c, #c0392b);
 }
 
 .btn-edit:hover, .btn-delete:hover {
     opacity: 0.8;
     color: white;
 }
+
 
 /* Mensajes y loading */
 .no-data {

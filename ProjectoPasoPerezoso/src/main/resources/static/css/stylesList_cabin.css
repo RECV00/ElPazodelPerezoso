@@ -225,12 +225,33 @@ nav .nav-links a:hover {
 .cabin-table th {
     padding: 17px 29px;
     position: relative;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.5px;
     font-size: 0.95em;
     color: white;
-    text-align: left;
+    text-align: center; 
 }
+.cabin-table th:nth-child(1), 
+.cabin-table td:nth-child(1) {
+    width: 15%; /* Nombre */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+.cabin-table th:nth-child(2), 
+.cabin-table td:nth-child(2) {
+    width: 20%; /* Descripcion  */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+
+.cabin-table th:nth-child(3), 
+.cabin-table td:nth-child(3) {
+    width: 30%; /* Ubicacion  */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+
+
 .cabin-table th:not(:last-child)::after {
     content: "";
     position: absolute;
@@ -242,7 +263,7 @@ nav .nav-links a:hover {
 }
 
 .cabin-table td {
-    padding: 14px 20px;
+    padding: 1px 2px;
     border-bottom: 1px solid rgba(160, 179, 32, 0.1);
     vertical-align: middle;
     transition: all 0.2s ease;
@@ -250,6 +271,7 @@ nav .nav-links a:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     color: white;
+    text-align: center; 
 }
 
 /*.cabin-table tr:nth-child(even) {
@@ -341,25 +363,43 @@ nav .nav-links a:hover {
 .page-item:last-child .page-link {
     padding: 8px 15px;
 }
-
-/* Estilos para botones de acción */
-.btn-edit, .btn-delete {
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    color: white;
-    font-size: 0.9em;
-    margin-right: 5px;
-    display: inline-block;
-    transition: opacity 0.3s;
+.cabin-actions {
+    /*display: flex;*/
+    gap: 18px;
+    justify-content: center;
 }
 
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+.action-btn i {
+    font-size: 14px;
+}
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important;
+}
+
+
 .btn-edit {
-    background-color: #e1b822;
+   background: linear-gradient(135deg, #d1b52a, #b59d22);
 }
 
 .btn-delete {
-    background-color: #e74c3c;
+   background: linear-gradient(135deg, #e74c3c, #c0392b);
 }
 
 .btn-edit:hover, .btn-delete:hover {

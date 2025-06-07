@@ -122,11 +122,11 @@ h1::after {
 .user-table th {
     padding: 17px 29px;
     position: relative;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.5px;
     font-size: 0.95em;
     color: white;
-    text-align: left;
+    text-align: center;
 }
 
 .user-table th:not(:last-child)::after {
@@ -140,13 +140,14 @@ h1::after {
 }
 
 .user-table td {
-    padding: 14px 20px;
+    padding: 19px 5px;
     border-bottom: 1px solid rgba(160, 179, 32, 0.1);
     vertical-align: middle;
     transition: all 0.2s ease;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center; 
 }
 
 .user-table tbody tr {
@@ -213,7 +214,7 @@ h1::after {
 .user-actions {
     display: flex;
     gap: 8px;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 .action-btn {

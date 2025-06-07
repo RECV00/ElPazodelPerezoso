@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="addModal">
+        <!-- Modal para agregar transporte -->
+        <div class="modal fade" id="addTransportModal" tabindex="-1" aria-labelledby="addTransportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="addTransportModalLabel">Agregar Nuevo Transporte</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/transportation/add}" id="addTransportForm" class="needs-validation" novalidate>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="addPlate" class="form-label fw-bold">Placa del Vehículo:</label>
+                                        <input type="text" class="form-control" id="addPlate" name="plate" 
+                                               pattern="[A-Za-z0-9]{3,10}" required>
+                                        <div class="invalid-feedback">Ingrese una placa válida (3-10 caracteres alfanuméricos)</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="addDriver" class="form-label fw-bold">Conductor:</label>
+                                        <input type="text" class="form-control" id="addDriver" name="driver" required>
+                                        <div class="invalid-feedback">Ingrese el nombre del conductor</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="addDateTime" class="form-label fw-bold">Fecha y Hora:</label>
+                                        <input type="datetime-local" class="form-control" id="addDateTime" name="dataTimeService" required>
+                                        <div class="invalid-feedback">Seleccione fecha y hora válidas</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="addInitial" class="form-label fw-bold">Ubicación Inicial:</label>
+                                        <input type="text" class="form-control" id="addInitial" name="initialLocation" required>
+                                        <div class="invalid-feedback">Ingrese ubicación inicial</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="addFinal" class="form-label fw-bold">Ubicación Final:</label>
+                                        <input type="text" class="form-control" id="addFinal" name="finalLocation" required>
+                                        <div class="invalid-feedback">Ingrese ubicación final</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="addStatus" class="form-label fw-bold">Estado:</label>
+                                        <select class="form-control" id="addStatus" name="serviceStatus" required>
+                                            <option value="">Seleccione estado</option>
+                                            <option value="Programado">Programado</option>
+                                            <option value="En curso">En curso</option>
+                                            <option value="Completado">Completado</option>
+                                            <option value="Cancelado">Cancelado</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione un estado</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="addDuration" class="form-label fw-bold">Duración (min):</label>
+                                        <input type="number" class="form-control" id="addDuration" name="serviceDuration" 
+                                               min="1" max="600" required>
+                                        <div class="invalid-feedback">Ingrese duración válida (1-600 min)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Guardar Transporte</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            const form = document.getElementById('addTransportForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+            
+            // Establecer fecha/hora mínima
+            const now = new Date();
+            const today = now.toISOString().slice(0, 16);
+            document.getElementById('addDateTime').setAttribute('min', today);
+        })();
+        </script>
+    </div>
+</body>
+</html>

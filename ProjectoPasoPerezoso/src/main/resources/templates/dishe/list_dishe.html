@@ -36,7 +36,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" placeholder="Buscar por nombre (presiona Enter)">
+                    <input type="text" id="name" name="name" placeholder="Buscar por nombre">
                     
                     <button type="button" id="resetButton" class="btn-reset">
                         <i class="fas fa-broom"></i> Limpiar
@@ -181,8 +181,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                               `<img src="/${dish.imageUrl}" alt="Imagen del plato" style="width: 100px; height: auto;">` : 
                               'Sin imagen'}
                         </td>
-                        <td class="actions">
-                            <a href="#" class="btn-edit" 
+                        <td class="dishe-actions">
+                             <a href="#" class="action-btn btn-edit" title= "Editar"
                                data-bs-toggle="modal" 
                                data-bs-target="#editDishModal"
                                data-dish-id="${dish.disheID}"
@@ -193,11 +193,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                data-dish-available="${dish.available}"
                                data-dish-preparation-time="${dish.preparationTime}"
                                data-dish-image="${dish.imageUrl}">
-                                <i class="fas fa-edit"></i> Editar
+                                <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
-                            <a href="#" class="btn-delete" onclick="deleteDish(${dish.disheID}); return false;">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </a>
+                            <button class="action-btn btn-delete" title="Eliminar"
+                                onclick="deleteDish(${dish.disheID}); return false;">
+                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                        </button>
+               
                         </td>
                     </tr>
                 `;

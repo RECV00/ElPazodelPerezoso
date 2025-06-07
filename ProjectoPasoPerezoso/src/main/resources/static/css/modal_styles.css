@@ -10,7 +10,7 @@
     display: none;
     justify-content: center;
     align-items: center;
-    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+    overflow-y: auto;
 }
 
 .modal-container.show {
@@ -19,16 +19,49 @@
 
 /* Contenido del modal - FORMULARIO */
 .modal-content {
-    background: white;
+    background-color: rgba(52, 58, 64, 0.95);
+    color: white;
     width: 90%;
-    max-width: 600px; /* Ancho máximo más reducido */
-    max-height: 90vh; /* Altura máxima */
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    overflow-y: auto; /* Scroll interno si es necesario */
+    max-width: 60%;
+    max-height: 90vh;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
     position: relative;
-    padding: 25px;
-    margin: 20px 0; /* Margen vertical */
+    padding: -0px;
+    margin: 20px 0;
+}
+
+/* Header del modal */
+.modal-header {
+    border-bottom: 1px solid #6f7e14;
+    padding: 15px 20px;
+    background-color: rgba(52, 58, 64, 0.9);
+    position: relative;
+}
+
+.modal-title {
+    color: white;
+    font-size: 2.5em;
+    margin: 0;
+    text-align: center;
+    width: 100%;
+}
+
+/* Body del modal */
+.modal-body {
+    padding: 20px;
+    background-color: rgba(52, 58, 64, 0.85);
+}
+
+/* Footer del modal */
+.modal-footer {
+    border-top: 1px solid #6f7e14;
+    padding: 15px 20px;
+    background-color: rgba(52, 58, 64, 0.9);
+    display: flex;
+    justify-content: space-between;
 }
 
 /* Botón de cerrar */
@@ -37,11 +70,16 @@
     top: 15px;
     right: 15px;
     font-size: 24px;
-    color: #777;
+    color: white;
     background: none;
     border: none;
     cursor: pointer;
     z-index: 10;
+    opacity: 0.8;
+}
+
+.close-modal:hover {
+    opacity: 1;
 }
 
 /* Contenedor del formulario dentro del modal */
@@ -53,12 +91,12 @@
 
 /* Título del formulario */
 .modal-content .form-title {
-    font-size: 1.5rem;
-    color: #2c3e50;
+    font-size: 2.5em;
+    color: white;
     margin-bottom: 1.5rem;
     text-align: center;
     padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #6f7e14;
 }
 
 /* Grupos de campos del formulario */
@@ -69,26 +107,43 @@
 .modal-content .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #34495e;
+    font-weight: bold;
+    color: white;
 }
 
 .modal-content .form-group input,
 .modal-content .form-group select,
 .modal-content .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
+    width: 95%;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: white;
+    color: black;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.modal-content .form-group input:focus,
+.modal-content .form-group select:focus,
+.modal-content .form-group textarea:focus {
+    border-color: #82750b;
+    outline: none;
+    box-shadow: none;
+}
+
+.modal-content .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
 /* Sección de empleado */
 .modal-content #empleadoFields {
-    background: #f9f9f9;
+    background: rgba(255, 255, 255, 0.1);
     padding: 15px;
     border-radius: 6px;
     margin-top: 15px;
+    border: 1px solid #6f7e14;
 }
 
 /* Contenedor de botones */
@@ -98,24 +153,29 @@
     gap: 15px;
     margin-top: 25px;
     padding-top: 15px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #6f7e14;
 }
 
 .modal-content .btn-submit {
     flex: 1;
-    padding: 12px;
-    background: #2ecc71;
+    padding: 10px 20px;
+    background: #a2a26e;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-content .btn-submit:hover {
+    background-color: #6f7e14;
 }
 
 .modal-content .btn-cancel {
     flex: 1;
-    padding: 12px;
-    background: #e74c3c;
+    padding: 10px 20px;
+    background: #6c757d;
     color: white;
     border: none;
     border-radius: 4px;
@@ -123,6 +183,11 @@
     text-decoration: none;
     font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-content .btn-cancel:hover {
+    background-color: #5a6268;
 }
 
 /* Vista previa de imagen */
@@ -134,19 +199,35 @@
     max-width: 150px;
     max-height: 150px;
     display: block;
-    margin: 10px 0;
+    margin: 10px auto;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 1px solid #6f7e14;
+}
+
+/* Textos pequeños */
+.modal-content small {
+    color: #adb5bd !important;
+    display: block;
+    margin-top: 5px;
 }
 
 /* Responsive para móviles */
 @media (max-width: 768px) {
     .modal-content {
         width: 95%;
-        padding: 15px;
+    }
+    
+    .modal-title, .modal-content .form-title {
+        font-size: 1.8em;
     }
     
     .modal-content .button-group {
         flex-direction: column;
+    }
+    
+    .modal-content .form-group input,
+    .modal-content .form-group select,
+    .modal-content .form-group textarea {
+        width: 100%;
     }
 }

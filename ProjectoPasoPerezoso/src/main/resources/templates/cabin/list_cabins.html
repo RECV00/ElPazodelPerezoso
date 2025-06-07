@@ -54,9 +54,12 @@
                     <tr>
                         <!--<th>ID</th>-->
                         <th>Nombre</th>
+                        <th>Descripción</th>
                         <th>Ubicación</th>
                         <th>Capacidad</th>
                         <th>Precio/Noche</th>
+<!--                    <th>includedServices</th>-->
+                        <th>Múltimedia</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -150,11 +153,16 @@
                     <tr>
 //                        
                         <td>${cabin.name}</td>
+                        <td>${cabin.description}</td>
                         <td>${cabin.location}</td>
                         <td>${cabin.capacity}</td>
                         <td>$${cabin.pricePerNight.toFixed(2)}</td>
+                        
                         <td>
-                            <a href="#" class="btn-edit" 
+                            ${cabin.image ? `<img src="/${cabin.image}" alt="Imagen del la cabaña" style="width: 100px; height: auto;">` : 'Sin imagen'}
+                        </td>"
+                        <td class="cabin-actions">
+                            <a href="#" class="action-btn btn-edit" title= "Editar"
                                data-bs-toggle="modal" 
                                data-bs-target="#editCabinModal"
                                data-cabin-id="${cabin.cabinID}"
@@ -165,9 +173,12 @@
                                data-cabin-location="${cabin.location}"
                                data-cabin-services="${cabin.includedServices}"
                                data-cabin-image="${cabin.image}">
-                                Editar
+                                 <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
-                            <a href="#" class="btn-delete" onclick="deleteCabin(${cabin.cabinID}); return false;">Eliminar</a>
+                            <button class="action-btn btn-delete" title="Eliminar"
+                                onclick="deleteCabin(${cabin.cabinID}); return false;">
+                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                        </button>
                         </td>
                     </tr>
                 `;

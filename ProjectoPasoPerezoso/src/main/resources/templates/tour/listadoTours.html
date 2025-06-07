@@ -154,8 +154,8 @@
                         <td>
                             ${tour.multimedia ? `<img src="/${tour.multimedia}" alt="Imagen del tour" style="width: 100px; height: auto;">` : 'Sin imagen'}
                         </td>
-                        <td>
-                            <a href="#" class="btn-edit" 
+                        <td class="tour-actions">
+                            <a href="#" class="action-btn btn-edit" title= "Editar"
                                data-bs-toggle="modal" 
                                data-bs-target="#editTourModal"
                                data-tour-id="${tour.id_Tour}"
@@ -167,9 +167,14 @@
                                data-tour-duration="${tour.duration}"
                                data-tour-startingpoint="${tour.startingPoint}"
                                data-tour-multimedia="${tour.multimedia}">
-                                Editar
+                                <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
-                            <a href="#" class="btn-delete" onclick="deleteTour(${tour.id_Tour}); return false;">Eliminar</a>
+                            
+                            <button class="action-btn btn-delete" title="Eliminar"
+                                onclick="deleteTour(${tour.id_Tour}); return false;">
+                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                        </button>
+             
                         </td>
                     </tr>
                 `;

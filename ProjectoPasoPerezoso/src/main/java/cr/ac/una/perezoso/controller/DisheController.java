@@ -27,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 /**
  *
  * @author keyna
@@ -42,7 +41,7 @@ public class DisheController {
 
     // Lista de categorías disponibles (puedes obtenerlas de la BD si lo prefieres)
     private final List<String> categories = Arrays.asList(
-        "Entrada", "Plato Principal", "Postre", "Bebida", "Ensalada", "Sopa"
+        "Pastas", "Méxicano", "Postres", "Bebida", "Ensaladas", "Sopa" ,"Carnés", "Japonés"
     );
     
     

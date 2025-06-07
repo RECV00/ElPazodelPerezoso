@@ -63,27 +63,6 @@ public String listTours(Model model,
     }
     
     
-//     @GetMapping("/listTours")
-//    public String showTours(Model model) {
-//        List<Tour> tours = tourService.getAll();
-//        model.addAttribute("tours", tours);
-//        return "/tour/listadoTours";
-//    }
-//
-//    // Método para filtrar tours por nombre
-//    @GetMapping("/filter")
-//    public String filterTours(@RequestParam String nameTour, Model model) {
-//        List<Tour> tours;
-//        if (nameTour != null && !nameTour.isEmpty()) {
-//            // Filtrar tours por nombre si se proporciona un valor
-//            tours = tourService.searchByName(nameTour);
-//        } else {
-//            // Mostrar todos los tours si no se proporciona un valor
-//            tours = tourService.getAll();
-//        }
-//        model.addAttribute("tours", tours); // Pasar la lista filtrada a la vista
-//        return "/tour/listadoTours"; // Renderiza la vista tours.html
-//    }
 //------------------------------------------ANADIRNUEVO----------------------------------------------------------------------------------
     // Mostrar formulario para agregar un nuevo tour
     @GetMapping("/add-form")
@@ -177,12 +156,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
 }
     
 //------------------------------------------ELIMINAR-------------------------------------------------------------------------------
-    // Eliminar un tour
-//    @GetMapping("/delete/{id}")
-//    public String deleteTour(@PathVariable int id) {
-//        tourService.delete(id);
-//        return "redirect:/tours/listTours"; // Redirigir a la lista de tours
-//    }
+
     
     @DeleteMapping("/delete/{id}")
 public String deleteTour(@PathVariable int id, RedirectAttributes redirectAttributes) {
