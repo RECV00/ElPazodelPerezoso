@@ -29,4 +29,6 @@ public interface TourRepository extends JpaRepository<Tour, Integer>,JpaSpecific
     List<Tour> findByPriceBetween(Double minPrice, Double maxPrice);
     
     List<Tour> findByStartingPointContainingIgnoreCase(String location);
+
+    Page<Tour> findByStartingPointContainingIgnoreCase(String location, Pageable pageable);
 }

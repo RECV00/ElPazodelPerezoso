@@ -1,30 +1,34 @@
-/* Estilos base para el formulario */
+/* Contenedor principal del formulario */
 .form-container {
-    max-width: 800px;
+    max-width: 65%;
     margin: 2rem auto;
-    padding: 2rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 27px;
+    background-color: rgba(52, 58, 64, 0.95);
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
+/* Título del formulario */
 .form-title {
-    color: #2c3e50;
+    color: white;
     text-align: center;
     margin-bottom: 1.5rem;
-    font-size: 1.8rem;
+    font-size: 2.5rem;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #6f7e14;
 }
 
 /* Grupos de formulario */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #34495e;
-    font-weight: 500;
+    color: white;
+    font-weight: bold;
 }
 
 .form-group input[type="text"],
@@ -32,27 +36,38 @@
 .form-group input[type="number"],
 .form-group input[type="date"],
 .form-group input[type="password"],
-.form-group select {
-    width: 100%;
+.form-group select,
+.form-group textarea {
+    width: 82%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid black;
+    border-radius: 5px;
     font-size: 1rem;
+    background-color: white;
+    color: black;
     transition: border-color 0.3s;
 }
 
 .form-group input:focus,
-.form-group select:focus {
-    border-color: #3498db;
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #82750b;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    box-shadow: none;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
 /* Subsección de empleado */
 #empleadoFields {
     margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    border: 1px solid #6f7e14;
 }
 
 /* Subida de archivos */
@@ -64,15 +79,15 @@
     max-width: 150px;
     max-height: 150px;
     display: block;
-    margin-bottom: 1rem;
+    margin: 10px auto;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 1px solid #6f7e14;
 }
 
 .file-upload label {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background: #3498db;
+    background: #a2a26e;
     color: white;
     border-radius: 4px;
     cursor: pointer;
@@ -80,7 +95,7 @@
 }
 
 .file-upload label:hover {
-    background: #2980b9;
+    background: #6f7e14;
 }
 
 .file-upload input[type="file"] {
@@ -90,7 +105,7 @@
 #fileName {
     margin-top: 0.5rem;
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: #adb5bd;
 }
 
 /* Botones */
@@ -98,11 +113,13 @@
     display: flex;
     justify-content: space-between;
     margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #6f7e14;
 }
 
 .btn-submit {
     padding: 0.75rem 1.5rem;
-    background: #2ecc71;
+    background: #a2a26e;
     color: white;
     border: none;
     border-radius: 4px;
@@ -112,12 +129,12 @@
 }
 
 .btn-submit:hover {
-    background: #27ae60;
+    background: #6f7e14;
 }
 
 .btn-cancel {
     padding: 0.75rem 1.5rem;
-    background: #e74c3c;
+    background: #6c757d;
     color: white;
     border: none;
     border-radius: 4px;
@@ -129,7 +146,7 @@
 }
 
 .btn-cancel:hover {
-    background: #c0392b;
+    background: #5a6268;
 }
 
 /* Mensajes de error */
@@ -149,12 +166,26 @@
         margin: 1rem;
     }
     
+    .form-title {
+        font-size: 1.8rem;
+    }
+    
     .button-group {
         flex-direction: column;
         gap: 1rem;
     }
     
     .btn-submit, .btn-cancel {
+        width: 100%;
+    }
+    
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group input[type="password"],
+    .form-group select,
+    .form-group textarea {
         width: 100%;
     }
 }

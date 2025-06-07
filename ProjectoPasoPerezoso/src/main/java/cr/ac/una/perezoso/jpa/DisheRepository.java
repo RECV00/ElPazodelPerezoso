@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DisheRepository extends JpaRepository<Dishe, Integer>,JpaSpecificationExecutor<Dishe>{
     
-    List<Dishe> findByCategory(String category);
+    Page<Dishe> findByCategory(String category,Pageable pageable);
     
     List<Dishe> findByAvailable(Boolean available);
     

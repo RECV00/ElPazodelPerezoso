@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
         paginationContainer: document.querySelector('.pagination-container')
     };
 
+// Variables para el debounce
+    let filterTimeout;
+    const debounceTime = 500; // 500ms de espera después de que el usuario deja de escribir
     // Manejar clic en "Nuevo Usuario"
     domElements.newUserBtn?.addEventListener('click', function(e) {
         e.preventDefault();
@@ -48,6 +51,32 @@ document.addEventListener('DOMContentLoaded', function() {
             loadUsersWithFilters(page);
         }
     });
+    
+    // Eventos para el filtrado automático
+//    domElements.filterIdentification?.addEventListener('input', function() {
+//        clearTimeout(filterTimeout);
+//        filterTimeout = setTimeout(() => {
+//            loadUsersWithFilters(0); // Resetear a la primera página
+//        }, debounceTime);
+//    });
+    domElements.filterIdentification?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault(); // Prevenir comportamiento por defecto
+        loadUsersWithFilters(0); // Resetear a la primera página
+    }
+    }); 
+    
+    domElements.filterType?.addEventListener('change', function() {
+        loadUsersWithFilters(0); // Resetear a la primera página
+    });
+    
+    // Manejador de limpieza de filtros
+    domElements.clearFiltersBtn?.addEventListener('click', function() {
+        if (domElements.filterIdentification) domElements.filterIdentification.value = '';
+        if (domElements.filterType) domElements.filterType.value = '';
+        loadUsersWithFilters(0);
+    });
+    
     
     async function loadUsersWithFilters(page = 0) {
         try {
@@ -154,19 +183,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Manejador de envío del formulario de filtrado
-    domElements.filterForm?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        loadUsersWithFilters(0);
-    });
-    
-    // Manejador de limpieza de filtros
-    domElements.clearFiltersBtn?.addEventListener('click', function() {
-        if (domElements.filterIdentification) domElements.filterIdentification.value = '';
-        if (domElements.filterType) domElements.filterType.value = '';
-        if (domElements.currentPageInput) domElements.currentPageInput.value = '0';
-        loadUsersWithFilters(0);
-    });
+//    // Manejador de envío del formulario de filtrado
+//    domElements.filterForm?.addEventListener('submit', function(e) {
+//        e.preventDefault();
+//        loadUsersWithFilters(0);
+//    });
+//    
+//    // Manejador de limpieza de filtros
+//    domElements.clearFiltersBtn?.addEventListener('click', function() {
+//        if (domElements.filterIdentification) domElements.filterIdentification.value = '';
+//        if (domElements.filterType) domElements.filterType.value = '';
+//        if (domElements.currentPageInput) domElements.currentPageInput.value = '0';
+//        loadUsersWithFilters(0);
+//    });
     
     // Función de confirmación para eliminar usuario
     async function confirmDelete(event, button) {
@@ -222,12 +251,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-//    // Función para cargar formularios en modal (si existe)
-//    function loadFormInModal(url) {
-//        if (typeof loadModalContent === 'function') {
-//            loadModalContent(url);
-//        } else {
-//            window.location.href = url;
-//        }
-//    }
+
 });
