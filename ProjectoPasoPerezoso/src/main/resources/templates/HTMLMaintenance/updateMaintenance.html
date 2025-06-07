@@ -1,178 +1,131 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actualizar Mantenimiento</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: url('/img/imag.jpeg') no-repeat center center fixed;
-            background-size: cover;
-            margin: 0;
-            padding: 20px;
-            color: white;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-        }
-
-        form {
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 30px;
-            border-radius: 10px;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid white;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-align: center;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border: none;
-        }
-
-        .button:hover {
-            background-color: #0056b3;
-        }
-
-        .exit-button {
-            background-color: #dc3545;
-        }
-
-        .exit-button:hover {
-            background-color: #c82333;
-        }
-
-        /* Estilos del modal externo para coherencia visual */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .modal-content {
-            background-color: #1e1e1e;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 800px;
-            color: white;
-            position: relative;
-        }
-
-        .cerrar {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 30px;
-            font-weight: bold;
-            color: #ccc;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            form {
-                padding: 20px;
-            }
-
-            input, select, textarea {
-                font-size: 14px;
-            }
-
-            .button {
-                font-size: 14px;
-                padding: 8px 15px;
-            }
-        }
-    </style>
-</head>
 <body>
-    <h1>Actualizar Mantenimiento</h1>
-
-    <form th:object="${maintenance}" th:action="@{maintenance/updateM}" method="post">
-        <input type="hidden" th:field="*{id}" />
-
-        <label for="maintenanceDate">Fecha de Mantenimiento:</label>
-        <input type="date" th:field="*{maintenanceDate}" required />
-
-        <label for="maintenanceType">Tipo de Mantenimiento:</label>
-        <select th:field="*{maintenanceType}" required>
-            <option value="">Seleccione</option>
-            <option value="Preventivo">Preventivo</option>
-            <option value="Correctivo">Correctivo</option>
-        </select>
-
-        <label for="description">Descripción:</label>
-        <textarea th:field="*{description}" rows="3" required></textarea>
-
-        <label for="priorities">Prioridad:</label>
-        <select th:field="*{priorities}" required>
-            <option value="">Seleccione</option>
-            <option value="alta">Alta</option>
-            <option value="media">Media</option>
-            <option value="baja">Baja</option>
-        </select>
-
-        <label for="state">Estado:</label>
-        <select th:field="*{state}" required>
-            <option value="">Seleccione</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="En proceso">En proceso</option>
-            <option value="Terminada">Terminada</option>
-        </select>
-
-        <label for="assignedPersonal">Personal Asignado:</label>
-        <select th:field="*{assignedPersonal}" required>
-            <option value="">Seleccione</option>
-            <option value="Técnico">Técnico</option>
-            <option value="Usuario">Usuario</option>
-        </select>
-
-        <label for="location">Ubicación:</label>
-        <input type="text" th:field="*{location}" required />
-
-        <div class="button-group">
-            <button type="submit" class="button save-button">Guardar</button>
-            <a href="maintenance" class="button exit-button">Salir</a>
+    <div th:fragment="updateModal">
+        <!-- Modal para actualizar mantenimiento -->
+        <div class="modal fade" id="updateMaintenanceModal" tabindex="-1" aria-labelledby="updateMaintenanceModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="updateMaintenanceModalLabel">Actualizar Mantenimiento</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/maintenance/updateM}" enctype="multipart/form-data" id="updateMaintenanceForm" class="needs-validation" novalidate>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <!-- Columna 1 -->
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="maintenanceDate" class="form-label fw-bold">Fecha de Mantenimiento:</label>
+                                        <input type="date" class="form-control" id="maintenanceDate" name="maintenanceDate" th:field="*{maintenanceDate}" required>
+                                        <div class="invalid-feedback">Por favor ingrese una fecha válida.</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="maintenanceType" class="form-label fw-bold">Tipo de Mantenimiento:</label>
+                                        <select class="form-control" id="maintenanceType" name="maintenanceType" th:field="*{maintenanceType}" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Preventivo">Preventivo</option>
+                                            <option value="Correctivo">Correctivo</option>
+                                        </select>
+                                        <div class="invalid-feedback">Por favor seleccione un tipo de mantenimiento.</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="description" class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3" th:field="*{description}" required></textarea>
+                                        <div class="invalid-feedback">Por favor ingrese una descripción.</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="location" class="form-label fw-bold">Ubicación:</label>
+                                        <input type="text" class="form-control" id="location" name="location" th:field="*{location}" required>
+                                        <div class="invalid-feedback">Ingrese una ubicación válida.</div>
+                                    </div>
+                                </div>
+                                <!-- Columna 2 -->
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="priorities" class="form-label fw-bold">Prioridad:</label>
+                                        <select class="form-control" id="priorities" name="priorities" th:field="*{priorities}" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="alta">Alta</option>
+                                            <option value="media">Media</option>
+                                            <option value="baja">Baja</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione una prioridad válida.</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="state" class="form-label fw-bold">Estado:</label>
+                                        <select class="form-control" id="state" name="state" th:field="*{state}" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Pendiente">Pendiente</option>
+                                            <option value="En proceso">En proceso</option>
+                                            <option value="Terminada">Terminada</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione un estado válido.</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="assignedPersonal" class="form-label fw-bold">Personal Asignado:</label>
+                                        <select class="form-control" id="assignedPersonal" name="assignedPersonal" th:field="*{assignedPersonal}" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Técnico">Técnico</option>
+                                            <option value="Usuario">Usuario</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione un personal asignado válido.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Actualizar Mantenimiento</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
+
+   <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('modalUpdate');
+            const modalBody = document.getElementById('modalBody');
+
+            document.querySelectorAll('.edit').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const id = this.getAttribute('data-id');
+
+                    fetch(`/maintenance/FormUpdate?id=${id}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("No se pudo cargar el formulario");
+                            return response.text();
+                        })
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const bodyContent = doc.querySelector('body').innerHTML;
+
+                            modalBody.innerHTML = '<span class="cerrar">&times;</span>' + bodyContent;
+                            modal.style.display = 'block';
+                        })
+                        .catch(error => {
+                            modalBody.innerHTML = '<p style="color: red;">Error al cargar el formulario</p>';
+                            modal.style.display = 'block';
+                        });
+                });
+            });
+
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('cerrar')) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
+    </script>
 </body>
 </html>
-

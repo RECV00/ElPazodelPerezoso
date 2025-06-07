@@ -183,7 +183,7 @@
             <td th:text="${maintenance.location}"></td>
             <td class="actions">
                <a href="#" th:attr="data-id=${maintenance.id}" class="delete">Eliminar</a>
-               <a href="#" th:attr="data-id=${maintenance.id}" class="edit">Editar</a>
+               <a href="#" th:attr="data-id=${maintenance.id}" class="edit" data-bs-toggle="modal" data-bs-target="#updateMaintenanceModal">Editar</a>
               
             </td>
         </tr>
@@ -205,61 +205,12 @@
     <a th:if="${currentPage < totalPages - 1}" th:href="@{/maintenance/list(page=${totalPages - 1})}">Última &raquo;</a>
 </div>
 
-<div id="modalUpdate" class="modal">
-    <div class="modal-content" id="modalBody">
-        <span class="cerrar">&times;</span>
-    </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('modalUpdate');
-    const modalBody = document.getElementById('modalBody');
-
-    document.querySelectorAll('.edit').forEach(link => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            const id = this.getAttribute('data-id');
-
-            fetch(`/maintenance/FormUpdate?id=${id}`)
-                .then(response => {
-                    if (!response.ok) throw new Error("No se pudo cargar el formulario");
-                    return response.text();
-                })
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const bodyContent = doc.querySelector('body').innerHTML;
-
-                    modalBody.innerHTML = '<span class="cerrar">&times;</span>' + bodyContent;
-                    modal.style.display = 'block';
-                })
-                .catch(error => {
-                    modalBody.innerHTML = '<p style="color: red;">Error al cargar el formulario</p>';
-                    modal.style.display = 'block';
-                });
-        });
-    });
-
-    document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('cerrar')) {
-            modal.style.display = 'none';
-        }
-    });
-
-    window.onclick = function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
-});
-</script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.delete').forEach(link => {
         link.addEventListener('click', function (e) {
-            e.preventDefault();
             const id = this.getAttribute('data-id');
 
             Swal.fire({

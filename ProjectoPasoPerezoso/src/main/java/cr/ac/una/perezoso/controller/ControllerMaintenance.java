@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -102,12 +104,14 @@ public String showUpdateForm(@RequestParam("id") int id, Model model) {
         model.addAttribute("alertTitle", "Error");
         model.addAttribute("alertMessage", "Mantenimiento no encontrado con ID: " + id);
         model.addAttribute("alertType", "error");
-        return "/HTMLMaintenance/updateMaintenance"; 
+       return "/HTMLMaintenance/updateMaintenance:: addModal";
     }
     
     model.addAttribute("maintenance", maintenance);
-    return "/HTMLMaintenance/updateMaintenance";
+    return "/HTMLMaintenance/updateMaintenance:: addModal";
 }
+
+
 
 @PostMapping("/updateM")
 public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maintenance, 
@@ -119,7 +123,7 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
         model.addAttribute("alertTitle", "Error");
         model.addAttribute("alertMessage", "Datos inválidos en el formulario");
         model.addAttribute("alertType", "error");
-        return "/HTMLMaintenance/updateMaintenance";
+        return "/HTMLMaintenance/updateMaintenance:: addModal";
     }
     
     try {
@@ -142,8 +146,11 @@ public String updateMaintenance(@ModelAttribute("maintenance") Maintenance maint
         model.addAttribute("alertType", "error");
     }
     
-    return "/HTMLMaintenance/updateMaintenance";
+    return "/HTMLMaintenance/updateMaintenance:: addModal";
 }
+
+
+
    
     @GetMapping("/remove")
    public String deleteMaintenance(@RequestParam("id") int id) {
