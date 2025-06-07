@@ -57,7 +57,8 @@ public class SecurityConfig {
                 .requestMatchers("/booking/**").authenticated()
                 .requestMatchers("/tour/**").authenticated()
                 .requestMatchers("/payment/**").authenticated()
-                .requestMatchers("/food/**").authenticated()
+                .requestMatchers("/Dishe/**").authenticated()
+                    .requestMatchers("/Transportation/**").authenticated()
                 
                 .anyRequest().authenticated()
             )

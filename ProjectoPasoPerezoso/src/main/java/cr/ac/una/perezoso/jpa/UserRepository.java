@@ -26,7 +26,9 @@ import org.springframework.data.domain.Pageable;
 public interface UserRepository extends JpaRepository<User, Integer>{
     
      // Buscar usuario por cédula
-    Optional<User> findByIdentification(String identification);
+//     Client findByIdentification(String identification);
+     Optional<User> findByIdentification(String identification);
+
     // Nuevo método para búsqueda case-insensitive
     Optional<User> findByIdentificationIgnoreCase(String identification);
     // Listado de cada tipo de usuario usando herencia
@@ -47,7 +49,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
     Optional<Employee> findEmployeeByIdentification(String identification);
 
     @Query("SELECT u FROM User u WHERE TYPE(u) = Client AND u.identification = ?1")
-    Optional<Client> findClientsByIdentification(String identification);
+    Client findClientsByIdentification(String identification);
 
     // Conteo de usuarios por tipo (usando el atributo userType)
     @Query("SELECT COUNT(u) FROM User u WHERE u.userType = :userType")
@@ -79,5 +81,5 @@ public interface UserRepository extends JpaRepository<User, Integer>{
     
     // Métodos para conteo con filtros combinados
     public long countByIdentificationContainingIgnoreCaseAndUserType(String identification, String userType);
-
+    
 }

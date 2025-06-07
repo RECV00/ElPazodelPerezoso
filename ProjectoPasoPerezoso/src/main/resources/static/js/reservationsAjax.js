@@ -1,77 +1,310 @@
-// Variables globales para manejar el debounce
-let timeoutId;
-
-// Función para retrasar la ejecución de filtros (debounce)
-function ejecutarConRetraso(func, delay) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(func, delay);
-}
-
-// Funciones de filtrado en tiempo real
-function filtrarPorCliente() {
-    const elementoCargando = document.getElementById('client-filter-loading');
-    elementoCargando.style.display = 'inline-block';
+function searchClient() {
+    const identification = document.getElementById('clientIdentification').value.trim();
+    const errorDiv = document.getElementById('clientError');
+    const infoDiv = document.getElementById('clientInfo');
     
-    ejecutarConRetraso(() => {
-        const cedulaCliente = document.getElementById('clientId').value;
-        let url = '/booking/listaReservas?page=0';
-        
-        if (cedulaCliente) {
-            url = `/booking/search?clientId=${encodeURIComponent(cedulaCliente)}&page=0`;
-        }
-        
-        obtenerReservaciones(url, elementoCargando);
-    }, 500); // 500ms de retraso después de la última tecla
-}
-
-function filtrarPorEstado() {
-    const elementoCargando = document.getElementById('status-filter-loading');
-    elementoCargando.style.display = 'inline-block';
+    // Reset UI
+    errorDiv.style.display = 'none';
+    infoDiv.style.display = 'none';
     
-    ejecutarConRetraso(() => {
-        const estado = document.getElementById('status').value;
-        let url = '/booking/listaReservas?page=0';
-        
-        if (estado) {
-            url = `/booking/search?status=${encodeURIComponent(estado)}&page=0`;
-        }
-        
-        obtenerReservaciones(url, elementoCargando);
-    }, 300); // 300ms de retraso después del cambio
-}
-
-function validarRangoFechas() {
-    const fechaInicio = document.getElementById('startDate').value;
-    const fechaFin = document.getElementById('endDate').value;
-    const elementoError = document.getElementById('date-error');
-    const elementoCargando = document.getElementById('date-filter-loading');
-    
-    // Validaciones
-    if ((fechaInicio && !fechaFin) || (!fechaInicio && fechaFin)) {
-        elementoError.textContent = 'Debe seleccionar ambas fechas para filtrar';
-        elementoError.style.display = 'inline-block';
-        return false;
+    if (!identification) {
+        showError('Por favor ingrese una identificación');
+        return;
     }
-    
-    if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
-        elementoError.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
-        elementoError.style.display = 'inline-block';
-        return false;
-    }
-    
-    elementoError.style.display = 'none';
-    elementoCargando.style.display = 'inline-block';
-    
-    ejecutarConRetraso(() => {
-        let url = '/booking/listaReservas?page=0';
-        
-        if (fechaInicio && fechaFin) {
-            url = `/booking/search?startDate=${fechaInicio}&endDate=${fechaFin}&page=0`;
-        }
-        
-        obtenerReservaciones(url, elementoCargando);
-    }, 500); // 500ms de retraso después del cambio
+
+    fetch(`/booking/clients/findByIdentification?identification=${encodeURIComponent(identification)}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Asegúrate que estos IDs existen en tu HTML
+                document.getElementById('clientName').textContent = `${data.name} ${data.lastName}`;
+                document.getElementById('clientPhone').textContent = data.phone;
+                document.getElementById('clientEmail').textContent = data.email;
+                infoDiv.style.display = 'block';
+            } else {
+                throw new Error(data.message || 'Error desconocido');
+            }
+        })
+        .catch(error => {
+            showError(error.message);
+        });
 }
+function validateForm() {
+    // Validar que si el servicio de tour está seleccionado, se haya elegido un tour
+    const tourServiceChecked = document.getElementById('tourServiceCheckbox').checked;
+    const tourSelected = document.querySelector('input[name="selectedTourId"]:checked') !== null;
+    
+//    if (tourServiceChecked && !tourSelected) {
+//        alert('Por favor seleccione un tour para continuar');
+//        return false;
+//    }
+    
+    // Depuración: Mostrar datos que se enviarán
+    const formData = {
+        clientIdentification: document.getElementById('clientIdentification').value,
+        services: Array.from(document.querySelectorAll('input[name="services"]:checked')).map(cb => cb.value),
+        selectedTourId: document.querySelector('input[name="selectedTourId"]:checked')?.value
+    };
+    console.log("Datos a enviar:", formData);
+    
+    return confirm("¿Estás seguro de que deseas agregar esta booking?");
+}
+function showError(message) {
+    const errorDiv = document.getElementById('clientError');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+//SELECCIONAR TOURS-----------------------------------------------------------------------------------
+
+//// Variables globales
+//let selectedTours = [];
+//
+//// Función para abrir ventana de selección de tours
+//function openTourSelectionWindow() {
+//    const tourWindow = window.open('/booking/tours/listForReservation', 'TourSelection', 
+//        'width=900,height=600,scrollbars=yes,resizable=yes');
+//    
+//    window.addEventListener('message', function(event) {
+//        if (event.data.type === 'tourSelection') {
+//            handleIncomingTourSelection(event.data.tourIds);
+//        }
+//    });
+//}
+//
+//// Función para manejar la selección de tours desde la ventana
+//function handleIncomingTourSelection(tourIds) {
+//    selectedTours = tourIds || [];
+//    updateSelectedToursList();
+//    updateHiddenTourIds();
+//    
+//    // Opcional: Mostrar detalles de los tours seleccionados
+//    if (selectedTours.length > 0) {
+//        fetch(`/booking/tours/getMultiple?ids=${selectedTours.join(',')}`)
+//            .then(response => response.json())
+//            .then(tours => {
+//                displayTourDetails(tours);
+//            });
+//    }
+//}
+//
+//// Función para mostrar detalles de tours
+//function displayTourDetails(tours) {
+//    const container = document.getElementById('selectedToursDisplay');
+//    const list = document.getElementById('selectedToursList');
+//    
+//    list.innerHTML = '';
+//    tours.forEach(tour => {
+//        const li = document.createElement('li');
+//        li.style.padding = '8px';
+//        li.style.borderBottom = '1px solid #eee';
+//        li.style.display = 'flex';
+//        li.style.justifyContent = 'space-between';
+//        li.innerHTML = `
+//            <span>${tour.nameTour} ($${tour.price.toFixed(2)})</span>
+//            <button onclick="removeTour(${tour.id_tour})" 
+//                    style="background-color: #f44336; color: white; 
+//                           border: none; padding: 2px 8px; border-radius: 3px;">
+//                Quitar
+//            </button>
+//        `;
+//        list.appendChild(li);
+//    });
+//    
+//    container.style.display = 'block';
+//}
+//
+//// Función para eliminar un tour
+//function removeTour(tourId) {
+//    selectedTours = selectedTours.filter(id => id !== tourId);
+//    updateHiddenTourIds();
+//    if (selectedTours.length === 0) {
+//        document.getElementById('selectedToursDisplay').style.display = 'none';
+//    } else {
+//        fetch(`/booking/tours/getMultiple?ids=${selectedTours.join(',')}`)
+//            .then(response => response.json())
+//            .then(tours => {
+//                displayTourDetails(tours);
+//            });
+//    }
+//}
+//
+//// Actualizar campo oculto con IDs
+//function updateHiddenTourIds() {
+//    document.getElementById('selectedTourIds').value = selectedTours.join(',');
+//}
+//
+//// Función de búsqueda de tours
+//function searchTours(searchTerm) {
+//    if (searchTerm.length < 2) {
+//        document.getElementById('tourResults').innerHTML = '<p>Ingrese al menos 2 caracteres</p>';
+//        return;
+//    }
+//    
+//    fetch(`/booking/tours/search?name=${encodeURIComponent(searchTerm)}`)
+//        .then(response => response.json())
+//        .then(tours => {
+//            const resultsDiv = document.getElementById('tourResults');
+//            resultsDiv.innerHTML = '';
+//            
+//            if (tours.length === 0) {
+//                resultsDiv.innerHTML = '<p>No se encontraron tours</p>';
+//                return;
+//            }
+//            
+//            const table = document.createElement('table');
+//            table.style.width = '100%';
+//            table.style.borderCollapse = 'collapse';
+//            
+//            // Cabecera
+//            const thead = document.createElement('thead');
+//            thead.innerHTML = `
+//                <tr>
+//                    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Nombre</th>
+//                    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Precio</th>
+//                    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Duración</th>
+//                    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Acción</th>
+//                </tr>
+//            `;
+//            table.appendChild(thead);
+//            
+//            // Cuerpo
+//            const tbody = document.createElement('tbody');
+//            tours.forEach(tour => {
+//                const isSelected = selectedTours.includes(tour.id_tour);
+//                const row = document.createElement('tr');
+//                row.style.borderBottom = '1px solid #eee';
+//                row.innerHTML = `
+//                    <td style="padding: 8px;">${tour.nameTour}</td>
+//                    <td style="padding: 8px;">$${tour.price.toFixed(2)}</td>
+//                    <td style="padding: 8px;">${tour.duration} horas</td>
+//                    <td style="padding: 8px;">
+//                        <button onclick="addTourToSelection(${tour.id_tour}, '${tour.nameTour}', ${tour.price})"
+//                                style="padding: 4px 8px; background-color: ${isSelected ? '#ccc' : '#4CAF50'}; 
+//                                       color: white; border: none; border-radius: 3px;"
+//                                ${isSelected ? 'disabled' : ''}>
+//                            ${isSelected ? 'Agregado' : 'Agregar'}
+//                        </button>
+//                    </td>
+//                `;
+//                tbody.appendChild(row);
+//            });
+//            
+//            table.appendChild(tbody);
+//            resultsDiv.appendChild(table);
+//        });
+//}
+//
+//// Función para agregar un tour desde la búsqueda
+//function addTourToSelection(tourId, tourName, price) {
+//    if (!selectedTours.includes(tourId)) {
+//        selectedTours.push(tourId);
+//        updateHiddenTourIds();
+//        
+//        const displayDiv = document.getElementById('selectedToursDisplay');
+//        const list = document.getElementById('selectedToursList');
+//        
+//        if (displayDiv.style.display === 'none') {
+//            displayDiv.style.display = 'block';
+//        }
+//        
+//        const li = document.createElement('li');
+//        li.style.padding = '8px';
+//        li.style.borderBottom = '1px solid #eee';
+//        li.style.display = 'flex';
+//        li.style.justifyContent = 'space-between';
+//        li.innerHTML = `
+//            <span>${tourName} ($${price.toFixed(2)})</span>
+//            <button onclick="removeTour(${tourId})" 
+//                    style="background-color: #f44336; color: white; 
+//                           border: none; padding: 2px 8px; border-radius: 3px;">
+//                Quitar
+//            </button>
+//        `;
+//        list.appendChild(li);
+//    }
+//}
+
+//
+//
+////// Variables globales para manejar el debounce
+//let timeoutId;
+//
+//// Función para retrasar la ejecución de filtros (debounce)
+//function ejecutarConRetraso(func, delay) {
+//    clearTimeout(timeoutId);
+//    timeoutId = setTimeout(func, delay);
+//}
+//
+//// Funciones de filtrado en tiempo real
+//function filtrarPorCliente() {
+//    const elementoCargando = document.getElementById('client-filter-loading');
+//    elementoCargando.style.display = 'inline-block';
+//    
+//    ejecutarConRetraso(() => {
+//        const cedulaCliente = document.getElementById('clientId').value;
+//        let url = '/booking/listaReservas?page=0';
+//        
+//        if (cedulaCliente) {
+//            url = `/booking/search?clientId=${encodeURIComponent(cedulaCliente)}&page=0`;
+//        }
+//        
+//        obtenerReservaciones(url, elementoCargando);
+//    }, 500); // 500ms de retraso después de la última tecla
+//}
+//
+//function filtrarPorEstado() {
+//    const elementoCargando = document.getElementById('status-filter-loading');
+//    elementoCargando.style.display = 'inline-block';
+//    
+//    ejecutarConRetraso(() => {
+//        const estado = document.getElementById('status').value;
+//        let url = '/booking/listaReservas?page=0';
+//        
+//        if (estado) {
+//            url = `/booking/search?status=${encodeURIComponent(estado)}&page=0`;
+//        }
+//        
+//        obtenerReservaciones(url, elementoCargando);
+//    }, 300); // 300ms de retraso después del cambio
+//}
+//
+//function validarRangoFechas() {
+//    const fechaInicio = document.getElementById('startDate').value;
+//    const fechaFin = document.getElementById('endDate').value;
+//    const elementoError = document.getElementById('date-error');
+//    const elementoCargando = document.getElementById('date-filter-loading');
+//    
+//    // Validaciones
+//    if ((fechaInicio && !fechaFin) || (!fechaInicio && fechaFin)) {
+//        elementoError.textContent = 'Debe seleccionar ambas fechas para filtrar';
+//        elementoError.style.display = 'inline-block';
+//        return false;
+//    }
+//    
+//    if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+//        elementoError.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
+//        elementoError.style.display = 'inline-block';
+//        return false;
+//    }
+//    
+//    elementoError.style.display = 'none';
+//    elementoCargando.style.display = 'inline-block';
+//    
+//    ejecutarConRetraso(() => {
+//        let url = '/booking/listaReservas?page=0';
+//        
+//        if (fechaInicio && fechaFin) {
+//            url = `/booking/search?startDate=${fechaInicio}&endDate=${fechaFin}&page=0`;
+//        }
+//        
+//        obtenerReservaciones(url, elementoCargando);
+//    }, 500); // 500ms de retraso después del cambio
+//}
 
 // Función mejorada para obtener reservaciones
 //function obtenerReservaciones(url, elementoCargando = null) {

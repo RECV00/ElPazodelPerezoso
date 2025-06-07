@@ -103,9 +103,9 @@
                         </td>
                         <td class="services-container">
                             <!-- Comida -->
-                            <div th:if="${booking.food != null}">
+                            <div th:if="${booking.dishe != null}">
                                 <strong>Comida:</strong> 
-                                <span th:text="${foodNames.get(booking.food.id_food)}"></span>
+                                <span th:text="${disheNames.get(booking.dishe.disheID)}"></span>
                             </div>
                             <!-- Transporte -->
                             <div th:if="${booking.transportation != null}">
@@ -117,7 +117,7 @@
                                 <strong>Tour:</strong> 
                                 <span th:text="${tourNames.get(booking.tour.id_tour)}"></span>
                             </div>
-                            <span th:if="${booking.food == null and booking.transportation == null and booking.tour == null}">
+                            <span th:if="${booking.dishe == null and booking.transportation == null and booking.tour == null}">
                                 Sin servicios adicionales
                             </span>
                         </td>

@@ -6,6 +6,7 @@ package cr.ac.una.perezoso.jpa;
 
 import cr.ac.una.perezoso.domain.Dishe;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +29,5 @@ public interface DisheRepository extends JpaRepository<Dishe, Integer>,JpaSpecif
     Page<Dishe> findByNameContainingIgnoreCase(String name,Pageable pageable);
     
     List<Dishe> findByPriceBetween(Double minPrice, Double maxPrice);
+    Optional<Dishe> findById(Integer id);
 }

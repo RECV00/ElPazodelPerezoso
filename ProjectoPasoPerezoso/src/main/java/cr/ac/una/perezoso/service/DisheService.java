@@ -8,6 +8,7 @@ import cr.ac.una.perezoso.domain.Dishe;
 import cr.ac.una.perezoso.jpa.DisheRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Transactional
-public class DisheService implements CRUD<Dishe, Integer>{
+public  class DisheService implements CRUD<Dishe, Integer>{
     
     private final DisheRepository disheRepository;
 
@@ -77,5 +78,8 @@ public class DisheService implements CRUD<Dishe, Integer>{
      @Override
     public boolean existsById(Integer id) {
         return disheRepository.existsById(id);
+    }
+    public Optional<Dishe> findById(int disheId) {
+    return disheRepository.findById(disheId);
     }
 }

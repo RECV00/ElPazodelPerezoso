@@ -36,7 +36,7 @@ public class Booking {
     private LocalDate checkOutDate;
     
     @Column(name = "number_guest", nullable = false)
-    private Integer numberGuests;
+    private int numberGuests;
     
     @Column(name = "booking_type", nullable = false)
     private String bookingType;
@@ -71,8 +71,8 @@ public class Booking {
     private Transportation transportation;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_food")
-    private Food food;
+    @JoinColumn(name = "id_dishe")
+    private Dishe dishe;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_payment", referencedColumnName = "id_payment")
@@ -86,7 +86,7 @@ public class Booking {
     public Booking(LocalDate checkInDate, LocalDate checkOutDate, int numberGuests, 
             String bookingType, boolean additionalServices, String specialRequirements, 
             String promotionCode, String reserveStatus, Client client, 
-            Cabin cabin, Tour tour, Transportation transportation, Food food, 
+            Cabin cabin, Tour tour, Transportation transportation, Dishe dishe, 
             PaymentManagement payment) {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
@@ -100,7 +100,7 @@ public class Booking {
         this.cabin = cabin;
         this.tour = tour;
         this.transportation = transportation;
-        this.food = food;
+        this.dishe = dishe;
         this.payment = payment;
     }
 
@@ -211,12 +211,12 @@ public class Booking {
         this.transportation = transportation;
     }
 
-    public Food getFood() {
-        return food;
+    public Dishe getDishe() {
+        return dishe;
     }
 
-    public void setFood(Food food) {
-        this.food = food;
+    public void setDishe(Dishe dishe) {
+        this.dishe = dishe;
     }
 
     public PaymentManagement getPayment() {
@@ -238,50 +238,6 @@ public class Booking {
                 + reserveStatus + '}';
     }
     
-   // Método de negocio para validaciones
-//    @PrePersist
-//    @PreUpdate
-//    private void validate() {
-//        // Validación de fechas
-//        if (checkInDate == null || checkOutDate == null) {
-//            throw new IllegalArgumentException("Las fechas de check-in y check-out son obligatorias");
-//        }
-//        
-//        if (checkOutDate.isBefore(checkInDate)) {
-//            throw new IllegalArgumentException("La fecha de check-out debe ser posterior a la de check-in");
-//        }
-//        
-//        if (checkInDate.isBefore(LocalDate.now())) {
-//            throw new IllegalArgumentException("La fecha de check-in debe ser hoy o en el futuro");
-//        }
-//        
-//        // Validación de huéspedes
-//        if (numberGuests < 1) {
-//            throw new IllegalArgumentException("Debe haber al menos 1 huésped");
-//        }
-//        
-//        if (numberGuests > 20) {
-//            throw new IllegalArgumentException("No puede haber más de 20 huéspedes");
-//        }
-//        
-//        // Validación de campos de texto
-//        if (specialRequirements != null && specialRequirements.length() > 500) {
-//            throw new IllegalArgumentException("Los requisitos especiales no pueden exceder los 500 caracteres");
-//        }
-//        
-//        if (promotionCode != null && promotionCode.length() > 20) {
-//            throw new IllegalArgumentException("El código de promoción no puede exceder los 20 caracteres");
-//        }
-//        
-//        // Validación de relaciones obligatorias
-//        if (client == null) {
-//            throw new IllegalArgumentException("El cliente es obligatorio");
-//        }
-//        
-//        if (reserveStatus == null) {
-//            throw new IllegalArgumentException("El estado de la reservación es obligatorio");
-//        }
-//    }
 
     
 }

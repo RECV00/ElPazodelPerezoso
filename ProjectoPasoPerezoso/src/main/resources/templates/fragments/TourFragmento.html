@@ -1,12 +1,10 @@
-
-
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="tourFragment">
     <div id="tourSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
-        <h3 style="margin-top: 0;">Selección de Tours</h3>
+        <h3 style="margin-top: 0;">Selección de Tour</h3>
         
-        <!-- Lista de tours -->
+         Lista de tours 
         <div id="tourResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
             <div th:if="${tours == null or tours.isEmpty()}">
                 <p>No hay tours disponibles en este momento.</p>
@@ -14,11 +12,12 @@
             
             <div th:unless="${tours == null or tours.isEmpty()}" th:each="tour : ${tours}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
                 <label style="display: flex; align-items: center; cursor: pointer;">
-                    <input type="checkbox" 
+                    <input type="radio" 
+                           name="tourSelectionId"
                            th:value="${tour.id_tour}" 
                            th:id="'id_tour' + ${tour.id_tour}"
                            style="margin-right: 10px;" 
-                           onchange="updateSelectedTours(this)"/>
+                           onchange="updateSelectedTour(this)"/>
                     <div>
                         <strong th:text="${tour.nameTour}"></strong>
                         <div style="font-size: 0.9em; color: #555;">
@@ -30,119 +29,96 @@
             </div>
         </div>
         
-         <!--Tours seleccionados--> 
-        <div id="selectedToursDisplay" style="display: none; margin-top: 15px;">
-            <h4>Tours Seleccionados:</h4>
-            <ul id="selectedToursList"></ul>
+         Tour seleccionado 
+        <div id="selectedTourDisplay" style="display: none; margin-top: 15px;">
+            <h4>Tour Seleccionado:</h4>
+            <div id="selectedTourInfo"></div>
         </div>
         
-        <!-- Botón de confirmación -->
-        <button type="button" onclick="confirmTourSelection()" class="button" 
-                style="background-color: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
-            Confirmar Tours Seleccionados
-        </button>
-        
-        <!-- Campo oculto para enviar los IDs al formulario -->
-        <input type="hidden" id="selectedTourIds" name="selectedTourIds" value="">
+         Campo oculto para enviar el ID al formulario 
+        <input type="hidden" name="selectedTourId" th:value="${tour.id_tour}" />
     </div>
 </div>
 
 <script>
-    // Array para almacenar los IDs de los tours seleccionados
-    let selectedTours = [];
+    // Variable para almacenar el ID del tour seleccionado
+    let selectedTour = null;
     
-    // Función para actualizar la lista de tours seleccionados
-    function updateSelectedTours(checkbox) {
-        const tourId = parseInt(checkbox.value);
-        
-        if (checkbox.checked) {
-            if (!selectedTours.includes(tourId)) {
-                selectedTours.push(tourId);
-            }
-        } else {
-            selectedTours = selectedTours.filter(id => id !== tourId);
+    // Función para actualizar el tour seleccionado
+    function updateSelectedTour(radioButton) {
+        if (radioButton.checked) {
+            selectedTour = parseInt(radioButton.value);
+            updateSelectedTourDisplay();
+            // Actualizar el campo oculto del formulario
+            document.getElementById('selectedTourId').value = selectedTour;
         }
-        
-        updateSelectedToursList();
     }
     
-    // Función para actualizar la visualización de tours seleccionados
-    function updateSelectedToursList() {
-        const selectedList = document.getElementById('selectedToursList');
-        const selectedContainer = document.getElementById('selectedTours');
+    // Función para actualizar la visualización del tour seleccionado
+    function updateSelectedTourDisplay() {
+        const selectedInfo = document.getElementById('selectedTourInfo');
+        const selectedContainer = document.getElementById('selectedTourDisplay');
         
-        selectedList.innerHTML = '';
+        selectedInfo.innerHTML = '';
         
-        if (selectedTours.length > 0) {
+        if (selectedTour !== null) {
             selectedContainer.style.display = 'block';
             
-            selectedTours.forEach(tourId => {
-                // Aquí podrías hacer una llamada AJAX para obtener más detalles del tour si es necesario
-                const tourName = document.querySelector(`#tour_${tourId} + div strong`).textContent;
-                
-                const li = document.createElement('li');
-                li.style.padding = '5px 0';
-                li.style.borderBottom = '1px solid #eee';
-                li.innerHTML = `
-                    ${tourName}
-                    <button onclick="removeTour(${tourId})" style="float: right; background-color: #f44336; color: white; border: none; border-radius: 3px; padding: 2px 5px; cursor: pointer;">
-                        Quitar
+            // Obtener el nombre del tour seleccionado
+            const tourName = document.querySelector(`#id_tour${selectedTour} + div strong`).textContent;
+            
+            selectedInfo.innerHTML = `
+                <div style="padding: 10px; background-color: #e9ffe9; border-radius: 4px; border: 1px solid #ddd;">
+                    <strong>${tourName}</strong>
+                    <button type="button" onclick="deselectTour()" style="float: right; background-color: #f44336; color: white; border: none; border-radius: 3px; padding: 2px 5px; cursor: pointer;">
+                        Cambiar selección
                     </button>
-                `;
-                selectedList.appendChild(li);
-            });
+                </div>
+            `;
         } else {
             selectedContainer.style.display = 'none';
+            document.getElementById('selectedTourId').value = '';
         }
     }
     
-    // Función para remover un tour de la selección
-    function removeTour(tourId) {
-        selectedTours = selectedTours.filter(id => id !== tourId);
-        const checkbox = document.querySelector(`#tour_${tourId}`);
-        if (checkbox) {
-            checkbox.checked = false;
+    // Función para deseleccionar el tour
+    function deselectTour() {
+        selectedTour = null;
+        const radioButton = document.querySelector(`input[name="tourSelection"]:checked`);
+        if (radioButton) {
+            radioButton.checked = false;
         }
-        updateSelectedToursList();
+        updateSelectedTourDisplay();
     }
     
-    // Función para confirmar la selección
-    function confirmTourSelection() {
-        if (selectedTours.length === 0) {
-            alert('Por favor seleccione al menos un tour para reservar.');
-            return;
+    // Función para validar antes de enviar el formulario principal
+    function validateFormBeforeSubmit() {
+        const tourRequired = true; // Cambiar a false si el tour es opcional
+        
+        if (tourRequired && selectedTour === null) {
+            alert('Por favor seleccione un tour para continuar.');
+            return false;
         }
         
-        // Aquí puedes hacer lo que necesites con los tours seleccionados
-        console.log('Tours seleccionados para reservación:', selectedTours);
-        
-        // Ejemplo: Enviar los IDs al backend
-        fetch('/tours/reservar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ tourIds: selectedTours }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Reservación realizada con éxito!');
-            // Puedes redirigir o limpiar la selección aquí
-            selectedTours = [];
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateSelectedToursList();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Hubo un error al procesar la reservación.');
-        });
+        return true;
     }
+    
+    // Asignar la función de validación al formulario principal
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainForm = document.querySelector('form'); // Ajustar este selector según tu formulario principal
+        
+        if (mainForm) {
+            mainForm.onsubmit = function() {
+                return validateFormBeforeSubmit();
+            };
+        }
+    });
 </script>
-</html>
+</html>-->
 
+<!--
 
-
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="tourFragment">
     <div id="tourSelectionContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">

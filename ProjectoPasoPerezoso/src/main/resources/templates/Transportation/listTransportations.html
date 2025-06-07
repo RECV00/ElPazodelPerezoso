@@ -58,7 +58,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             </thead>
             <tbody>
                 <tr th:each="transportation : ${transportations}">
-                    <td th:text="${transportation.id}"></td>
+                    <td th:text="${transportation.id_transportation}"></td>
                     <td th:text="${transportation.plate}"></td>
                     <td th:text="${transportation.driver}"></td>
                     <td th:text="${#temporals.format(transportation.dataTimeService, 'dd/MM/yyyy HH:mm')}"></td>
@@ -72,9 +72,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     </td>
                     <td th:text="${transportation.serviceDuration}"></td>
                     <td class="action-cells">
-                        <a th:href="@{/transportation/edit/{id}(id=${transportation.id})}" class="button edit-btn">
+                        <a th:href="@{/transportation/edit/{id}(id=${transportation.id_transportation})}" class="button edit-btn">
                             <i class="fas fa-edit"></i> Editar</a>
-                        <a th:href="@{/transportation/delete/{id}(id=${transportation.id})}" 
+                        <a th:href="@{/transportation/delete/{id}(id=${transportation.id_transportation})}" 
                            class="button delete-btn" onclick="return confirmDelete()">
                             <i class="fas fa-trash-alt"></i>Eliminar</a>
                     </td>

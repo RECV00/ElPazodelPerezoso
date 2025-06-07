@@ -5,6 +5,7 @@
 package cr.ac.una.perezoso.jpa;
 
 import cr.ac.una.perezoso.domain.Booking;
+import cr.ac.una.perezoso.domain.Client;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +25,14 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
      @Query("SELECT b FROM Booking b " +
            "LEFT JOIN FETCH b.client " +
            "LEFT JOIN FETCH b.cabin " +
-           "LEFT JOIN FETCH b.food " +
+           "LEFT JOIN FETCH b.dishe " +
            "LEFT JOIN FETCH b.transportation " +
            "LEFT JOIN FETCH b.tour " +
            "LEFT JOIN FETCH b.payment " +
            "WHERE b.id_booking = :id")
     Optional<Booking> findByIdWithDetails(@Param("id") int id);
     
-    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.food WHERE b.id = :id")
+    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.dishe WHERE b.id = :id")
     Booking findByIdWithFood(@Param("id") Long id);
     @Query("SELECT b FROM Booking b JOIN b.client c WHERE c.identification = :identification")
     Page<Booking> findByClientIdentification(@Param("identification") String identification, Pageable pageable);
@@ -44,7 +45,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
     Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
     // Buscar por estado
     Page<Booking> findByReserveStatus(String status, Pageable pageable);
-    
+    List<Booking> findByClient(Client client);
     List<Booking> findByReserveStatus(String status);
     // Find by date range
     @Query("SELECT b FROM Booking b WHERE " +
@@ -113,8 +114,8 @@ Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
 
 @Query("SELECT b FROM Booking b WHERE b.transportation.id_transportation = :vehicleId")
 Page<Booking> findByVehicleId(@Param("vehicleId") Integer vehicleId, Pageable pageable);
-    @Query("SELECT b FROM Booking b WHERE b.food.id_food = :foodId")
-    Page<Booking> findByFoodId(@Param("foodId") Integer foodId, Pageable pageable);
+    @Query("SELECT b FROM Booking b WHERE b.dishe.disheID = :disheId")
+    Page<Booking> findByDisheId(@Param("disheId") Integer disheId, Pageable pageable);
     
    
 

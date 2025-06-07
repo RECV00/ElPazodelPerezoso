@@ -7,10 +7,13 @@ package cr.ac.una.perezoso.jpa;
 import cr.ac.una.perezoso.domain.Tour;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -29,4 +32,9 @@ public interface TourRepository extends JpaRepository<Tour, Integer>,JpaSpecific
     List<Tour> findByPriceBetween(Double minPrice, Double maxPrice);
     
     List<Tour> findByStartingPointContainingIgnoreCase(String location);
+    @Query("SELECT t FROM Tour t WHERE t.id IN :ids")
+    List<Tour> findByIdIn(@Param("ids") List<Integer> ids);
+//    public boolean existsById(int tourId);
+    Optional<Tour> findById(int tourId);
+
 }

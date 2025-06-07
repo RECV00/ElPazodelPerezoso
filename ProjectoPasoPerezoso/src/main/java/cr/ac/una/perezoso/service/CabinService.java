@@ -77,7 +77,10 @@ public class CabinService implements CRUD<Cabin, Integer>{
     public boolean existsById(Integer id) {
         return cabinRepository.existsById(id);
     }
-    
+    public Optional<Cabin> findById(int cabinId) {
+    return cabinRepository.findById(cabinId);
+    }
+     
 //    public Page<Cabin> findByFilters(String location, Integer minCapacity, 
 //                               Double minPrice, Double maxPrice, Pageable pageable) {
 //    Specification<Cabin> spec = Specification.where(null);

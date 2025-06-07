@@ -6,9 +6,11 @@ package cr.ac.una.perezoso.service;
 
 import cr.ac.una.perezoso.domain.Tour;
 import cr.ac.una.perezoso.jpa.TourRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,4 +81,10 @@ public class TourService implements CRUD<Tour, Integer>{
     public boolean existsById(Integer id) {
         return tourRepository.existsById(id);
     }
+
+    public Optional<Tour> findById(int tourId) {
+    return tourRepository.findById(tourId);
+    }
+       
+    
 }
