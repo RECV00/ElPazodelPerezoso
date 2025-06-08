@@ -1,87 +1,288 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Listado de Tours</title>
     <meta charset="UTF-8">
-    <title>Lista de Tours</title>
-    <!-- Incluir Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet" type="text/css">
-    <script>
-        // Función para confirmar la eliminación
-        function confirmDelete() {
-            return confirm("¿Estás seguro de que deseas eliminar este tour?");
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet">
+    <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
-    <!-- Incluir la barra de navegación -->
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
-
-    <div class="container">
-        <h1>Lista de Tours</h1>
+    
+    <div class="content">
+        <h1>Listado de Tours</h1>
         
-        <!-- Formulario para filtrar tours por nombre -->
-        <form action="/tours/filter" method="get">
-            <label for="nameTour">Filtrar por nombre:</label>
-            <input type="text" id="nameTour" name="nameTour">
-            <button type="submit">Filtrar</button>
-        </form>
+        <div class="top-actions">
+            <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#addTourModal">
+                <i class="fas fa-plus"></i> Nuevo Tour
+            </button>
+            
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+        </div>
 
-        <!-- Botones para agregar un nuevo tour y mostrar todos -->
-        <button onclick="window.location.href='/tours/add'" class="button">
-           <i class="fas fa-plus-circle"></i> Agregar Nuevo Tour
-        </button>
-        <button onclick="window.location.href='/tours/'" class="button">
-            <i class="fas fa-list"></i> Mostrar Todos
-        </button>
+        <div class="filter-container">         
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="nameTour">Nombre:</label>
+                    <input type="text" id="nameTour" name="nameTour" placeholder="Buscar por nombre (presiona Enter)">
+
+                    <button type="button" id="resetButton" class="btn-reset">
+                        <i class="fas fa-broom"></i> Limpiar
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <label for="startingPoint">Ubicación:</label>
+                    <input type="text" id="startingPoint" name="startingPoint" placeholder="Buscar por ubicación (presiona Enter)">
+                </div>
+            </div>
+        </div>
         
-        <!-- Tabla para mostrar los tours -->
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th>Fecha</th>
-                    <th>Inicio</th>
-                    <th>Duración</th>
-                    <th>Ubicación</th>
-                    <th>Multimedia</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Iterar sobre la lista de tours -->
-                <tr th:each="tour : ${tours}">
-                    <td th:text="${tour.id_tour}"></td>
-                    <td th:text="${tour.nameTour}"></td>
-                    <td th:text="${tour.description}"></td>
-                    <td th:text="${tour.price}"></td>
-                    <td th:text="${tour.date}"></td>
-                    <td th:text="${tour.startTime}"></td>
-                    <td th:text="${tour.duration}"></td>
-                    <td th:text="${tour.startingPoint}"></td>
-                    <td>
-                        <!-- Mostrar la imagen si existe -->
-                        <img th:if="${tour.multimedia != null}" th:src="@{'/' + ${tour.multimedia}}" alt="Imagen del tour" style="width: 100px; height: auto;">
-                    </td>
-                    <td>
-                        <!-- Botón para editar un tour -->
-                        <a th:href="@{/tours/edit/{id}(id=${tour.id_tour})}" 
-                           class="button edit">
-                           <i class="fas fa-edit"></i> Editar 
-                        </a>
+        <div id="tourTableContainer">
+            <div id="loadingIndicator" class="loading-indicator">
+                <div class="loading-spinner"></div> Cargando tours...
+            </div>
+            
+            <table class="tour-table">
+                <thead>
+                    <tr>
+                        <!--<th>ID</th>-->
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Fecha</th>
+                        <th>Inicio</th>
+                        <th>Duración</th>
+                        <th>Ubicación</th>
+                        <th>Multimedia</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tourTableBody">
+                    <!-- Los datos se cargarán via AJAX -->
+                </tbody>
+            </table>
+            
+            <div class="pagination-container">
+                <ul class="pagination" id="paginationControls">
+                    <!-- Los controles se generarán aquí -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Modales -->
+        <div th:replace="~{/tour/add_tour_modal :: addModal}"></div>
+        <div th:replace="~{/tour/edit_tour_modal :: editModal}"></div>
 
-                        <!-- Botón para eliminar un tour -->
-                        <a th:href="@{/tours/delete/{id}(id=${tour.id_tour})}" 
-                           class="button delete" onclick="return confirmDelete()">
-                            <i class="fas fa-trash-alt"></i> Eliminar 
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
     </div>
+    
+    <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            let currentPage = 0;
+            
+            loadTours(0);
+            
+            // Filtrado al presionar Enter
+            $('#nameTour, #startingPoint').on('keypress', function(e) {
+                if (e.which === 13) {
+                    loadTours(0);
+                }
+            });
+            
+            $('#resetButton').click(function() {
+                $('#nameTour').val('');
+                $('#startingPoint').val('');
+                loadTours(0);
+            });
+        });
+
+        function loadTours(page) {
+            const filters = {
+                nameTour: $('#nameTour').val(),
+                startingPoint: $('#startingPoint').val(),
+                page: page,
+                size: 4
+            };
+            
+            $('#loadingIndicator').show();
+            $('.tour-table').addClass('loading');
+            $('#tourTableBody').hide();
+            
+            $.ajax({
+                url: '/tours/api/list',
+                type: 'GET',
+                data: filters,
+                success: function(response) {
+                    updateTable(response.content);
+                    updatePagination(response.totalPages, page);
+                    $('#tourTableBody').fadeIn(300);
+                },
+                error: function(xhr) {
+                    $('#tourTableBody').html('<tr><td colspan="10" class="no-data">Error al cargar los datos</td></tr>');
+                    $('#tourTableBody').show();
+                    console.error('Error:', xhr.responseText);
+                },
+                complete: function() {
+                    $('#loadingIndicator').hide();
+                    $('.tour-table').removeClass('loading');
+                }
+            });
+        }
+        
+        function updateTable(tours) {
+            const tbody = $('#tourTableBody');
+            tbody.empty();
+            
+            if (tours.length === 0) {
+                tbody.append('<tr><td colspan="10" class="no-data">No se encontraron tours con los filtros aplicados</td></tr>');
+                return;
+            }
+            
+            tours.forEach(tour => {
+                const row = `
+                    <tr>
+                        
+                        <td>${tour.nameTour}</td>
+                        <td>${tour.description}</td>
+                        <td>$${tour.price.toFixed(2)}</td>
+                        <td>${tour.date}</td>
+                        <td>${tour.startTime}</td>
+                        <td>${tour.duration}</td>
+                        <td>${tour.startingPoint}</td>
+                        <td>
+                            ${tour.multimedia ? `<img src="/${tour.multimedia}" alt="Imagen del tour" style="width: 100px; height: auto;">` : 'Sin imagen'}
+                        </td>
+                        <td class="tour-actions">
+                            <a href="#" class="action-btn btn-edit" title= "Editar"
+                               data-bs-toggle="modal" 
+                               data-bs-target="#editTourModal"
+                               data-tour-id="${tour.id_Tour}"
+                               data-tour-name="${tour.nameTour}"
+                               data-tour-description="${tour.description}"
+                               data-tour-price="${tour.price}"
+                               data-tour-date="${tour.date}"
+                               data-tour-starttime="${tour.startTime}"
+                               data-tour-duration="${tour.duration}"
+                               data-tour-startingpoint="${tour.startingPoint}"
+                               data-tour-multimedia="${tour.multimedia}">
+                                <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
+                            </a>
+                            
+                            <button class="action-btn btn-delete" title="Eliminar"
+                                onclick="deleteTour(${tour.id_Tour}); return false;">
+                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                        </button>
+             
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+        
+        function updatePagination(totalPages, currentPage) {
+            const pagination = $('#paginationControls');
+            pagination.empty();
+
+            if (totalPages <= 1) return;
+
+            // Botón Anterior
+            const prevBtn = `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="${currentPage === 0 ? 'return false;' : `loadTours(${currentPage - 1}); return false;`}">
+                    &laquo;
+                </a>
+            </li>`;
+            pagination.append(prevBtn);
+
+            // Números de página
+            const startPage = Math.max(0, currentPage - 2);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+            
+            if (startPage > 0) {
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadTours(0); return false;">1</a></li>`);
+                if (startPage > 1) {
+                    pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadTours(${i}); return false;">
+                        ${i + 1}
+                    </a>
+                </li>`;
+                pagination.append(pageBtn);
+            }
+            
+            if (endPage < totalPages - 1) {
+                if (endPage < totalPages - 2) {
+                    pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+                }
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadTours(${totalPages - 1}); return false;">${totalPages}</a></li>`);
+            }
+
+            // Botón Siguiente
+            const nextBtn = `<li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="${currentPage === totalPages - 1 ? 'return false;' : `loadTours(${currentPage + 1}); return false;`}">
+                    &raquo;
+                </a>
+            </li>`;
+            pagination.append(nextBtn);
+        }
+        
+        $('#editTourModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            modal.find('#editTourId').val(button.data('tour-id'));
+            modal.find('#editNameTour').val(button.data('tour-name'));
+            modal.find('#editDescription').val(button.data('tour-description'));
+            modal.find('#editPrice').val(button.data('tour-price'));
+            modal.find('#editDate').val(button.data('tour-date'));
+            modal.find('#editStartTime').val(button.data('tour-starttime'));
+            modal.find('#editDuration').val(button.data('tour-duration'));
+            modal.find('#editStartingPoint').val(button.data('tour-startingpoint'));
+            
+            var imagePath = button.data('tour-multimedia');
+            if(imagePath) {
+                modal.find('#currentImage').attr('src', '/' + imagePath);
+                modal.find('#currentImageContainer').show();
+            } else {
+                modal.find('#currentImageContainer').hide();
+            }
+        });
+        
+        function deleteTour(tourId) {
+            if (confirm('¿Estás seguro que deseas eliminar este tour?')) {
+                fetch('/tours/delete/' + tourId, {
+                    method: 'DELETE',
+                    redirect: 'follow'
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Error al eliminar el tour');
+                });
+            }
+        }
+
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            $('.top-actions').prepend(alertHtml);
+            setTimeout(() => $('.alert').alert('close'), 5000);
+        }
+    </script>
 </body>
 </html>

@@ -15,3 +15,5 @@ public interface PaymentsRepository extends JpaRepository<PaymentManagement, Int
     PaymentManagement findTopByOrderByIdPaymentDesc(); // Obtener el último registro por ID en orden descendente
     
 }
+
+

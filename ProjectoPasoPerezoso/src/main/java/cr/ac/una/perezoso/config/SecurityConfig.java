@@ -30,7 +30,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
     
-    private final UserDetailsService userDetailsService;
+
+    
+       private final UserDetailsService userDetailsService;
+
 
     public SecurityConfig(@Qualifier("customUserDetailsService") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -39,9 +42,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
+
             .csrf(csrf -> csrf.disable()) // Deshabilitado solo para ejemplo - ajustar según necesidades
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
+
+
                 // Recursos estáticos
                 .requestMatchers("/", "/login", "/img/**", "/css/**", "/js/**").permitAll()
                 
@@ -49,9 +56,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**").permitAll()
                 
                 // Roles específicos
+
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/employee/**").hasRole("EMPLOYEE")
                 .requestMatchers("/client/**").hasRole("CLIENT")
+
                 
                 // Endpoints protegidos pero con acceso según autenticación
                 .requestMatchers("/booking/**").authenticated()
@@ -61,6 +70,7 @@ public class SecurityConfig {
                 .requestMatchers("/Transportation/**").authenticated()
                 .requestMatchers("/maintenance/**").authenticated()
                 
+
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -119,7 +129,9 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+
+        source.registerCorsConfiguration("/", configuration);
+
         return source;
     }
 
@@ -132,60 +144,10 @@ public class SecurityConfig {
         return firewall;
     }
 
-    @Bean
+
+   @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-}
 
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfig {
-//    
-//     private final UserDetailsService userDetailsService;
-//
-//    // Inyectamos el UserDetailsService personalizado
-//    public SecurityConfig(@Qualifier("customUserDetailsService") UserDetailsService userDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//    }
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeHttpRequests(auth -> auth
-//                .requestMatchers("/", "/login","/img/**", "/css/**", "/js/**").permitAll()
-//                .requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/employee/**").hasRole("EMPLOYEE")
-//                .requestMatchers("/client/**").hasRole("CLIENT")
-//                .requestMatchers("/booking/**").permitAll()
-//                .requestMatchers("/tour/**").permitAll()
-//                .requestMatchers("/payment/**").permitAll()
-//                .requestMatchers("/food/**").permitAll()
-//                .anyRequest().authenticated()
-//            )
-//            .formLogin(form -> form
-//                .loginPage("/login")
-//                .loginProcessingUrl("/auth/login")
-//                .defaultSuccessUrl("/redirect-by-role", true)
-//                .failureUrl("/login?error=true")
-//                .permitAll()
-//            )
-//            .logout(logout -> logout
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout=true")
-//                .permitAll()
-//            );
-//            
-//        return http.build();
-//    }
-//@Bean
-//    public HttpFirewall allowUrlEncodedSemicolonHttpFirewall() {
-//        StrictHttpFirewall firewall = new StrictHttpFirewall();
-//        firewall.setAllowSemicolon(true); // Permite punto y coma en URLs
-//        return firewall;
-//    }
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//}
+}

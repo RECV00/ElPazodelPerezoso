@@ -20,12 +20,13 @@ import jakarta.persistence.Table;
 @Table(name = "tb_payment_management")
 public class PaymentManagement {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática del ID
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "id_payment") 
     private Integer idPayment;
 
     @Column(name = "transaction_amount", nullable = false) 
-    private Integer transactionAmount;
+    private int transactionAmount;
 
     @Column(name = "date_transfer") 
     private LocalDate dateTransfer;
@@ -54,7 +55,8 @@ public class PaymentManagement {
     public PaymentManagement() {
     }
 
-    public PaymentManagement(Integer transactionAmount, LocalDate dateTransfer, String methodPayment, String numberReference, String statePayment, String nameClient, String identificationFiscal, String direction, String proof) {
+
+    public PaymentManagement(int transactionAmount, LocalDate dateTransfer, String methodPayment, String numberReference, String statePayment, String nameClient, String identificationFiscal, String direction, String proof) {
         this.transactionAmount = transactionAmount;
         this.dateTransfer = dateTransfer;
         this.methodPayment = methodPayment;
@@ -66,7 +68,8 @@ public class PaymentManagement {
         this.proof = proof;
     }
 
-    public PaymentManagement(Integer idPayment,Integer transactionAmount, LocalDate dateTransfer, String methodPayment, String numberReference, String statePayment, String nameClient, String identificationFiscal, String direction, String proof) {
+
+    public PaymentManagement(Integer idPayment, int transactionAmount, LocalDate dateTransfer, String methodPayment, String numberReference, String statePayment, String nameClient, String identificationFiscal, String direction, String proof) {
         this.idPayment = idPayment;
         this.transactionAmount = transactionAmount;
         this.dateTransfer = dateTransfer;
@@ -87,11 +90,12 @@ public class PaymentManagement {
         this.idPayment = idPayment;
     }
 
-    public Integer getTransactionAmount() {
+    public int getTransactionAmount() {
         return transactionAmount;
     }
 
-    public void setTransactionAmount(Integer transactionAmount) {
+    public void setTransactionAmount(int transactionAmount) {
+
         this.transactionAmount = transactionAmount;
     }
 
@@ -176,3 +180,4 @@ public class PaymentManagement {
     }
 
 }
+

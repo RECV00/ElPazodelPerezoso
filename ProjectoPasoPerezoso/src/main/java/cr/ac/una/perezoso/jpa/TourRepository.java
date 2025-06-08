@@ -37,4 +37,6 @@ public interface TourRepository extends JpaRepository<Tour, Integer>,JpaSpecific
 //    public boolean existsById(int tourId);
     Optional<Tour> findById(int tourId);
 
+    Page<Tour> findByStartingPointContainingIgnoreCase(String location, Pageable pageable);
+
 }

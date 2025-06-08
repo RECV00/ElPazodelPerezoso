@@ -8,15 +8,20 @@ import cr.ac.una.perezoso.domain.Article;
 import cr.ac.una.perezoso.service.ArticleService;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  *
  * @author keyna
@@ -35,96 +40,84 @@ public class ArticleController {
         logic = new ArticleLogic();
     }
     
-  @GetMapping({"/addForm"})
-    public String addArticle(Model model) {
-        model.addAttribute("article",new Article());             
-        return "/article/add_article";  
-    }
-     //"/Article"/form""
- @PostMapping("/saveArticle")
-public String saveArticles(
-    @RequestParam("productName") String productName,
-    @RequestParam("description") String description,
-    @RequestParam("productQuantity") int productQuantity,
-    @RequestParam("unitOfMeasurement") String unitOfMeasurement,
-    @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
-    @RequestParam("supplier") String supplier,
-    @RequestParam("unitPrice") int unitPrice,
-    Model model) throws SQLException, ClassNotFoundException {
-    
-    // Validación modificada para fecha opcional
-    if (!logic.validateWord(productName) || !logic.checkStrings(description) || 
-        !logic.validateNumbers(productQuantity) || !logic.validateWord(unitOfMeasurement) || 
-        !logic.validateWord(supplier) || !logic.validateNumbers(unitPrice) ||
-        (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
+    // Vista completa con paginación
+    @GetMapping("/list")
+    public String listArticles(
+        @RequestParam(value = "productName", required = false) String productName,
+        @RequestParam(value = "supplier", required = false) String supplier,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "6") int size,
+        Model model) throws SQLException, ClassNotFoundException {
         
-        model.addAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
-        return "/article/add_article"; 
-    }
-    
-    Article article = new Article(productName, description, productQuantity, 
-                                unitOfMeasurement, expirationDate, supplier, unitPrice);
-     articleService.save(article);
-    
-    return "redirect:/Article/list?success=Artículo creado correctamente";
-}
-
-        //Listar articulos  
-       // "/Article/list"
-     @GetMapping("/list")
-    public String listArticles(Model model) throws SQLException, ClassNotFoundException {
-    List<Article> articles = articleService.getAll();
-     model.addAttribute("articles", articles);
-    
+        Page<Article> articlePage = getFilteredArticles(productName, supplier, page, size);
+        
+        model.addAttribute("articles", articlePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", articlePage.getTotalPages());
         return "/article/list_article";
-                
     }
     
-    // Método para filtrar tours por nombre
-    @GetMapping("/filter")
-    public String filterArticle(@RequestParam(value="supplier",required = false) String supplier,@RequestParam(value="id_article", required = false) Integer id_article, Model model) {
-        List<Article> articles;
+     // Endpoint para AJAX
+    @GetMapping("/api/list")
+    @ResponseBody
+    public Page<Article> listArticlesApi(
+        @RequestParam(value = "productName", required = false) String productName,
+        @RequestParam(value = "supplier", required = false) String supplier,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "6") int size) {
         
-        if (supplier != null && !supplier.isEmpty()) {
-            // Filtrar tours por nombre si se proporciona un valor
-            articles = articleService.searchBySupplier(supplier);
-            if (articles.isEmpty()) {
-            model.addAttribute("errorMessage", "No se encontraron artículos del proveedor: " + supplier);
-             }
-        }else if(id_article == null){
-            // Mostrar todos los tours si no se proporciona un valor
-            articles = articleService.getAll();
-        }
-        else {
-            Article article = articleService.getById(id_article);
-            articles = article != null ? List.of(article) : List.of();
-            if (articles.isEmpty()) {
-                model.addAttribute("errorMessage", "No se encontró ningún artículo con el ID: " + id_article);
-            }
-        }
-        model.addAttribute("articles", articles); // Pasar la lista filtrada a la vista
-        return "/article/list_article"; // Renderiza la vista tours.html
-    }
-    
-    
-    //"/Article/formRemove"
-      @GetMapping({"/formRemove", "/createRemove"})
-    public String formRemove() {
-        return "remove";  
+        return getFilteredArticles(productName, supplier, page, size);
     }
 
+    private Page<Article> getFilteredArticles(String productName, String supplier, int page, int size) {
+        if (productName != null && !productName.isEmpty()) {
+            return articleService.findByProductNameContaining(productName, PageRequest.of(page, size));
+        } else if (supplier != null && !supplier.isEmpty()) {
+            return articleService.findBySupplierContaining(supplier, PageRequest.of(page, size));
+        } else {
+            return articleService.getAll(PageRequest.of(page, size));
+        }
+    }
     
-    //Eliminar Articulos 
-     //"/Article/removeData"
-    @PostMapping("/removeData")
-    public String removeArticles(@RequestParam("id_article") int id_article) throws SQLException, ClassNotFoundException{
-        articleService.delete(id_article);
     
+  // Métodos para modales
+    @GetMapping("/add-form")
+    public String getAddModal(Model model) {
+        model.addAttribute("article", new Article());
+        return "/article/add_article_modal :: addModal";
+    }
+    
+     //"/Article"/form""
+  @PostMapping("/add")
+    public String saveArticles(
+        @RequestParam("productName") String productName,
+        @RequestParam("description") String description,
+        @RequestParam("productQuantity") int productQuantity,
+        @RequestParam("unitOfMeasurement") String unitOfMeasurement,
+        @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
+        @RequestParam("supplier") String supplier,
+        @RequestParam("unitPrice") int unitPrice,
+        RedirectAttributes redirectAttributes) throws SQLException, ClassNotFoundException {
+        
+        // Validación
+        if (!logic.validateWord(productName) || !logic.checkStrings(description) || 
+            !logic.validateNumbers(productQuantity) || !logic.validateWord(unitOfMeasurement) || 
+            !logic.validateWord(supplier) || !logic.validateNumbers(unitPrice) ||
+            (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
+            
+            redirectAttributes.addFlashAttribute("error", "Todos los campos son obligatorios y deben ser válidos.");
+            return "redirect:/Article/add-form";
+        }
+        
+        Article article = new Article(productName, description, productQuantity, 
+                                    unitOfMeasurement, expirationDate, supplier, unitPrice);
+        articleService.save(article);
+        
+        redirectAttributes.addFlashAttribute("success", "Artículo creado correctamente");
         return "redirect:/Article/list";
     }
-  
-
-     @GetMapping("/formUpdate")
+   
+     @GetMapping("/edit-form")
     public String formUpdate(@RequestParam("id_article") int id_article, Model model)  throws SQLException, ClassNotFoundException{
         if (id_article <= 0) {
             return "redirect:/Article/list?error=Articulo no encontrado";
@@ -136,12 +129,12 @@ public String saveArticles(
     } else {
         return "redirect:/Article/list?error=Articulo no encontrado";
     }
-    return "/article/edit_article";  
+    return "/article/edit_article_modal :: editModal"; 
     }   
         
     //Editar Articulos 
-    //"/Article/Updates"
-    @PostMapping("/Updates")
+    
+    @PostMapping("/update")
     public String UpdateArticles(
     @RequestParam("id_article") int id_article,
     @RequestParam("productName") String productName,
@@ -150,58 +143,46 @@ public String saveArticles(
     @RequestParam("unitOfMeasurement") String unitOfMeasurement,
     @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate,
     @RequestParam("supplier") String supplier,
-    @RequestParam("unitPrice") int unitPrice) throws SQLException, ClassNotFoundException {
+    @RequestParam("unitPrice") int unitPrice,RedirectAttributes redirectAttributes) throws SQLException, ClassNotFoundException {
     
+    Article article =   articleService.getById(id_article);
+    
+    if (article == null) {
+            return "redirect:/Article/list?error=Articulo no encontrado";
+        }
     // Validación modificada para fecha opcional
-    if (!logic.validateNumbers(id_article) || !logic.validateWord(productName) || 
-        !logic.checkStrings(description) || !logic.validateNumbers(productQuantity) || 
-        !logic.validateWord(unitOfMeasurement) || !logic.validateWord(supplier) || 
-        !logic.validateNumbers(unitPrice) || 
-        (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
-        
-        return "redirect:/Article/list?error=Datos inválidos";
-    }
+//    if (!logic.validateNumbers(id_article) || !logic.validateWord(productName) || 
+//        !logic.checkStrings(description) || !logic.validateNumbers(productQuantity) || 
+//        !logic.validateWord(unitOfMeasurement) || !logic.validateWord(supplier) || 
+//        !logic.validateNumbers(unitPrice) || 
+//        (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
+//        
+//        return "redirect:/Article/list?error=Datos inválidos";
+//    }
     
-    Article article = new Article(id_article, productName, description, productQuantity,
-                                unitOfMeasurement, expirationDate, supplier, unitPrice);
+    article.setProductName(productName);
+    article.setDescription(description);
+    article.setProductQuantity(productQuantity);
+    article.setUnitOfMeasurement(unitOfMeasurement);
+    article.setExpirationDate(expirationDate);
+    article.setSupplier(supplier);
+    article.setUnitPrice(unitPrice);
+    
    articleService.save(article);
     
+   redirectAttributes.addFlashAttribute("successMessage", "Articulo actualizado correctamente.");
     return "redirect:/Article/list?success=Artículo actualizado correctamente";
 }
     
-   
-//     @GetMapping({"/formSearch", "/createSearch"})
-//    public String formSearch() {
-//        return "searchResult";  
-//    }
-//    //"/Article/searchById""
-//    @PostMapping("/searchById")
-//    public String searchArticleById(@RequestParam("id_article") int id_article, Model model) throws SQLException, ClassNotFoundException {
-//    Article article = articleService.getById(id_article);
-//    if (article != null) {
-//        model.addAttribute("article", article);
-//    } else {
-//        model.addAttribute("error", "No se encontró el artículo con ID " + id_article);
-//    }
-//    return "searchResult";
-//   
-//}
-//    //"/Article/formSupplier
-//     @GetMapping({"/formSupplier", "/createSupplier"})
-//    public String formSupplier() {
-//        return "searchSupplier";  
-//    }
-//    //"/Article/searchBySupplier
-//    @PostMapping("/searchBySupplier")
-//    public String searchArticlesBySupplier(@RequestParam("supplier") String supplier, Model model) throws SQLException, ClassNotFoundException {
-//        List<Article> articles = articleService.searchBySupplier(supplier);
-//        if (articles.isEmpty()) {
-//            model.addAttribute("error", "No se encontraron artículos para el proveedor: " + supplier);
-//        } else {
-//            model.addAttribute("articles", articles);
-//        }
-//        return "/article/list_article"; 
-//    }
+   @DeleteMapping("/delete/{id}")
+    public String deleteArticle(@PathVariable int id, RedirectAttributes redirectAttributes) 
+        throws SQLException, ClassNotFoundException {
+        
+        articleService.delete(id);
+        redirectAttributes.addFlashAttribute("success", "Artículo eliminado correctamente");
+        return "redirect:/Article/list";
+    }
+
 
 }
 

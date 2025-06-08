@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="addModal">
+    <div class="modal fade" id="addTourModal" tabindex="-1" aria-labelledby="addTourModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTourModalLabel">Agregar Nuevo Tour</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addTourForm" th:action="@{/tours/add}" method="post" enctype="multipart/form-data" onsubmit="return confirmAdd()">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nameTour" class="form-label">Nombre del Tour</label>
+                                    <input type="text" class="form-control" id="nameTour" name="nameTour" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Precio ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="startTime" class="form-label">Hora de Inicio</label>
+                                    <input type="time" class="form-control" id="startTime" name="startTime" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">Duración</label>
+                                    <input type="time" class="form-control" id="duration" name="duration" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="startingPoint" class="form-label">Punto de Partida</label>
+                                    <input type="text" class="form-control" id="startingPoint" name="startingPoint" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="multimedia" class="form-label">Imagen del Tour</label>
+                                    <input type="file" class="form-control" id="multimedia" name="multimedia">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar Tour</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Función para establecer la fecha mínima como la fecha actual
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').setAttribute('min', today);
+        }
+
+        // Función para confirmar la adición
+        function confirmAdd() {
+            return confirm("¿Estás seguro de que deseas agregar este tour?");
+        }
+
+        // Ejecutar cuando el modal se muestre
+        $('#addTourModal').on('shown.bs.modal', function() {
+            setMinDate();
+        });
+    </script>
+</div>
+</html>

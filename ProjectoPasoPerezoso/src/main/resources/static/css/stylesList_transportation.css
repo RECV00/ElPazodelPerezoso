@@ -1,14 +1,16 @@
-/* Base fondo decorativa */
+/* Estilos generales */
 body {
     background-image: url('/img/fondo.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
     color: white;
     margin: 0;
     padding: 0;
+    background-color: #f4f4f4;
 }
 
 /* Barra de navegación */
@@ -18,12 +20,8 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(5px);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    
 }
 
 nav .logo a {
@@ -31,7 +29,6 @@ nav .logo a {
     font-size: 1.5em;
     text-decoration: none;
     font-weight: bold;
-    letter-spacing: 1px;
 }
 
 nav .nav-links {
@@ -42,32 +39,29 @@ nav .nav-links {
 }
 
 nav .nav-links li {
-    margin-left: 25px;
-    position: relative;
+    margin-left: 20px;
 }
 
 nav .nav-links a {
     color: white;
     text-decoration: none;
     font-size: 1.1em;
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 3px;
     transition: background-color 0.3s;
 }
 
 nav .nav-links a:hover {
     background-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
 }
 
-/* Contenedor principal */
+/* Contenido principal */
 .content {
-    background-color: rgba(52, 58, 64, 0.8);
     padding: 20px;
-    border-radius: 10px;
-    margin: 20px auto;
     max-width: 1200px;
+    margin: 20px auto;
+    background-color: rgba(52, 58, 64, 0.8);
+    border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -77,6 +71,7 @@ nav .nav-links a:hover {
     margin-bottom: 20px;
     text-align: center;
 }
+
 /* Contenedor superior con acciones */
 .top-actions {
     display: flex;
@@ -89,45 +84,7 @@ nav .nav-links a:hover {
     gap: 15px;
 }
 
-/* Filtros y botones */
-.filter-container {
-/*    margin-bottom: 20px;*/
-}
-
-.filter-group {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.filter-group label {
-    margin-right: 15px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    min-width: 160px;
-    font-size: 0.95em;
-}
-
-.filter-group input {
-    padding: 10px 15px;
-    border: 1px solid rgba(111, 126, 20, 0.5);
-    border-radius: 6px;
-    margin-right: 15px;
-    flex-grow: 1;
-    max-width: 300px;
-    font-size: 0.95em;
-    transition: all 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #333;
-}
-
-.filter-group input:focus {
-    outline: none;
-    border-color: #a0b320;
-    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
-}
-
+/* Botón Agregar */
 .btn-add {
     display: inline-flex;
     align-items: center;
@@ -142,21 +99,7 @@ nav .nav-links a:hover {
     gap: 10px;
     border: none;
     cursor: pointer;
-    font-size: 1em;   
-}
-
-.btn-filter, .btn-reset {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
     font-size: 1em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transform: scale(1);
 }
 
 .btn-add:hover {
@@ -166,18 +109,94 @@ nav .nav-links a:hover {
 }
 
 
+.filter-group {
+    
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px; /* Espacio entre elementos */
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group select {
+    width: 294px; /* Ancho más corto para el select */
+    padding: 10px 15px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 0.95em;
+}
+
+
+.filter-group label {
+    margin-right: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    min-width: 160px;
+    font-size: 0.95em;
+}
+
+.filter-group input {
+    padding: 10px 15px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    border-radius: 6px;
+    /*margin-right: 15px;*/
+    flex-grow: 1;
+    max-width: 300px;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.filter-group input:focus {
+    outline: none;
+    border-color: #a0b320;
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-reset {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    white-space: nowrap; /* Evita que el texto del botón se divida en varias líneas */
+}
+
 .btn-reset:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     background: linear-gradient(135deg, #7f8c8d, #6c7a7b);
 }
 
+
+.btn-filter {
+    background-color: #28a745;
+    color: white;
+}
+
 .btn-reset {
    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
     color: white;
 }
-/* Tabla de tours */
-.tour-table {
+
+/* Estilos para la tabla */
+.cabin-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
@@ -186,14 +205,18 @@ nav .nav-links a:hover {
     transition: opacity 0.3s ease;
 }
 
-.tour-table thead tr {
+.cabin-table.loading {
+    opacity: 0.7;
+}
+
+.cabin-table thead tr {
     background: linear-gradient(135deg, #8a9a1a, #6f7e14);
     color: white;
     text-align: left;
     font-weight: 600;
 }
-.tour-table th{
-    padding: 17px 29px;
+.cabin-table th {
+    padding: 5px 2px;
     position: relative;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -201,7 +224,28 @@ nav .nav-links a:hover {
     color: white;
     text-align: center; 
 }
-.tour-table th:not(:last-child)::after {
+.cabin-table th:nth-child(1), 
+.cabin-table td:nth-child(1) {
+    width: 15%; /* Nombre */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+.cabin-table th:nth-child(2), 
+.cabin-table td:nth-child(2) {
+    width: 20%; /* Descripcion  */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+
+.cabin-table th:nth-child(3), 
+.cabin-table td:nth-child(3) {
+    width: 30%; /* Ubicacion  */
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+}
+
+
+.cabin-table th:not(:last-child)::after {
     content: "";
     position: absolute;
     right: 0;
@@ -210,8 +254,9 @@ nav .nav-links a:hover {
     width: 1px;
     background-color: rgba(255, 255, 255, 0.2);
 }
-tour-table td{
-    padding: 1px 2px;
+
+.cabin-table td {
+    padding: 24px 5px;
     border-bottom: 1px solid rgba(160, 179, 32, 0.1);
     vertical-align: middle;
     transition: all 0.2s ease;
@@ -222,86 +267,22 @@ tour-table td{
     text-align: center; 
 }
 
-/* Asegurar que el texto en las celdas sea blanco */
-.tour-table td,
-.tour-table td a { /* Si hay enlaces dentro de las celdas */
-    color: white;
-}
 
-/* Si hay otros elementos dentro de las celdas que necesitan color blanco */
-.tour-table td * {
-    color: white;
-}
-
-
-.tour-table tbody tr {
+.cabin-table tbody tr {
     background-color: rgba(255, 255, 255, 0.03);
 }
 
-.tour-table tbody tr:nth-child(even) {
+.cabin-table tbody tr:nth-child(even) {
      background-color: rgba(255, 255, 255, 0.05);
 }
 
-.tour-table th:nth-child(2), 
-.tour-table td:nth-child(2) {
-    width: 25%; /* Nombre */
-    white-space: normal; /* Permite saltos de línea */
-    word-wrap: break-word; /* Rompe palabras largas */
-}
-
-.tour-table tbody tr:hover {
+.cabin-table tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
-.tour-table tbody tr:last-child td {
+.cabin-table tbody tr:last-child td {
     border-bottom: none;
 }
-
-.tour-actions {
-    /*display: flex;*/
-    gap: 18px;
-    justify-content: center;
-}
-
-.action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-}
-.action-btn i {
-    font-size: 14px;
-}
-.action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    opacity: 1 !important;
-}
-
-
-.btn-edit {
-   background: linear-gradient(135deg, #d1b52a, #b59d22);
-}
-
-.btn-delete {
-   background: linear-gradient(135deg, #e74c3c, #c0392b);
-}
-
-.btn-edit:hover, .btn-delete:hover {
-    opacity: 0.8;
-    color: white;
-}
-
-
 /* Paginación */
 .pagination-container {
     background: transparent !important;
@@ -347,14 +328,16 @@ tour-table td{
 }
 
 .page-item.active .page-link {
-    background: linear-gradient(135deg, #8a9a1a, #6f7e14) !important;
+   background: linear-gradient(135deg, #8a9a1a, #6f7e14) !important;
     border: none !important;
     color: white !important;
 }
+
 .page-item:not(.disabled):not(.active) .page-link:hover {
     background-color: rgba(111, 126, 20, 0.2) !important;
     border-color: rgba(160, 179, 32, 0.5) !important;
 }
+
 .page-item.disabled .page-link {
     color: rgba(255, 255, 255, 0.3) !important;
     pointer-events: none;
@@ -366,7 +349,60 @@ tour-table td{
 .page-item:last-child .page-link {
     padding: 8px 15px;
 }
-/* Loading indicator */
+
+.transport-actions {
+    /*display: flex;*/
+    gap: 18px;
+    justify-content: center;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+.action-btn i {
+    font-size: 14px;
+}
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important;
+}
+
+
+.btn-edit {
+   background: linear-gradient(135deg, #d1b52a, #b59d22);
+}
+
+.btn-delete {
+   background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    opacity: 0.8;
+    color: white;
+}
+
+
+/* Mensajes y loading */
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #adb5bd;
+    font-style: italic;
+}
+
 .loading-indicator {
     display: none;
     text-align: center;
@@ -387,8 +423,6 @@ tour-table td{
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
-
-
 
 /* Mensajes de alerta */
 .alert {
@@ -413,72 +447,40 @@ tour-table td{
 
 /* Responsive */
 @media (max-width: 768px) {
-    .content {
-        margin: 10px;
-        padding: 15px;
-    }
-    
-    .filter-container {
-        display: flex;
-        flex-direction: column;
-    }
-    
     .filter-group {
-        margin-bottom: 10px;
+        min-width: 100%;
         margin-right: 0;
     }
     
-    .tour-table, .tour-table thead, .tour-table tbody, .tour-table th, .tour-table td, .tour-table tr {
-        display: block;
+    .top-actions {
+        flex-direction: column;
+        align-items: flex-start;
     }
     
-    .tour-table thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
+    .btn-add {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
     }
     
-    .tour-table tr {
-        margin-bottom: 15px;
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 5px;
-    }
-    
-    .tour-table td {
-        position: relative;
-        padding-left: 50%;
-        border: none;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .tour-table td:before {
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        content: attr(data-label);
-        font-weight: bold;
-        color: #6f7e14;
+    .alert {
+        margin-top: 10px;
     }
     
     nav {
         flex-direction: column;
         padding: 15px;
+        gap: 15px;
     }
     
     nav .nav-links {
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 15px;
+        width: 100%;
+        justify-content: space-around;
+        gap: 5px;
     }
     
-    nav .nav-links li {
-        margin-left: 0;
-    }
-    
-     .top-actions {
-        flex-direction: column;
-        align-items: flex-start;
+    nav .nav-links a {
+        padding: 8px 12px;
+        font-size: 0.95em;
     }
 }

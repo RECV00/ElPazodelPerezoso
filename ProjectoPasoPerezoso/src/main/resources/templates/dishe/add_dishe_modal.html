@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="addModal">
+        <!-- Modal para agregar plato -->
+        <div class="modal fade" id="addDishModal" tabindex="-1" aria-labelledby="addDishModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="addDishModalLabel">Agregar Nuevo Plato</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/dishes/add}" enctype="multipart/form-data" id="addDishForm" class="needs-validation" novalidate>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="addName" class="form-label fw-bold">Nombre del Plato:</label>
+                                        <input type="text" class="form-control" id="addName" name="name" required>
+                                        <div class="invalid-feedback">Por favor ingrese un nombre válido</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addDescription" class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control" id="addDescription" name="description" rows="3" required></textarea>
+                                        <div class="invalid-feedback">Por favor ingrese una descripción</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addPrice" class="form-label fw-bold">Precio ($):</label>
+                                        <input type="number" class="form-control" id="addPrice" name="price" step="0.01" min="0" required>
+                                        <div class="invalid-feedback">Ingrese un precio válido</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="addCategory" class="form-label fw-bold">Categoría:</label>
+                                        <select class="form-select" id="addCategory" name="category" required>
+                                            <option value="">Seleccione una categoría</option>
+                                            <option value="Entrada">Entrada</option>
+                                            <option value="Plato Principal">Plato Principal</option>
+                                            <option value="Postre">Postre</option>
+                                            <option value="Bebida">Bebida</option>
+                                            <option value="Especial">Especial del Chef</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione una categoría</div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label fw-bold">Disponibilidad:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="addAvailableTrue" name="available" value="true" checked>
+                                            <label class="form-check-label" for="addAvailableTrue">Disponible</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="addAvailableFalse" name="available" value="false">
+                                            <label class="form-check-label" for="addAvailableFalse">No Disponible</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="addPreparationTime" class="form-label fw-bold">Tiempo de Preparación (HH:MM):</label>
+                                        <input type="time" class="form-control" id="addPreparationTime" name="preparationTime" 
+                                               min="00:05" max="03:00" step="300" required>
+                                        <div class="invalid-feedback">Ingrese un tiempo válido (5 min - 3 horas)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="addImage" class="form-label fw-bold">Imagen del Plato:</label>
+                                <input type="file" class="form-control" id="addImage" name="image" accept="image/*" required>
+                                <small class="text-muted d-block mt-1">Formatos aceptados: JPG, PNG, GIF (Máx. 5MB)</small>
+                                <div class="invalid-feedback">Seleccione una imagen válida</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Guardar Plato</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            const form = document.getElementById('addDishForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        })();
+        
+        // Validación de tamaño de imagen
+        document.getElementById('addImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file && file.size > maxSize) {
+                e.target.setCustomValidity('La imagen no debe exceder 5MB');
+                e.target.reportValidity();
+                e.target.value = '';
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+        
+        // Validación adicional para el tiempo de preparación
+        document.getElementById('addDishForm').addEventListener('submit', function(e) {
+            const timeInput = document.getElementById('addPreparationTime');
+            if(timeInput.value === '00:00') {
+                e.preventDefault();
+                timeInput.setCustomValidity('Por favor ingrese un tiempo de preparación válido');
+                timeInput.reportValidity();
+            } else {
+                timeInput.setCustomValidity('');
+            }
+        });
+        </script>
+    </div>
+</body>
+</html>
