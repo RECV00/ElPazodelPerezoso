@@ -58,7 +58,7 @@ nav .nav-links a {
 }
 
 nav .nav-links a:hover {
-    background-color: rgba(52, 152, 219, 0.7); /* Azul más claro al hover */
+    background-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
 }
 
