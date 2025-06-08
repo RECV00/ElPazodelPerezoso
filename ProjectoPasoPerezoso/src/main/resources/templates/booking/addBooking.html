@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Agregar Booking</title>
-    <link th:href="@{/css/stylesAddReservation.css}" rel="stylesheet">
+    <link th:href="@{/css/stylesAddBooking.css}" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -120,7 +120,9 @@
                                                            th:value="${cabin.cabinID}">
                                                     <img th:src="@{'/' + ${cabin.image}}" alt="Cabaña" style="width: 80px; height: 60px; object-fit: cover;">
                                                     <div class="cabin-info">
+                                                        <div style="font-size: 0.9em; color: black;">
                                                     <strong th:text="${cabin.name}"></strong>
+                                                    </div>
                                                     <div style="font-size: 0.9em; color: #555;">
                                                         <span th:text="'Capacidad: ' + ${cabin.capacity} + ' personas'"></span> | 
                                                         <span th:text="'Precio por Noche: $' + ${cabin.pricePerNight}"></span> |
@@ -149,7 +151,9 @@
                                                th:id="'tour_' + ${tour.id_tour}"
                                                style="margin-right: 10px;">
                                         <div>
+                                            <div style="font-size: 0.9em; color: black;">
                                             <strong th:text="${tour.nameTour}"></strong>
+                                            </div>
                                             <div style="font-size: 0.9em; color: #555;">
                                                 <span th:text="'Precio: $' + ${tour.price}"></span> | 
                                                 <span th:text="'Duración: ' + ${tour.duration}"></span>
@@ -175,7 +179,9 @@
                                            th:id="'dishe_' + ${dishe.disheID}"
                                            style="margin-right: 10px;">
                                     <div>
+                                        <div style="font-size: 0.9em; color: black;">
                                         <strong th:text="${dishe.name}"></strong>
+                                        </div>
                                         <div style="font-size: 0.9em; color: #555;">
                                             <span th:text="'Precio: $' + ${dishe.price}"></span> | 
                                             <span th:text="'Descripción: ' + ${dishe.description}"></span>
@@ -202,7 +208,9 @@
                                                th:id="'transportation_' + ${transportation.id_transportation}"
                                                style="margin-right: 10px;">
                                         <div>
+                                            <div style="font-size: 0.9em; color: black;">
                                             <strong th:text="'Nombre del Conductor: ' + ${transportation.driver}"></strong>
+                                            </div>
                                             <div style="font-size: 0.9em; color: #555;">
                                                 <span th:text="'Placa: ' + ${transportation.plate}"></span>
                                             </div>
@@ -381,272 +389,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-<!--<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Agregar Booking</title>
-    <link th:href="@{/css/stylesAddReservation.css}" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h1>Agregar Nueva Booking</h1>
-        
-        <form th:action="@{/booking/save}" method="post" th:object="${booking}" class="reservation-form" onsubmit="return validateForm()">
-
-           <div class="form-group">
-                <label for="clientIdentification">Identificación del Cliente:</label>
-                <div class="search-container">
-                    <input type="text" id="clientIdentification" name="clientIdentification" required
-                           placeholder="Ingrese la identificación del cliente">
-                    <button type="button" class="search-btn" onclick="searchClient()">Buscar</button>
-                </div>
-                <div id="clientInfo" class="client-info" style="display: none;">
-                    <p><strong>Nombre:</strong> <span id="clientName"></span></p>
-                    <p><strong>Email:</strong> <span id="clientEmail"></span></p>
-                </div>
-                <div id="clientError" class="error-message" style="display: none;"></div>
-            </div>
-            
-            Sección de fechas 
-            <div class="form-section">
-                <h2>Fechas</h2>
-                <div class="form-group">
-                    <label for="checkInDate">Fecha de Entrada:</label>
-                    <input type="date" id="checkInDate" th:field="*{checkInDate}" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="checkOutDate">Fecha de Salida:</label>
-                    <input type="date" id="checkOutDate" th:field="*{checkOutDate}" required>
-                </div>
-            </div>
-            
-            Sección de detalles principales 
-            <div class="form-section">
-                <h2>Detalles Principales</h2>
-                <div class="form-group">
-                    <label for="numberGuests">Número de huéspedes:</label>
-                    <input type="number" id="numberGuests" th:field="*{numberGuests}" min="1" max="20" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Tipo de booking:</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" th:field="*{bookingType}" value="Hospedaje" required> 
-                            <span class="radio-label">Hospedaje</span>
-                        </label>
-                        <label>
-                            <input type="radio" th:field="*{bookingType}" value="Alquiler Temporal"> 
-                            <span class="radio-label">Alquiler Temporal</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="reserveStatus">Estado del Booking:</label>
-                    <select id="reserveStatus" th:field="*{reserveStatus}" required>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="confirmada">Confirmada</option>
-                        <option value="cancelada">Cancelada</option>
-                    </select>
-                </div>
-            </div>
-            
-            Sección de servicios adicionales 
-            <div class="form-section">
-                <h2>Servicios Adicionales</h2>
-                <div class="form-group">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="enableAdditionalServices" th:field="*{additionalServices}" onchange="toggleAdditionalServices()">
-                        <span class="checkmark"></span>
-                        ¿Desea servicios adicionales?
-                    </label>
-                    
-                    <div id="additionalServicesContainer" class="services-container" style="display: none;">
-                        <div class="checkbox-group">
-                            <label class="checkbox-container">
-                                <input type="checkbox" name="services" value="tour" id="tourServiceCheckbox" 
-                                       onclick="handleTourServiceSelection()">
-                                <span class="checkmark"></span>
-                                Tour
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox" name="services" value="alimentacion">
-                                <span class="checkmark"></span>
-                                Alimentación
-                            </label>
-                            <label class="checkbox-container">
-                                <input type="checkbox" name="services" value="transporte"id="transporteServiceCheckbox" 
-                                onclick="handleTransportationServiceSelection()">
-                                <span class="checkmark"></span>
-                                Transporte
-                            </label>
-                        </div>
-                        
-                         Contenedor del selector de tours 
-                        <div id="tourSelectorContainer" style="display: none; margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
-                            <h4>Seleccione un Tour</h4>
-                            <div id="tourResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
-                                 Los tours se cargarán aquí 
-                                <div th:if="${tours == null or tours.isEmpty()}">
-                                    <p>No hay tours disponibles en este momento.</p>
-                                </div>
-                                
-                                <div th:unless="${tours == null or tours.isEmpty()}" th:each="tour : ${tours}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
-                                    <label style="display: flex; align-items: center; cursor: pointer;">
-                                        <input type="radio" 
-                                               name="selectedTourId"
-                                               th:value="${tour.id_tour}" 
-                                               th:id="'tour_' + ${tour.id_tour}"
-                                               style="margin-right: 10px;"
-                                        <div>
-                                            <strong th:text="${tour.nameTour}"></strong>
-                                            <div style="font-size: 0.9em; color: #555;">
-                                                <span th:text="'Precio: $' + ${tour.price}"></span> | 
-                                                <span th:text="'Duración: ' + ${tour.duration}"></span>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            Sección de información adicional 
-            <div class="form-section">
-                <h2>Información Adicional</h2>
-                <div class="form-group">
-                    <label for="specialRequirements">Requerimientos Especiales:</label>
-                    <textarea id="specialRequirements" th:field="*{specialRequirements}" rows="3" 
-                              placeholder="Indique cualquier requerimiento especial..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="promotionCode">Código de Promoción/Descuento:</label>
-                    <input type="text" id="promotionCode" th:field="*{promotionCode}" 
-                           placeholder="Opcional">
-                </div>
-            </div>
-    
-             Botón de enviar 
-            <div class="form-actions">
-                <button type="submit" class="button save-btn">Guardar Booking</button>
-                <a th:href="@{/booking/listaReservas}" class="button cancel-btn">Cancelar</a>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        // Buscar cliente
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('clientIdentification').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchClient();
-                }
-            });
-            
-            // Configurar fechas mínimas
-            setupDates();
-        });
-
-        function searchClient() {
-            const identification = document.getElementById('clientIdentification').value.trim();
-            const errorDiv = document.getElementById('clientError');
-            const infoDiv = document.getElementById('clientInfo');
-
-            if (!identification) {
-                errorDiv.textContent = 'Por favor ingrese una identificación';
-                errorDiv.style.display = 'block';
-                infoDiv.style.display = 'none';
-                return;
-            }
-
-            errorDiv.style.display = 'none';
-            infoDiv.style.display = 'none';
-
-            fetch(`/booking/clients/findByIdentification?identification=${encodeURIComponent(identification)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.message || 'Error al buscar cliente'); });
-                    }
-                    return response.json();
-                })
-                .then(clientData => {
-                    document.getElementById('clientName').textContent = 
-                        `${clientData.name} ${clientData.lastName}`;
-                    document.getElementById('clientEmail').textContent = clientData.email;
-                    infoDiv.style.display = 'block';
-                })
-                .catch(error => {
-                    errorDiv.textContent = error.message;
-                    errorDiv.style.display = 'block';
-                });
-        }
-
-        function setupDates() {
-            const today = new Date().toISOString().split('T')[0];
-            const checkInInput = document.getElementById('checkInDate');
-            const checkOutInput = document.getElementById('checkOutDate');
-            
-            checkInInput.setAttribute('min', today);
-            
-            checkInInput.addEventListener('change', function() {
-                checkOutInput.setAttribute('min', this.value);
-                if (checkOutInput.value && checkOutInput.value < this.value) {
-                    checkOutInput.value = '';
-                }
-            });
-        }
-
-        function toggleAdditionalServices() {
-            const servicesDiv = document.getElementById('additionalServicesContainer');
-            const isChecked = document.getElementById('enableAdditionalServices').checked;
-            
-            servicesDiv.style.display = isChecked ? 'block' : 'none';
-            
-            if (!isChecked) {
-                // Desmarcar todos los servicios adicionales si se desactiva
-                document.querySelectorAll('#additionalServicesContainer input[type="checkbox"]').forEach(cb => {
-                    cb.checked = false;
-                });
-                document.getElementById('tourSelectorContainer').style.display = 'none';
-            }
-        }
-        
-//-------------------------------------SERVICIOS DE TOURS-----------------------------------------------------------------------------------------------------
-        function handleTourServiceSelection() {
-        const tourCheckbox = document.getElementById('tourServiceCheckbox');
-        const tourContainer = document.getElementById('tourSelectorContainer');
-        tourContainer.style.display = tourCheckbox.checked ? 'block' : 'none';
-    }
-
-        function validateForm() {
-            // Validar que si el servicio de tour está seleccionado, se haya elegido un tour
-            const tourServiceChecked = document.getElementById('tourServiceCheckbox').checked;
-            const tourSelected = document.querySelector('input[name="selectedTourId"]:checked') !== null;
-
-            // Depuración
-            console.log("Tour service checked:", tourServiceChecked);
-            console.log("Tour selected:", tourSelected);
-            console.log("Selected tour ID:", 
-                document.querySelector('input[name="selectedTourId"]:checked')?.value);
-
-            if (tourServiceChecked && !tourSelected) {
-                alert('Por favor seleccione un tour para continuar');
-                return false;
-            }
-
-            return confirm("¿Estás seguro de que deseas agregar esta Reserva?");
-        }
-    </script>
-</body>
-</html>-->

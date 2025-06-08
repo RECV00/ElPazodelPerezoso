@@ -9,8 +9,7 @@
     <div class="container">
         <h1>Editar Booking</h1>
         
-        <form th:action="@{/booking/update}" method="post" th:object="${booking}" class="reservation-form" onsubmit="return validateForm()">
-            <input type="hidden" th:field="*{id_booking}">
+        <form th:action="@{/booking/update/{id}(id=${booking.id_booking})}" method="post" th:object="${booking}" class="reservation-form" onsubmit="return validateForm()">
 
             <!-- Sección de cliente-->
             <div class="form-group">
@@ -169,33 +168,33 @@
                         </div>
                         
                         <!-- Contenedor del selector de platillos -->
-                        <div id="disheSelectorContainer" th:style="${booking.dishes != null} ? 'display: block' : 'display: none'" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
-                            <h4>Seleccione Platillos</h4>
-                            <div id="disheResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
-                                <div th:if="${booking.dishe != null}">
-                                    <p>No hay platillos disponibles en este momento.</p>
-                                </div>
-                                
-                                <div th:unless="${dishes == null or dishes.isEmpty()}" th:each="dishe : ${dishes}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
-                                    <label style="display: flex; align-items: center; cursor: pointer;">
-                                        <input type="radio" 
-                                               name="selectedDisheId"
-                                               th:value="${dishe.disheID}" 
-                                               th:id="'dishe_' + ${dishe.disheID}"
-                                               th:checked="${booking.dishes != null and booking.dishes.contains(dishe)}"
-                                               style="margin-right: 10px;">
-                                        <div>
-                                            <strong th:text="${dishe.name}"></strong>
-                                            <div style="font-size: 0.9em; color: #555;">
-                                                <span th:text="'Precio: $' + ${dishe.price}"></span> | 
-                                                <span th:text="'Descripción: ' + ${dishe.description}"></span>
-                                                <span th:text="'Categoria: ' + ${dishe.category}"></span>
+                            <div id="disheSelectorContainer" th:style="${booking.dishe != null} ? 'display: block' : 'display: none'" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+                                <h4>Seleccione Platillos</h4>
+                                <div id="disheResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+                                    <div th:if="${dishes == null or dishes.isEmpty()}">
+                                        <p>No hay platillos disponibles en este momento.</p>
+                                    </div>
+
+                                    <div th:unless="${dishes == null or dishes.isEmpty()}" th:each="dishe : ${dishes}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="radio" 
+                                                   name="selectedDisheId"
+                                                   th:value="${dishe.disheID}" 
+                                                   th:id="'dishe_' + ${dishe.disheID}"
+                                                   th:checked="${booking.dishe != null and booking.dishe.disheID == dishe.disheID}"
+                                                   style="margin-right: 10px;">
+                                            <div>
+                                                <strong th:text="${dishe.name}"></strong>
+                                                <div style="font-size: 0.9em; color: #555;">
+                                                    <span th:text="'Precio: $' + ${dishe.price}"></span> | 
+                                                    <span th:text="'Descripción: ' + ${dishe.description}"></span>
+                                                    <span th:text="'Categoria: ' + ${dishe.category}"></span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </label>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         
                         <!-- Contenedor del selector de transportes -->
                         <div id="transportationSelectorContainer" th:style="${booking.transportation != null} ? 'display: block' : 'display: none'" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">

@@ -17,7 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 /**
  *
- * @author keyna
+ * @author corra
  */
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer>{
@@ -38,16 +38,16 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
     Page<Booking> findByClientIdentification(@Param("identification") String identification, Pageable pageable);
       Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identification, Pageable pageable);
     
-    // Buscar por estado (búsqueda parcial insensible a mayúsculas)
+
     Page<Booking> findByReserveStatusContainingIgnoreCase(String status, Pageable pageable);
     
-    // Buscar por rango de fechas
+
     Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
-    // Buscar por estado
+
     Page<Booking> findByReserveStatus(String status, Pageable pageable);
     List<Booking> findByClient(Client client);
     List<Booking> findByReserveStatus(String status);
-    // Find by date range
+
     @Query("SELECT b FROM Booking b WHERE " +
            "(b.checkInDate BETWEEN :startDate AND :endDate) OR " +
            "(b.checkOutDate BETWEEN :startDate AND :endDate) OR " +
@@ -55,46 +55,27 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
     List<Booking> findByDateRange(@Param("startDate") LocalDate startDate, 
                                  @Param("endDate") LocalDate endDate);
     
-    // Find by client ID
+
     @Query("SELECT b FROM Booking b WHERE b.client.id_user = :clientId")
     List<Booking> findByClientId(@Param("clientId") Integer clientId);
     
     @Query("SELECT b FROM Booking b WHERE b.client.id_user = :clientId")
     Page<Booking> findByClientId(@Param("clientId") Integer clientId, Pageable pageable);
     
-    // Find by client name (contains, case insensitive)
+
     @Query("SELECT b FROM Booking b JOIN b.client c WHERE " +
            "LOWER(CONCAT(c.name, ' ', c.last_name)) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<Booking> findByClientNameContaining(@Param("name") String name, Pageable pageable);
     
-    // Find by booking type (contains, case insensitive)
     Page<Booking> findByBookingTypeContainingIgnoreCase(String bookingType, Pageable pageable);
-    
-//    // Find upcoming reservations
-//    @Query("SELECT b FROM Booking b WHERE b.checkInDate >= CURRENT_DATE ORDER BY b.checkInDate ASC")
-//    List<Booking> findUpcomingReservations();
-//    
-    // Find active reservations (current date between check-in and check-out)
     @Query("SELECT b FROM Booking b WHERE CURRENT_DATE BETWEEN b.checkInDate AND b.checkOutDate")
     List<Booking> findActiveReservations();
     
-    // Find by cabin ID
+  
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     List<Booking> findByCabinId(@Param("cabinId") Integer cabinId);
-    
-//    // Find by tour ID
-//    @Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
-//    List<Booking> findByTourId(@Param("tourId") Integer tourId);
-//    
-//    // Find by transportation ID
-//    @Query("SELECT b FROM Booking b WHERE b.transportation.id_vehicle = :id_transportation")
-//    List<Booking> findByTransportationId(@Param("id_transportation") Integer transportationId);
-//    
-    // Find by payment status
     @Query("SELECT b FROM Booking b JOIN b.payment p WHERE p.statePayment = :status")
     List<Booking> findByPaymentStatus(@Param("status") String status);
-    
-    // Check availability for a cabin in a date range
     @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE " +
            "b.cabin.cabinID = :cabinId AND " +
            "((b.checkInDate BETWEEN :startDate AND :endDate) OR " +
@@ -103,12 +84,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
     boolean existsByCabinAndDateRange(@Param("cabinId") Integer cabinId,
                                     @Param("startDate") LocalDate startDate,
                                     @Param("endDate") LocalDate endDate);
-
- // Nuevos métodos para búsqueda por entidades relacionadas
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     Page<Booking> findByCabinId(@Param("cabinId") Integer cabinId, Pageable pageable);
-    
-   // Descomentar y actualizar estos métodos en BookingRepository
 @Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
 Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
 
