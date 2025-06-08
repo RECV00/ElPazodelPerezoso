@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const id = this.getAttribute('data-id');
 
-            fetch(`maintenance/FormUpdate?id=${id}`)
+            fetch(`/maintenance/FormUpdate?id=${id}`)
                 .then(response => {
                     if (!response.ok) throw new Error("No se pudo cargar el formulario");
                     return response.text();
@@ -237,6 +237,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     modalBody.innerHTML = '<span class="cerrar">&times;</span>' + bodyContent;
                     modal.style.display = 'block';
+                    // Espera a que el HTML del formulario ya esté dentro del modal
+const form = modalBody.querySelector('#updateForm');
+if (form) {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error al guardar');
+            return response.text();
+        })
+        .then(() => {
+            Swal.fire({
+                title: 'Actualizado',
+                text: 'El mantenimiento fue actualizado correctamente',
+                icon: 'success'
+            }).then(() => {
+                modal.style.display = 'none'; // Cierra modal
+                location.reload();            // Recarga tabla
+            });
+        })
+        .catch(() => {
+            Swal.fire('Error', 'No se pudo guardar el mantenimiento', 'error');
+        });
+    });
+}
+
                 })
                 .catch(error => {
                     modalBody.innerHTML = '<p style="color: red;">Error al cargar el formulario</p>';

@@ -126,8 +126,8 @@
 <body>
     <h1>Actualizar Mantenimiento</h1>
 
-    <form th:object="${maintenance}" th:action="@{/maintenance/updateM}" method="post">
-        <input type="hidden" th:field="*{id}" />
+    <form id="updateForm" th:object="${maintenance}" th:action="@{/maintenance/updateM}" method="post">
+    <input type="hidden" th:field="*{id}" />
 
         <label for="maintenanceDate">Fecha de Mantenimiento:</label>
         <input type="date" th:field="*{maintenanceDate}" required />
@@ -168,11 +168,11 @@
         <label for="location">Ubicación:</label>
         <input type="text" th:field="*{location}" required />
 
-        <div class="button-group">
-            <button type="submit" class="button save-button">Guardar</button>
-            <a href="/maintenance/list" class="button exit-button">Salir</a>
-        </div>
-    </form>
+      <div class="button-group">
+        <button type="submit" class="button save-button">Guardar</button>
+        <button type="button" class="button exit-button cerrar">X</button>
+    </div>
+</form>
 </body>
 </html>
 
