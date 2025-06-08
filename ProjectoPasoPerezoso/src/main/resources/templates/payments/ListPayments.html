@@ -11,14 +11,16 @@
     <link rel="stylesheet" href="/css/payments.css">
 </head>
 <body>
+    <div th:replace="~{/fragments/navbar :: navbar}"></div>
+    
     <div class="content">
         <div class="top-actions">
             <button class="btn btn-save" onclick="window.location.href='/payment/payments'">
                 <i class="fas fa-plus"></i> Ir a Gestión de Pagos
             </button>
-            <button class="btn-back" onclick="window.location.href='/redirect-by-role'">
+<!--            <button class="btn-back" onclick="window.location.href='/redirect-by-role'">
                 <i class="fas fa-arrow-left"></i> Volver
-            </button>
+            </button>-->
         </div>
 
         <div class="tabla-container">

@@ -53,9 +53,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**").permitAll()
                 
                 // Roles específicos
-                .requestMatchers("/admin/").hasRole("ADMIN")
-                .requestMatchers("/employee/").hasRole("EMPLOYEE")
-                .requestMatchers("/client/").hasRole("CLIENT")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/employee/**").hasRole("EMPLOYEE")
+                .requestMatchers("/client/**").hasRole("CLIENT")
                 
                 // Endpoints protegidos pero con acceso según autenticación
                 .requestMatchers("/booking/**").authenticated()
