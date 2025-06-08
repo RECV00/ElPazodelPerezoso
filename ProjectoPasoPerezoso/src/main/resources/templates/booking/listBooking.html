@@ -25,16 +25,6 @@
         </div>
         
         <!-- Filtros -->
-        <div class="filter-container">
-            <div class="filter-row">
-                <!-- Filtro por cédula de cliente -->
-                <div class="filter-group">
-                    <label for="clientId">Cédula Cliente:  </label>
-                    <input type="text" id="clientId" name="clientId" placeholder="Buscar por cédula">
-                    <button onclick="reiniciarFiltros()" class="btn-reset">
-                    <i class="fas fa-broom"></i> Limpiar
-                    </button>
-                </div>
                 
                 <!-- Filtro por estado -->
                 <div class="filter-group">
@@ -49,11 +39,17 @@
                 
                 <!-- Filtro por rango de fechas -->
                 <div class="filter-group">
-                    <label>Fechas:  </label>
-                    <input type="date" id="startDate" name="startDate" onchange="validarRangoFechas()">
-                    <span>a  </span>
-                    <input type="date" id="endDate" name="endDate" onchange="validarRangoFechas()">
-                    <span id="date-error" class="error-message" style="display: none;"></span>
+                    <label>Fechas: </label>
+                    <input type="date" id="startDate" name="startDate" 
+                           th:value="${startDate != null} ? ${#temporals.format(startDate, 'yyyy-MM-dd')} : ''" 
+                           onchange="validateDateRange()"
+                           class="form-control">
+                    <span> a </span>
+                    <input type="date" id="endDate" name="endDate" 
+                           th:value="${endDate != null} ? ${#temporals.format(endDate, 'yyyy-MM-dd')} : ''" 
+                           onchange="validateDateRange()"
+                           class="form-control">
+                    <span id="date-error" class="error-message" style="display: none; color: red;"></span>
                 </div>
                 
                 
@@ -184,7 +180,7 @@
                 </div>
             </div>
             
-            <!-- Mensaje cuando no hay resultados -->
+            <!-- No hay resultados -->
             <div th:if="${bookings != null && bookings.empty}" class="no-results">
                 <i class="fas fa-info-circle"></i> No se encontraron reservaciones con los criterios seleccionados.
             </div>
@@ -235,44 +231,119 @@
             }
         });
 
-        // Función para validar el rango de fechas
-        function validateDateRange() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const errorElement = document.getElementById('date-error');
-            
-            if ((startDate && !endDate) || (!startDate && endDate)) {
-                errorElement.textContent = 'Debe seleccionar ambas fechas para filtrar';
-                errorElement.style.display = 'inline-block';
-                return false;
-            }
-            
-            if (startDate && endDate && startDate > endDate) {
-                errorElement.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
-                errorElement.style.display = 'inline-block';
-                return false;
-            }
-            
-            errorElement.style.display = 'none';
-            filterByDateRange();
-            return true;
+       // Validar las fechas
+
+    function validateDateRange() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const errorElement = document.getElementById('date-error');
+
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        // Resetear mensaje de error
+        errorElement.style.display = 'none';
+
+        // Validación 1: Solo una fecha seleccionada
+        if ((startDate && !endDate) || (!startDate && endDate)) {
+            errorElement.textContent = 'Debe seleccionar ambas fechas para filtrar';
+            errorElement.style.display = 'inline-block';
+            return false;
         }
 
-        // Función para cambiar el tamaño de página
-        function changePageSize(size) {
-            window.location.href = `/booking/listaReservas?page=0&size=${size}`;
+        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+            errorElement.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
+            errorElement.style.display = 'inline-block';
+
+           
+            startDateInput.classList.add('is-invalid');
+            endDateInput.classList.add('is-invalid');
+            return false;
         }
-        
-        // Función para reiniciar filtros
+        startDateInput.classList.remove('is-invalid');
+        endDateInput.classList.remove('is-invalid');
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Actualizar parámetros de fechas
+        if (startDate && endDate) {
+            urlParams.set('startDate', startDate);
+            urlParams.set('endDate', endDate);
+        } else {
+            urlParams.delete('startDate');
+            urlParams.delete('endDate');
+        }
+        urlParams.set('page', '0'); 
+        window.location.href = `/booking/listaReservas?${urlParams.toString()}`;
+
+        return true;
+    }
+        // Filtrar por estado
+        function filtrarPorEstado() {
+            const estado = document.getElementById('status').value;
+            if (estado) {
+                window.location.href = `/booking/listaReservas?status=${encodeURIComponent(estado)}`;
+            } else {
+                window.location.href = '/booking/listaReservas';
+            }
+        }
+
+
+        // Validar el rango de fechas
+        function validarRangoFechas() {
+            const fechaInicio = document.getElementById('startDate').value;
+            const fechaFin = document.getElementById('endDate').value;
+            const errorSpan = document.getElementById('date-error');
+
+            if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+                errorSpan.textContent = 'La fecha de inicio no puede ser mayor a la fecha fin';
+                errorSpan.style.display = 'inline';
+                return false;
+            } else {
+                errorSpan.style.display = 'none';
+                filtrarPorFechas();
+                return true;
+            }
+        }
+
+        // Reiniciar todos los filtros
         function reiniciarFiltros() {
             document.getElementById('clientId').value = '';
             document.getElementById('status').value = '';
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
             document.getElementById('date-error').style.display = 'none';
-            // Aquí deberías recargar la tabla sin filtros
-            window.location.href = '/booking/listaReservas?page=0';
+
+            window.location.href = '/booking/listaReservas';
         }
+
+    // Configurar eventos al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar evento para el input de cédula (buscar al presionar Enter)
+        document.getElementById('clientId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filtrarPorCedula();
+            }
+        });
+    
+    // Configurar eventos para los inputs de fecha
+    document.getElementById('startDate').addEventListener('change', validarRangoFechas);
+    document.getElementById('endDate').addEventListener('change', validarRangoFechas);
+    
+    // Cargar valores de filtros desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('clientId')) {
+        document.getElementById('clientId').value = urlParams.get('clientId');
+    }
+    if (urlParams.has('status')) {
+        document.getElementById('status').value = urlParams.get('status');
+    }
+    if (urlParams.has('startDate')) {
+        document.getElementById('startDate').value = urlParams.get('startDate');
+    }
+    if (urlParams.has('endDate')) {
+        document.getElementById('endDate').value = urlParams.get('endDate');
+    }
+});
     </script>
 </body>
 </html>

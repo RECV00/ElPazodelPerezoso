@@ -32,30 +32,10 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
            "WHERE b.id_booking = :id")
     Optional<Booking> findByIdWithDetails(@Param("id") int id);
     
-    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.dishe WHERE b.id = :id")
-    Booking findByIdWithFood(@Param("id") Long id);
     @Query("SELECT b FROM Booking b JOIN b.client c WHERE c.identification = :identification")
     Page<Booking> findByClientIdentification(@Param("identification") String identification, Pageable pageable);
-      Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identification, Pageable pageable);
-    
-
-    Page<Booking> findByReserveStatusContainingIgnoreCase(String status, Pageable pageable);
-    
-
-    Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
-
-    Page<Booking> findByReserveStatus(String status, Pageable pageable);
     List<Booking> findByClient(Client client);
     List<Booking> findByReserveStatus(String status);
-
-    @Query("SELECT b FROM Booking b WHERE " +
-           "(b.checkInDate BETWEEN :startDate AND :endDate) OR " +
-           "(b.checkOutDate BETWEEN :startDate AND :endDate) OR " +
-           "(b.checkInDate <= :startDate AND b.checkOutDate >= :endDate)")
-    List<Booking> findByDateRange(@Param("startDate") LocalDate startDate, 
-                                 @Param("endDate") LocalDate endDate);
-    
-
     @Query("SELECT b FROM Booking b WHERE b.client.id_user = :clientId")
     List<Booking> findByClientId(@Param("clientId") Integer clientId);
     
@@ -74,16 +54,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
   
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     List<Booking> findByCabinId(@Param("cabinId") Integer cabinId);
-    @Query("SELECT b FROM Booking b JOIN b.payment p WHERE p.statePayment = :status")
-    List<Booking> findByPaymentStatus(@Param("status") String status);
-    @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE " +
-           "b.cabin.cabinID = :cabinId AND " +
-           "((b.checkInDate BETWEEN :startDate AND :endDate) OR " +
-           "(b.checkOutDate BETWEEN :startDate AND :endDate) OR " +
-           "(b.checkInDate <= :startDate AND b.checkOutDate >= :endDate))")
-    boolean existsByCabinAndDateRange(@Param("cabinId") Integer cabinId,
-                                    @Param("startDate") LocalDate startDate,
-                                    @Param("endDate") LocalDate endDate);
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     Page<Booking> findByCabinId(@Param("cabinId") Integer cabinId, Pageable pageable);
 @Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
@@ -93,7 +63,12 @@ Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
 Page<Booking> findByVehicleId(@Param("vehicleId") Integer vehicleId, Pageable pageable);
     @Query("SELECT b FROM Booking b WHERE b.dishe.disheID = :disheId")
     Page<Booking> findByDisheId(@Param("disheId") Integer disheId, Pageable pageable);
-    
-   
+// For filtering by status
+Page<Booking> findByReserveStatus(String status, Pageable pageable);
 
+// For filtering by client identification
+Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identification, Pageable pageable);
+
+// For filtering by date range
+Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

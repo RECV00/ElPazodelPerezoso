@@ -19,6 +19,7 @@ import cr.ac.una.perezoso.service.TourService;
 import cr.ac.una.perezoso.service.TransportationService;
 import cr.ac.una.perezoso.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -74,6 +76,7 @@ public class BookingController {
         this.cabinService = cabinService;
     }
   
+    
     @GetMapping("/listaReservas")
 public String showBookings(
         @RequestParam(defaultValue = "0") int page,
@@ -84,26 +87,36 @@ public String showBookings(
         @RequestParam(required = false) Integer disheId,
         @RequestParam(required = false) Integer clientId,
         @RequestParam(required = false) String status,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
         Model model) {
     
     try {
         Pageable pageable = PageRequest.of(page, size);
         Page<Booking> bookingPage;
         
-        
-        if (cabinId != null) {
-            bookingPage = bookingRepository.findByCabinId(cabinId, pageable);
-        } else if (tourId != null) {
-            bookingPage = bookingRepository.findByTourId(tourId, pageable);
-        } else if (vehicleId != null) {
-            bookingPage = bookingRepository.findByVehicleId(vehicleId, pageable);
-        } else if (disheId != null) {
-            bookingPage = bookingRepository.findByDisheId(disheId, pageable);
-        } else if (clientId != null) {
+          //fechas
+        if (startDate != null || endDate != null) {
+            LocalDate effectiveStart = startDate != null ? startDate : LocalDate.MIN;
+            LocalDate effectiveEnd = endDate != null ? endDate : LocalDate.MAX;
+            
+            if (effectiveStart.isAfter(effectiveEnd)) {
+                model.addAttribute("errorMessage", "La fecha de inicio no puede ser posterior a la fecha final");
+                return "/booking/listBooking";
+            }
+            
+            bookingPage = bookingRepository.findByCheckInDateBetween(effectiveStart, effectiveEnd, pageable);
+        } 
+        //cliente
+        else if (clientId != null) {
             bookingPage = bookingRepository.findByClientId(clientId, pageable);
-        } else if (status != null && !status.isEmpty()) {
+        } 
+        // sestado
+        else if (status != null && !status.isEmpty()) {
             bookingPage = bookingRepository.findByReserveStatus(status, pageable);
-        } else {
+        } 
+        // sin filtros
+        else {
             bookingPage = bookingRepository.findAll(pageable);
         }
         
