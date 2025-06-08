@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="user-table-fragment">
+        <div class="table-responsive">
+            <table class="user-table" aria-describedby="tableDescription">
+                <thead>
+                    <tr>
+                        <!--<th scope="col">ID</th>-->
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Identificación</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td colspan="7" class="text-center no-users">
+                            <i class="fas fa-info-circle"></i> No se encontraron usuarios registrados
+                        </td>
+                    </tr>
+                    
+                    <tr th:each="user : ${users}" th:object="${user}">
+                        <td th:text="*{id_user}">1</td>
+                        <td>
+                            <span class="badge" th:classappend="*{userType} == 'ADMIN' ? 'badge-admin' : 
+                                                  (*{userType} == 'EMPLOYEE' ? 'badge-employee' : 'badge-client')"
+                                  th:text="*{userType}">Tipo</span>
+                        </td>
+                        <td th:text="*{name + ' ' + last_name}">Nombre Apellido</td>
+                        <td th:text="*{identification}">1-1234-5678</td>
+                        <td>
+                            <a th:href="'mailto:' + *{email}" th:text="*{email}">
+                                <i class="fas fa-envelope"></i> email@example.com
+                            </a>
+                        </td>
+                        <td>
+                            <a th:href="'tel:' + *{phone}" th:text="*{phone}">88888888</a>
+                        </td>
+                        <td class="user-actions">
+                            <a th:href="@{/user/detalle/{id}(id=*{id_user})}" class="action-btn view-btn" title="Ver detalles">
+                                <i class="fas fa-eye"></i> <span class="sr-only">Ver</span>
+                            </a>
+                            <a th:href="@{/user/editar/{id}(id=*{id_user})}" class="action-btn edit-btn" title="Editar">
+                                <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
+                            </a>
+                            <form th:action="@{/user/eliminar/{id}(id=*{id_user})}" method="post" class="delete-form">
+                                <button type="submit" class="action-btn delete-btn" title="Eliminar">
+                                    <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <nav class="pagination-container" th:if="${totalPages > 1}" aria-label="Paginación">
+            <div class="pagination-info">
+                Mostrando <span th:text="${users.size()}"></span> de 
+                <span th:text="${totalItems}"></span> usuarios
+                <span th:if="${identificationFilter != null && !identificationFilter.isEmpty()}">
+                    | Filtrados por identificación: <strong th:text="${identificationFilter}"></strong>
+                </span>
+                <span th:if="${typeFilter != null && !typeFilter.isEmpty()}">
+                    | Filtrados por tipo: <strong th:text="${typeFilter}"></strong>
+                </span>
+            </div>
+            
+            <ul class="pagination">
+                <li th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a th:href="@{/admin/list(page=0, size=${size}, 
+                              identification=${identificationFilter}, 
+                              type=${typeFilter})}"
+                       aria-label="Primera página">
+                        &laquo; Primera
+                    </a>
+                </li>
+                <li th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a th:href="@{/admin/list(page=${currentPage - 1}, size=${size}, 
+                              identification=${identificationFilter}, 
+                              type=${typeFilter})}"
+                       aria-label="Página anterior">
+                        &lsaquo; Anterior
+                    </a>
+                </li>
+                
+                <li th:each="i : ${#numbers.sequence(
+                    (currentPage > 2 ? currentPage - 2 : 0),
+                    (currentPage < totalPages - 3 ? currentPage + 2 : totalPages - 1)
+                )}" 
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a th:href="@{/admin/list(page=${i}, size=${size}, 
+                              identification=${identificationFilter}, 
+                              type=${typeFilter})}"
+                       th:text="${i + 1}"
+                       th:aria-current="${i == currentPage} ? 'page' : false">
+                    </a>
+                </li>
+                
+                <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a th:href="@{/admin/list(page=${currentPage + 1}, size=${size}, 
+                              identification=${identificationFilter}, 
+                              type=${typeFilter})}"
+                       aria-label="Página siguiente">
+                        Siguiente &rsaquo;
+                    </a>
+                </li>
+                <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a th:href="@{/admin/list(page=${totalPages - 1}, size=${size}, 
+                              identification=${identificationFilter}, 
+                              type=${typeFilter})}"
+                       aria-label="Última página">
+                        Última &raquo;
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="page-size-selector">
+                <label for="pageSizeSelect">Mostrar:</label>
+                <select id="pageSizeSelect">
+                    <option value="4" th:selected="${size == 4}">4</option>
+                    <option value="10" th:selected="${size == 10}">10</option>
+                    <option value="20" th:selected="${size == 20}">20</option>
+                    <option value="50" th:selected="${size == 50}">50</option>
+                </select>
+                <span>por página</span>
+            </div>
+        </nav>
+    </div>
+</body>
+</html>

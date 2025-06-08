@@ -52,18 +52,14 @@ public class TransportationService implements CRUD<Transportation, Integer>{
         return transportationRepository.findByPlate(plate);
     }
 
-    public List<Transportation> searchByPlateOrDriver(String filter) {
-        return transportationRepository.searchByPlateOrDriver(filter);
+    public Page<Transportation> findByPlateContaining(String plate,Pageable pageable) {
+        return transportationRepository.findByPlateContaining(plate,pageable);
     }
 
-    public List<Transportation> findByStatus(String status) {
-        return transportationRepository.findByServiceStatus(status);
+    public Page<Transportation> findByStatus(String status,Pageable pageable) {
+        return transportationRepository.findByServiceStatus(status,pageable);
     }
 
-    public List<Transportation> findByDateRange(LocalDateTime start, LocalDateTime end) {
-        return transportationRepository.findByDataTimeServiceBetween(start, end);
-    }
-    
     @Override
     public Page<Transportation> getAll(Pageable pageable) {
         return transportationRepository.findAll(pageable);

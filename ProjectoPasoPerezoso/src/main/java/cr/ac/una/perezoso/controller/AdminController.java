@@ -30,25 +30,17 @@ public class AdminController {
     @Autowired
     private UserService userService;
    
-      @GetMapping("/list")
-    public String listUsers(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "4") int size,
-            @RequestParam(value = "identification", required = false) String identification,
-            @RequestParam(value = "type", required = false) String userType,
-            HttpServletRequest request,
-            Model model) {
-        
-        Page<User> userPage;
-        
-        // Si no hay filtros, usar getAll()
-        if ((identification == null || identification.isEmpty()) && 
-            (userType == null || userType.isEmpty())) {
-            userPage = userService.getAll(PageRequest.of(page, size));
-        } else {
-            // Si hay filtros, usar filterAndPaginateUsers()
-            userPage = userService.filterAndPaginateUsers(identification, userType, page, size);
-        }
+     @GetMapping("/list")
+public String listUsers(
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "4") int size,
+        @RequestParam(value = "identification", required = false) String identification,
+        @RequestParam(value = "type", required = false) String userType,
+        HttpServletRequest request,
+        Model model) {
+    
+   
+        Page<User> userPage = userService.filterAndPaginateUsers(identification, userType, page, size);
         
         model.addAttribute("users", userPage.getContent());
         model.addAttribute("currentPage", page);
@@ -59,14 +51,17 @@ public class AdminController {
         model.addAttribute("size", size);
         
         if (isAjaxRequest(request)) {
-            return "/list_user :: #usersTableBody";
+            return "/list_user :: #tableSection"; // Fragmento específico para AJAX
         }
-        return "/list_user";
-    }
+    
+    
+    return "/list_user";
+}
 
 private boolean isAjaxRequest(HttpServletRequest request) {
     return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 }
+
 
     @PostMapping("/admins")
     public Admin saveAdmin(@RequestBody Admin admin) {

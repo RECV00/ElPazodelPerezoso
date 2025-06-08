@@ -22,6 +22,6 @@ import org.springframework.stereotype.Repository;
 public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article>{
     List<Article> findByProductNameContainingIgnoreCase(String productName);
     Page<Article> findByProductNameContainingIgnoreCase(String productName,Pageable pageable);
-    List<Article> findBySupplierContainingIgnoreCase(String supplier);
+    Page<Article> findBySupplierContainingIgnoreCase(String supplier,Pageable pageable);
     List<Article> findByExpirationDate(LocalDate expirationDate);
 }

@@ -55,8 +55,8 @@ public class ArticleService implements CRUD<Article, Integer>{
         return articleRepository.findByProductNameContainingIgnoreCase(productName);
     }
 
-    public List<Article> searchBySupplier(String supplier) {
-        return articleRepository.findBySupplierContainingIgnoreCase(supplier);
+    public Page<Article> findBySupplierContaining(String supplier, Pageable pageable) {
+        return articleRepository.findBySupplierContainingIgnoreCase(supplier,pageable);
     }
 
     public List<Article> findByExpirationDate(LocalDate expirationDate) {
@@ -68,7 +68,7 @@ public class ArticleService implements CRUD<Article, Integer>{
         return articleRepository.findAll(pageable);
     }
 
-     public Page<Article> findByNameContaining(String name, Pageable pageable) {
+     public Page<Article> findByProductNameContaining(String name, Pageable pageable) {
     return articleRepository.findByProductNameContainingIgnoreCase(name, pageable);
 }
      
