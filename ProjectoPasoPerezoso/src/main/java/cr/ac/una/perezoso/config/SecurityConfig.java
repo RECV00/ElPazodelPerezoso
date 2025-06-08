@@ -26,13 +26,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  *
  * @author keyna
  */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     
 
-    
-       private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public SecurityConfig(@Qualifier("customUserDetailsService") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -46,6 +46,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
 
+
                 // Recursos estáticos
                 .requestMatchers("/", "/login", "/img/**", "/css/**", "/js/**").permitAll()
                 
@@ -53,9 +54,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**").permitAll()
                 
                 // Roles específicos
+
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/employee/**").hasRole("EMPLOYEE")
                 .requestMatchers("/client/**").hasRole("CLIENT")
+
                 
                 // Endpoints protegidos pero con acceso según autenticación
                 .requestMatchers("/booking/**").authenticated()
@@ -65,7 +68,6 @@ public class SecurityConfig {
                 .requestMatchers("/Transportation/**").authenticated()
                 .requestMatchers("/maintenance/**").authenticated()
                 
-
 
                 .anyRequest().authenticated()
             )
@@ -125,7 +127,9 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/", configuration);
+
         return source;
     }
 
@@ -137,6 +141,7 @@ public class SecurityConfig {
         firewall.setAllowUrlEncodedSlash(true);
         return firewall;
     }
+
 
    @Bean
     public PasswordEncoder passwordEncoder() {

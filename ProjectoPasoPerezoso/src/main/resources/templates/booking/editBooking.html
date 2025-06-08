@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link th:href="@{/css/stylesEditBooking.css}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Reserva</h1>
+        
+        <form th:action="@{/booking/update/{id}(id=${booking.id_booking})}" method="post" th:object="${booking}" class="reservation-form" id="bookingForm">
+
+            <!-- Sección de cliente-->
+            <div class="form-group">
+                <label for="clientIdentification">Identificación del Cliente:</label>
+                <div class="search-container">
+                    <input type="text" id="clientIdentification" name="clientIdentification" required
+                           th:value="${booking.client.identification}" readonly>
+                </div>
+                <div id="clientInfo" class="client-info">
+                    <div style="font-size: 0.9em; color: white;">
+                        <p><strong>Nombre:</strong> <span id="clientName" th:text="${booking.client.name + ' ' + booking.client.last_name}"></span></p>
+                        <p><strong>Email:</strong> <span id="clientEmail" th:text="${booking.client.email}"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de fechas-->
+            <div class="form-section">
+                <h2>Fechas</h2>
+                <div class="form-group">
+                    <label for="checkInDate">Fecha de Entrada:</label>
+                    <input type="date" id="checkInDate" th:field="*{checkInDate}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="checkOutDate">Fecha de Salida:</label>
+                    <input type="date" id="checkOutDate" th:field="*{checkOutDate}" required>
+                </div>
+            </div>
+            
+            <!-- Sección de detalles principales -->
+            <div class="form-section">
+                <h2>Detalles Principales</h2>
+                <div class="form-group">
+                    <label for="numberGuests">Número de huéspedes:</label>
+                    <input type="number" id="numberGuests" th:field="*{numberGuests}" min="1" max="20" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo de booking:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" th:field="*{bookingType}" value="Hospedaje" required> 
+                            <span class="radio-label">Hospedaje</span>
+                        </label>
+                        <label>
+                            <input type="radio" th:field="*{bookingType}" value="Alquiler Temporal"> 
+                            <span class="radio-label">Alquiler Temporal</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reserveStatus">Estado del Booking:</label>
+                    <select id="reserveStatus" th:field="*{reserveStatus}" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Sección de servicios adicionales -->
+            <div class="form-section">
+                <h2>Servicios Adicionales</h2>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="enableAdditionalServices" th:field="*{additionalServices}" 
+                            th:checked="${booking.additionalServices != null && booking.additionalServices}" 
+                            onchange="toggleAdditionalServices()">
+                        <span class="checkmark"></span>
+                        ¿Desea servicios adicionales?
+                    </label>
+                    
+                    <div id="additionalServicesContainer" class="services-container" th:style="${booking.additionalServices != null && booking.additionalServices} ? 'display: block' : 'display: none'">
+                        <div class="checkbox-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="tour" id="tourServiceCheckbox" 
+                                       th:checked="${booking.tour != null}"
+                                       onclick="handleServiceSelection('tour')">
+                                <span class="checkmark"></span>
+                                Tour
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="alimentacion" id="disheServiceCheckbox"
+                                    th:checked="${booking.dishe != null}"
+                                    onclick="handleServiceSelection('dishe')">
+                                <span class="checkmark"></span>
+                                Alimentación
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="services" value="transporte" id="transportationServiceCheckbox" 
+                                       th:checked="${booking.transportation != null}"
+                                       onclick="handleServiceSelection('transportation')">
+                                <span class="checkmark"></span>
+                                Transporte
+                            </label>
+                        </div>
+                        
+                        <!-- Contenedor del selector Cabañas-->
+                        <div class="form-section">
+                            <h2>Selección de Cabaña</h2>
+                            <div class="form-group">
+                                <div id="cabinSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+                                    <h4>Seleccione una Cabaña</h4>
+                                    <div id="cabinResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+                                        <div th:if="${cabins == null or cabins.isEmpty()}">
+                                            <p>No hay cabañas disponibles en este momento.</p>
+                                        </div>
+
+                                        <div th:unless="${cabins == null or cabins.isEmpty()}" th:each="cabin : ${cabins}">
+                                            <label class="cabin-option">
+                                                <input type="radio" name="selectedCabinId" 
+                                                       th:value="${cabin.cabinID}"
+                                                       th:checked="${booking.cabin != null and booking.cabin.cabinID == cabin.cabinID}">
+                                                <img th:src="@{'/' + ${cabin.image}}" alt="Cabaña" style="width: 100px; height: 100px; object-fit: cover;">
+                                                <div class="cabin-info">
+                                                    <div style="font-size: 0.9em; color: black;">
+                                                        <strong th:text="${cabin.name}"></strong>
+                                                    </div>
+                                                    <div style="font-size: 0.9em; color: #555;">
+                                                        <span th:text="'Capacidad: ' + ${cabin.capacity} + ' personas'"></span> | 
+                                                        <span th:text="'Precio por Noche: $' + ${cabin.pricePerNight}"></span> |
+                                                        <span th:text="'Descripción: ' + ${cabin.description}"></span>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenedor del selector de tours -->
+                        <div id="tourSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+                            <h4>Seleccione un Tour</h4>
+                            <div id="tourResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+                                <div th:if="${tours == null or tours.isEmpty()}">
+                                    <p>No hay tours disponibles en este momento.</p>
+                                </div>
+                                
+                                <div th:unless="${tours == null or tours.isEmpty()}" th:each="tour : ${tours}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="radio" 
+                                               name="selectedTourId"
+                                               th:value="${tour.id_tour}" 
+                                               th:id="'tour_' + ${tour.id_tour}"
+                                               th:checked="${booking.tour != null and booking.tour.id_tour == tour.id_tour}"
+                                               style="margin-right: 10px;">
+                                        <img th:src="@{'/' + ${tour.multimedia}}" alt="Tour" style="width: 100px; height: 100px; object-fit: cover;">
+                                        <div>
+                                            <div style="font-size: 0.9em; color: black;">
+                                                <strong th:text="${tour.nameTour}"></strong>
+                                            </div>
+                                            <div style="font-size: 0.9em; color: #555;">
+                                                <span th:text="'Precio: $' + ${tour.price}"></span> | 
+                                                <span th:text="'Duración: ' + ${tour.duration}"></span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenedor del selector de platillos -->
+                        <div id="disheSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+                            <h4>Seleccione Platillos</h4>
+                            <div id="disheResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+                                <div th:if="${dishes == null or dishes.isEmpty()}">
+                                    <p>No hay platillos disponibles en este momento.</p>
+                                </div>
+
+                                <div th:unless="${dishes == null or dishes.isEmpty()}" th:each="dishe : ${dishes}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="radio" 
+                                               name="selectedDisheId"
+                                               th:value="${dishe.disheID}" 
+                                               th:id="'dishe_' + ${dishe.disheID}"
+                                               th:checked="${booking.dishe != null and booking.dishe.disheID == dishe.disheID}"
+                                               style="margin-right: 10px;">
+                                        <img th:src="@{'/' + ${dishe.imageUrl}}" alt="Alimentacion" style="width: 100px; height: 100px; object-fit: cover;">
+                                        <div>
+                                            <div style="font-size: 0.9em; color: black;">
+                                                <strong th:text="${dishe.name}"></strong>
+                                            </div>
+                                            <div style="font-size: 0.9em; color: #555;">
+                                                <span th:text="'Precio: $' + ${dishe.price}"></span> | 
+                                                <span th:text="'Descripción: ' + ${dishe.description}"></span>
+                                                <span th:text="'Categoria: ' + ${dishe.category}"></span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenedor del selector de transportes -->
+                        <div id="transportationSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
+                            <h4>Seleccione un Transporte</h4>
+                            <div id="transportationResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
+                                <div th:if="${transportations == null or transportations.isEmpty()}">
+                                    <p>No hay transportes disponibles en este momento.</p>
+                                </div>
+                                
+                                <div th:unless="${transportations == null or transportations.isEmpty()}" th:each="transportation : ${transportations}" style="margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #eee;">
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="radio" 
+                                               name="selectedTransportationId"
+                                               th:value="${transportation.id_transportation}" 
+                                               th:id="'transportation_' + ${transportation.id_transportation}"
+                                               th:checked="${booking.transportation != null and booking.transportation.id_transportation == transportation.id_transportation}"
+                                               style="margin-right: 10px;">
+                                        <div>
+                                            <div style="font-size: 0.9em; color: black;">
+                                                <strong th:text="'Nombre del Conductor: ' + ${transportation.driver}"></strong>
+                                            </div>
+                                            <div style="font-size: 0.9em; color: #555;">
+                                                <span th:text="'Placa: ' + ${transportation.plate}"></span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de información adicional -->
+            <div class="form-section">
+                <h2>Información Adicional</h2>
+                <div class="form-group">
+                    <label for="specialRequirements">Requerimientos Especiales:</label>
+                    <textarea id="specialRequirements" th:field="*{specialRequirements}" rows="3" 
+                              placeholder="Indique cualquier requerimiento especial..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="promotionCode">Código de Promoción/Descuento:</label>
+                    <input type="text" id="promotionCode" th:field="*{promotionCode}" 
+                           placeholder="Opcional">
+                </div>
+            </div>
+    
+            <!-- Botón de enviar -->
+            <div class="form-actions d-flex justify-content-end gap-3 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-check-circle"></i> Actualizar Reserva
+                </button>
+                <a th:href="@{/booking/listaReservas}" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar fechas mínimas
+            setupDates();
+        });
+
+        function setupDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            
+            checkInInput.setAttribute('min', today);
+            
+            checkInInput.addEventListener('change', function() {
+                checkOutInput.setAttribute('min', this.value);
+                if (checkOutInput.value && checkOutInput.value < this.value) {
+                    checkOutInput.value = '';
+                }
+            });
+        }
+
+        function toggleAdditionalServices() {
+            const servicesDiv = document.getElementById('additionalServicesContainer');
+            const isChecked = document.getElementById('enableAdditionalServices').checked;
+            
+            servicesDiv.style.display = isChecked ? 'block' : 'none';
+            
+            if (!isChecked) {
+                // Desmarcar todos los servicios adicionales si se desactiva
+                document.querySelectorAll('#additionalServicesContainer input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+                document.getElementById('tourSelectorContainer').style.display = 'none';
+                document.getElementById('transportationSelectorContainer').style.display = 'none';
+                document.getElementById('disheSelectorContainer').style.display = 'none';
+            }
+        }
+
+        function handleServiceSelection(serviceType) {
+            const checkbox = document.getElementById(`${serviceType}ServiceCheckbox`);
+            const container = document.getElementById(`${serviceType}SelectorContainer`);
+            
+            container.style.display = checkbox.checked ? 'block' : 'none';
+            
+            // Si se desmarca, deseleccionar cualquier opción seleccionada
+            if (!checkbox.checked) {
+                const selectedInput = document.querySelector(`input[name="selected${serviceType.charAt(0).toUpperCase() + serviceType.slice(1)}Id"]:checked`);
+                if (selectedInput) {
+                    selectedInput.checked = false;
+                }
+            }
+        }
+
+        function validateForm() {
+            // Validar selección de cabaña (siempre requerida)
+            const cabinSelected = document.querySelector('input[name="selectedCabinId"]:checked') !== null;
+            if (!cabinSelected) {
+                alert('Por favor seleccione una cabaña para continuar');
+                return false;
+            }
+    
+            // Validar servicios adicionales seleccionados
+            const services = [];
+            document.querySelectorAll('#additionalServicesContainer input[type="checkbox"]:checked').forEach(cb => {
+                services.push(cb.value);
+            });
+
+            // Validar tour si está seleccionado
+            if (services.includes('tour')) {
+                const tourSelected = document.querySelector('input[name="selectedTourId"]:checked') !== null;
+                if (!tourSelected) {
+                    alert('Por favor seleccione un tour para continuar');
+                    return false;
+                }
+            }
+
+            // Validar transporte si está seleccionado
+            if (services.includes('transporte')) {
+                const transportationSelected = document.querySelector('input[name="selectedTransportationId"]:checked') !== null;
+                if (!transportationSelected) {
+                    alert('Por favor seleccione un transporte para continuar');
+                    return false;
+                }
+            }
+            
+            // Validar dishe si está seleccionado
+            if (services.includes('alimentacion')) {
+                const disheSelected = document.querySelector('input[name="selectedDisheId"]:checked') !== null;
+                if (!disheSelected) {
+                    alert('Por favor seleccione un platillo para continuar');
+                    return false;
+                }
+            }
+
+            return confirm("¿Estás seguro de que deseas actualizar esta Reserva?");
+        }
+    </script>
+</body>
+</html>

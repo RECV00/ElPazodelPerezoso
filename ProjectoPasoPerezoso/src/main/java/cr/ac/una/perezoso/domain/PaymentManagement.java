@@ -20,6 +20,7 @@ import jakarta.persistence.Table;
 @Table(name = "tb_payment_management")
 public class PaymentManagement {
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "id_payment") 
     private Integer idPayment;
@@ -54,6 +55,7 @@ public class PaymentManagement {
     public PaymentManagement() {
     }
 
+
     public PaymentManagement(int transactionAmount, LocalDate dateTransfer, String methodPayment, String numberReference, String statePayment, String nameClient, String identificationFiscal, String direction, String proof) {
         this.transactionAmount = transactionAmount;
         this.dateTransfer = dateTransfer;
@@ -65,6 +67,7 @@ public class PaymentManagement {
         this.direction = direction;
         this.proof = proof;
     }
+
 
     public PaymentManagement(Integer idPayment, int transactionAmount, LocalDate dateTransfer, String methodPayment, String numberReference, String statePayment, String nameClient, String identificationFiscal, String direction, String proof) {
         this.idPayment = idPayment;
@@ -92,6 +95,7 @@ public class PaymentManagement {
     }
 
     public void setTransactionAmount(int transactionAmount) {
+
         this.transactionAmount = transactionAmount;
     }
 
@@ -175,4 +179,5 @@ public class PaymentManagement {
                 "}";
     }
 
-}    
+}
+

@@ -6,6 +6,7 @@ package cr.ac.una.perezoso.jpa;
 
 import cr.ac.una.perezoso.domain.Cabin;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,6 @@ public interface CabinRepository extends JpaRepository<Cabin, Integer>,JpaSpecif
     List<Cabin> findByCapacityGreaterThanEqual(int capacity);
     
     List<Cabin> findByPricePerNightBetween(double minPrice, double maxPrice);
+
+    Optional<Cabin> findById(int cabinId);
 }

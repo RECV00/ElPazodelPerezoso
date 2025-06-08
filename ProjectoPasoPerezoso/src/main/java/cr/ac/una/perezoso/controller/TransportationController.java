@@ -145,7 +145,7 @@ public class TransportationController {
         
         // Verificar si la nueva placa ya existe (excepto para este mismo vehículo)
         Transportation transportWithSamePlate = transportationService.getByPlate(plate);
-        if (transportWithSamePlate != null && !transportWithSamePlate.getId().equals(id)) {
+        if (transportWithSamePlate != null && !transportWithSamePlate.getId_transportation().equals(id)) {
             redirectAttributes.addFlashAttribute("errorMessage", "La placa ya está registrada en otro vehículo");
             return "redirect:/transportation/listTransport";
         }

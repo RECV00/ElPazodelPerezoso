@@ -56,4 +56,3 @@ public class PaymentsService implements CRUD<PaymentManagement, Integer>{
         return repoPayments.existsById(id);
     }
 }
-

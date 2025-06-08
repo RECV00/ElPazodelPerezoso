@@ -81,7 +81,10 @@ public class CabinService implements CRUD<Cabin, Integer>{
     public boolean existsById(Integer id) {
         return cabinRepository.existsById(id);
     }
-    
 
+    public Optional<Cabin> findById(int cabinId) {
+    return cabinRepository.findById(cabinId);
+    }
+   
     
 }

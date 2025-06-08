@@ -9,6 +9,7 @@ import cr.ac.una.perezoso.jpa.TransportationRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,12 +43,10 @@ public class TransportationService implements CRUD<Transportation, Integer>{
     public List<Transportation> getAll() {
         return transportationRepository.findAll();
     }
-
-    @Override
-    public Transportation getById(Integer id) {
-        return transportationRepository.findById(id).orElse(null);
+   
+    public Optional<Transportation> findById(int transportationId) {
+    return transportationRepository.findById(transportationId);
     }
-
     public Transportation getByPlate(String plate) {
         return transportationRepository.findByPlate(plate);
     }
@@ -67,10 +66,14 @@ public class TransportationService implements CRUD<Transportation, Integer>{
 
 //     public Page<Transportation> findByNameContaining(String name, Pageable pageable) {
 //    return transportationRepository.findByNameContainingIgnoreCase(name, pageable);
-//}
-//     
+//}    
      @Override
     public boolean existsById(Integer id) {
         return transportationRepository.existsById(id);
+    }
+
+    @Override
+    public Transportation getById(Integer id) {
+        return transportationRepository.findById(id).orElse(null);
     }
 }
