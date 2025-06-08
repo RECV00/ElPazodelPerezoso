@@ -138,19 +138,25 @@ nav .nav-links a:hover {
 
 /* ========== FILTROS ========== */
 .filter-container {
-    margin-bottom: 25px;
+/*    margin-bottom: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(111, 126, 20, 0.3);*/
 }
 
 .filter-row {
-    display: flex;
+/*    display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    align-items: flex-end;
+    gap: 20px;
+    align-items: flex-end;*/
 }
 
 .filter-group {
-    flex: 1;
-    min-width: 200px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .filter-group label {
@@ -163,10 +169,13 @@ nav .nav-links a:hover {
 
 .filter-group input,
 .filter-group select {
-    width: 100%;
+    margin-left: 20px;
     padding: 10px 15px;
     border: 1px solid rgba(111, 126, 20, 0.5);
     border-radius: 6px;
+    margin-right: 15px;
+    flex-grow: 1;
+    max-width: 300px;
     font-size: 0.95em;
     transition: all 0.3s ease;
     background-color: rgba(255, 255, 255, 0.9);
@@ -178,6 +187,21 @@ nav .nav-links a:hover {
     outline: none;
     border-color: #a0b320;
     box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+/* Estilo para el grupo de fechas */
+.date-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-filter-group input {
+    width: auto;
+}
+
+.date-filter-group span {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .btn-reset {
@@ -193,6 +217,9 @@ nav .nav-links a:hover {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    height: 40px;
+    align-self: flex-end;
+    margin-bottom: 8px;
 }
 
 .btn-reset:hover {
@@ -209,6 +236,37 @@ nav .nav-links a:hover {
     font-size: 0.85em;
     margin-left: 10px;
     font-weight: 500;
+}
+
+/* Responsive para filtros */
+@media (max-width: 992px) {
+    .filter-group {
+        min-width: calc(50% - 10px);
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .btn-reset {
+        align-self: flex-start;
+        margin-bottom: 0;
+    }
+    
+    .date-filter-group {
+        flex-wrap: wrap;
+    }
+    
+    .date-filter-group input {
+        width: calc(50% - 5px);
+    }
 }
 
 /* ========== TABLA DE RESERVAS ========== */
@@ -364,7 +422,7 @@ nav .nav-links a:hover {
 }
 
 .btn-edit {
-     background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+     background: linear-gradient(135deg, #d1b52a, #b59d22);
 }
 
 .btn-delete {

@@ -29,13 +29,16 @@
             <div class="filter-row">
                 <!-- Filtro por cédula de cliente -->
                 <div class="filter-group">
-                    <label for="clientId">Cédula Cliente:</label>
+                    <label for="clientId">Cédula Cliente:  </label>
                     <input type="text" id="clientId" name="clientId" placeholder="Buscar por cédula">
+                    <button onclick="reiniciarFiltros()" class="btn-reset">
+                    <i class="fas fa-broom"></i> Limpiar
+                    </button>
                 </div>
                 
                 <!-- Filtro por estado -->
                 <div class="filter-group">
-                    <label for="status">Estado:</label>
+                    <label for="status">Estado:  </label>
                     <select id="status" name="status" onchange="filtrarPorEstado()">
                         <option value="">Todos</option>
                         <option value="Pendiente">Pendiente</option>
@@ -46,16 +49,14 @@
                 
                 <!-- Filtro por rango de fechas -->
                 <div class="filter-group">
-                    <label>Fechas:</label>
+                    <label>Fechas:  </label>
                     <input type="date" id="startDate" name="startDate" onchange="validarRangoFechas()">
-                    <span>a</span>
+                    <span>a  </span>
                     <input type="date" id="endDate" name="endDate" onchange="validarRangoFechas()">
                     <span id="date-error" class="error-message" style="display: none;"></span>
                 </div>
                 
-                <button onclick="reiniciarFiltros()" class="btn-reset">
-                    <i class="fas fa-broom"></i> Limpiar
-                </button>
+                
             </div>
         </div>
         
