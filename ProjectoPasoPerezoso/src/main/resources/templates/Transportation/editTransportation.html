@@ -8,11 +8,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <meta charset="UTF-8">
     <title>Editar Transporte</title>
     <link th:href="@{/css/stylesEditTransportation.css}" rel="stylesheet" type="text/css">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-    <script th:inline="javascript">
+    <script>
         // Función para establecer la fecha/hora mínima como la actual
         function setMinDateTime() {
             const now = new Date();
@@ -21,44 +17,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         }
 
         // Función para confirmar la edición
-        function confirmEdit(event) {
-            event.preventDefault();
-            
-            // Validar el formulario
-            const form = event.target;
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            Swal.fire({
-                title: '¿Guardar cambios?',
-                text: "¿Estás seguro de que deseas actualizar este transporte?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#6f7e14',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, guardar cambios',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+        function confirmEdit() {
+            return confirm("¿Estás seguro de que deseas guardar los cambios en este transporte?");
         }
-
-        // Mostrar mensaje de error si existe
-        document.addEventListener('DOMContentLoaded', function() {
-            const errorMessage = /*[[${errorMessage}]]*/ null;
-            if (errorMessage) {
-                Swal.fire({
-                    title: 'Error',
-                    text: errorMessage,
-                    icon: 'error',
-                    confirmButtonColor: '#6f7e14'
-                });
-            }
-        });
 
         // Ejecuta la función cuando la página se cargue
         window.onload = setMinDateTime;
@@ -71,13 +32,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="container">
         <h1>Editar Transporte</h1>
         
-        <form th:action="@{/transportation/edit/{id}(id=${transportation.id})}" method="post" onsubmit="confirmEdit(event)">
+        <form th:action="@{/transportations/edit/{id}(id=${transportation.id})}" method="post" onsubmit="return confirmEdit()">
             <input type="hidden" name="id" th:value="${transportation.id}">
             
             <div class="form-group">
-                <label for="plate">Placa del Vehículo:</label>
-                <input type="text" id="plate" name="plate" 
-                       th:value="${transportation.plate}" required
+                <label for="idVehicle">Placa del Vehículo:</label>
+                <input type="text" id="idVehicle" name="idVehicle" 
+                       th:value="${transportation.idVehicle}" required
                        placeholder="Ej: ABC123" pattern="[A-Za-z0-9]{3,10}" 
                        title="Formato de placa inválido (3-10 caracteres alfanuméricos)">
                 
@@ -117,9 +78,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             
             <div class="form-actions">
                 <button type="submit" class="btn-update">Actualizar Transporte</button>
-                <a href="/transportation/listTransport" class="button back-btn">
-                    <i class="fas fa-arrow-left"></i> Regresar
-                </a>
             </div>
         </form>
     </div>

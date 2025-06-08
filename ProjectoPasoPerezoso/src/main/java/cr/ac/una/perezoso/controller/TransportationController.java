@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -32,33 +29,37 @@ public class TransportationController {
     @Autowired
     private TransportationService transportationService;
     
-    // Mostrar todos los transportes
+       // Mostrar todos los transportes
     @GetMapping("/listTransport")
-    public String showTransportations(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size,
-            Model model) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Transportation> transportationsPage = transportationService.getAll(pageable);
-        
-        model.addAttribute("transportations", transportationsPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", transportationsPage.getTotalPages());
-        model.addAttribute("totalItems", transportationsPage.getTotalElements());
-        model.addAttribute("pageSize", size);
-        
-        return "/Transportation/listTransportations"; 
+    public String showTransportations(Model model) {
+        List<Transportation> transportations = transportationService.getAll();
+        model.addAttribute("transportations", transportations);
+        return "/transportation/listTransportations"; 
     }
-
+//---------------------------------FILTRO-------------------------------------------------------------------------
+    
+    // Filtrar transportes por conductor o ID de vehículo
+    @GetMapping("/filter")
+    public String filterTransportations(@RequestParam(required = false) String filter, Model model) {
+        List<Transportation> transportations;
+        if (filter != null && !filter.isEmpty()) {
+            transportations = transportations = transportationService.searchByPlateOrDriver(filter);
+        } else {
+            transportations = transportationService.getAll();
+        }
+        model.addAttribute("transportations", transportations);
+        return "/transportation/listTransportations";
+    }
+//--------------------------------ANADIR------------------------------------------------------------------------
     // Mostrar formulario para agregar un nuevo transporte
     @GetMapping("/add")
     public String showAddTransportationForm(Model model) {
         model.addAttribute("transportation", new Transportation());
-        return "/Transportation/addTransportation";
+        return "/transportation/addTransportation";
     }
 
     // Procesar el formulario para agregar un nuevo transporte
-    @PostMapping("/add")
+   @PostMapping("/add")
     public String addTransportation(
         @RequestParam("plate") String plate,
         @RequestParam("driver") String driver,
@@ -86,19 +87,18 @@ public class TransportationController {
         return "redirect:/transportation/listTransport";
     }
 
-    // Filtrar transportes por conductor o ID de vehículo
-    @GetMapping("/filter")
-    public String filterTransportations(@RequestParam(required = false) String filter, Model model) {
-        List<Transportation> transportations;
-        if (filter != null && !filter.isEmpty()) {
-            transportations = transportations = transportationService.searchByPlateOrDriver(filter);
-        } else {
-            transportations = transportationService.getAll();
-        }
-        model.addAttribute("transportations", transportations);
-        return "/transportation/listTransportations";
-    }
-
+//    @GetMapping("/edit/{id}")
+//    public String showEditTransportationForm1(@PathVariable Integer id, Model model) {
+//        Transportation transportation = transportationService.getById(id);
+//        if (transportation == null) {
+//            return "redirect:/transportation/listTransport?error=Transporte no encontrado";
+//        }
+//        model.addAttribute("transportation", transportation);
+//        return "/transportation/editTransportation";
+//    }
+//    
+    
+//--------------------------------------------EDITAR--------------------------------------------------------------------
     // Mostrar formulario para editar un transporte
     @GetMapping("/edit/{id}")
     public String showEditTransportationForm(@PathVariable Integer id, Model model) {
@@ -111,7 +111,7 @@ public class TransportationController {
     }
 
     // Procesar el formulario para actualizar un transporte
-    @PostMapping("/edit/{id}")
+     @PostMapping("/edit/{id}")
     public String updateTransportation(
         @PathVariable Integer id,
         @RequestParam("plate") String plate,
@@ -148,6 +148,7 @@ public class TransportationController {
         return "redirect:/transportation/listTransport";
     }
 
+//-----------------------------------ELIMINAR-------------------------------------------------------------------------
     // Eliminar un transporte
     @GetMapping("/delete/{id}")
     public String deleteTransportation(@PathVariable Integer id) {

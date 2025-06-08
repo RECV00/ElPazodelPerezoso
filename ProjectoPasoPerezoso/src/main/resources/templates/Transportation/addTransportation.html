@@ -8,11 +8,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <meta charset="UTF-8">
     <title>Agregar Transporte</title>
     <link th:href="@{/css/stylesAddTransportation.css}" rel="stylesheet" type="text/css">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-    <script th:inline="javascript">
+    <script>
         // Función para establecer la fecha/hora mínima como la actual
         function setMinDateTime() {
             const now = new Date();
@@ -22,44 +18,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         }
 
         // Función para confirmar la adición
-        function confirmAdd(event) {
-            event.preventDefault();
-            
-            // Validar el formulario
-            const form = event.target;
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            Swal.fire({
-                title: '¿Agregar nuevo transporte?',
-                text: "Por favor, verifica que los datos sean correctos",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#6f7e14',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, agregar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+        function confirmAdd() {
+            return confirm("¿Estás seguro de que deseas agregar este transporte?");
         }
-
-        // Mostrar mensaje de error si existe
-        document.addEventListener('DOMContentLoaded', function() {
-            const errorMessage = /*[[${errorMessage}]]*/ null;
-            if (errorMessage) {
-                Swal.fire({
-                    title: 'Error',
-                    text: errorMessage,
-                    icon: 'error',
-                    confirmButtonColor: '#6f7e14'
-                });
-            }
-        });
 
         // Ejecuta la función cuando la página se cargue
         window.onload = setMinDateTime;
@@ -72,10 +33,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="container">
         <h1>Agregar Nuevo Transporte</h1>
         
-        <form th:action="@{/transportation/add}" method="post" onsubmit="confirmAdd(event)">
+        <form action="/transportations/add" method="post" onsubmit="return confirmAdd()">
             <div class="form-group">
-                <label for="plate">Placa del Vehículo:</label>
-                <input type="text" id="plate" name="plate" required 
+                <label for="idVehicle">Placa del Vehículo:</label>
+                <input type="text" id="idVehicle" name="idVehicle" required 
                        placeholder="Ej: ABC123" pattern="[A-Za-z0-9]{3,10}" 
                        title="Formato de placa inválido (3-10 caracteres alfanuméricos)">
                 
@@ -110,9 +71,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             
             <div class="form-actions">
                 <button type="submit" class="btn-submit">Guardar Transporte</button>
-                <a href="/transportation/listTransport" class="button back-btn">
-                    <i class="fas fa-arrow-left"></i> Regresar
-                </a>
             </div>
         </form>
     </div>

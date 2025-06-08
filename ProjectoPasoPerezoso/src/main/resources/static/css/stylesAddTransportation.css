@@ -127,19 +127,3 @@ form button:hover,
 .button:hover {
     background-color: #6f7e14;
 }
-
-.button.back-btn {
-    background-color: #6c757d;
-    margin-left: 10px;
-}
-
-.button.back-btn:hover {
-    background-color: #5a6268;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
