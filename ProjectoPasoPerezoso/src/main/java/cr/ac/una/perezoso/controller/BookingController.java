@@ -20,12 +20,11 @@ import cr.ac.una.perezoso.service.TransportationService;
 import cr.ac.una.perezoso.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import static java.lang.Math.log;
-import static java.lang.StrictMath.log;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,54 +173,55 @@ public String showBookings(
     
     return "booking/listBooking";
 }
-@GetMapping("/search")
-public String searchBookings(
-        @RequestParam(required = false) String clientId,
-        @RequestParam(required = false) String status,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        Model model,
-        HttpServletRequest request) {
-    
-    try {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Booking> bookingPage;
-        
-        if (clientId != null && !clientId.isEmpty()) {
-            // Buscar por cédula del cliente
-            bookingPage = bookingRepository.findByClient_IdentificationContainingIgnoreCase(clientId, pageable);
-        } else if (status != null && !status.isEmpty()) {
-            // Buscar por estado
-            bookingPage = bookingRepository.findByReserveStatusContainingIgnoreCase(status, pageable);
-        } else if (startDate != null && endDate != null) {
-            // Buscar por rango de fechas (usando checkInDate)
-            bookingPage = bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
-        } else {
-            // Mostrar todas las reservaciones
-            bookingPage = bookingRepository.findAll(pageable);
-        }
-        
-        // Cargar datos relacionados
-        loadRelatedData(model, bookingPage.getContent());
-        
-        // Agregar atributos al modelo
-        model.addAttribute("bookings", bookingPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", bookingPage.getTotalPages());
-        model.addAttribute("pageSize", size);
-        
-    } catch (Exception e) {
-        model.addAttribute("errorMessage", "Error al cargar las reservaciones: " + e.getMessage());
-    }
-    
-    // Devolver fragmento HTML si es AJAX
-    if (isAjaxRequest(request)) {
-        return "booking/listBooking :: #bookings-container";
-    }
-    return "booking/listBooking";
-}
+//
+//@GetMapping("/search")
+//public String searchBookings(
+//        @RequestParam(required = false) String clientId,
+//        @RequestParam(required = false) String status,
+//        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+//        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+//        @RequestParam(defaultValue = "0") int page,
+//        @RequestParam(defaultValue = "10") int size,
+//        Model model,
+//        HttpServletRequest request) {
+//    
+//    try {
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<Booking> bookingPage;
+//        
+//        if (clientId != null && !clientId.isEmpty()) {
+//            // Buscar por cédula del cliente
+//            bookingPage = bookingRepository.findByClient_IdentificationContainingIgnoreCase(clientId, pageable);
+//        } else if (status != null && !status.isEmpty()) {
+//            // Buscar por estado
+//            bookingPage = bookingRepository.findByReserveStatusContainingIgnoreCase(status, pageable);
+//        } else if (startDate != null && endDate != null) {
+//            // Buscar por rango de fechas (usando checkInDate)
+//            bookingPage = bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
+//        } else {
+//            // Mostrar todas las reservaciones
+//            bookingPage = bookingRepository.findAll(pageable);
+//        }
+//        
+//        // Cargar datos relacionados
+//        loadRelatedData(model, bookingPage.getContent());
+//        
+//        // Agregar atributos al modelo
+//        model.addAttribute("bookings", bookingPage.getContent());
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("totalPages", bookingPage.getTotalPages());
+//        model.addAttribute("pageSize", size);
+//        
+//    } catch (Exception e) {
+//        model.addAttribute("errorMessage", "Error al cargar las reservaciones: " + e.getMessage());
+//    }
+//    
+//    // Devolver fragmento HTML si es AJAX
+//    if (isAjaxRequest(request)) {
+//        return "booking/listBooking :: #bookings-container";
+//    }
+//    return "booking/listBooking";
+//}
 
  @GetMapping("/new")
     public String showAddForm(Model model) {
@@ -317,99 +317,281 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
     
     return "redirect:/booking/listaReservas";
 }
-//    @PostMapping("/save")
-//public String saveBooking(@ModelAttribute("booking") Booking booking,
-//                        BindingResult bindingResult,
-//                        @RequestParam(value = "clientIdentification", required = true) String identification,
-//                        @RequestParam(value = "selectedTourId", required = false) Integer tourId,
-//                        @RequestParam(value = "selectedTransportationId", required = false) Integer transportationId,
-//                        @RequestParam(value = "services", required = false) List<String> services,
-//                        Model model,
-//                        RedirectAttributes redirectAttributes) {
-//    
-//    // Validar cliente
-//    Client client = userService.getClientByIdentification(identification);
-//    if (client == null) {
-//        bindingResult.rejectValue("client", "client.notFound", "Cliente no encontrado");
-//    }
-//    
-//    // Validar tour si está seleccionado
-//    if (services != null && services.contains("tour") && tourId == null) {
-//        bindingResult.rejectValue("tour", "tour.required", "Debe seleccionar un Tour");
-//    }
-//    if (services != null && services.contains("transportation") && transportationId == null) {
-//        bindingResult.rejectValue("transportation", "transportation.required", "Debe seleccionar un Transporte");
-//    }
-//    
-//    if (bindingResult.hasErrors()) {
-//        model.addAttribute("tours", tourService.getAll());
-//         model.addAttribute("transportations", transportationService.getAll());
-//        return "booking/addBooking";
-//    }
-//    
-//    try {
-//        booking.setClient(client);
-//        
-//        // Procesar servicios adicionales
-//        if (services != null && !services.isEmpty()) {
-//            booking.setAdditionalServices(true);
-//            
-//            if (services.contains("tour") && tourId != null) {
-//                Tour tour = tourService.findById(tourId).orElse(null);
-//                booking.setTour(tour);
-//            }
-//            
-//            if (services.contains("transportation") && transportationId != null) {
-//                Transportation transportation;
-//                transportation = transportationService.getById(transportationId).orElse(null);
-//                booking.setTransportation(transportation);
-//            }
-//            
-//            // Procesar otros servicios aquí
-//        } else {
-//            booking.setAdditionalServices(false);
-//        }
-//        
-//        bookingService.save(booking);
-//        redirectAttributes.addFlashAttribute("success", "Reserva guardada exitosamente");
-//    } catch (Exception e) {
-//        redirectAttributes.addFlashAttribute("error", "Error al guardar la reserva: " + e.getMessage());
-//        return "redirect:/booking/new";
-//    }
-//    
-//    return "redirect:/booking/listaReservas";
-//}
-
     @GetMapping("/clients/findByIdentification")
     @ResponseBody
     public Client findClientByIdentification(@RequestParam String identification) {
         return userService.getClientByIdentification(identification);
     }
+    
+    @GetMapping("/edit/{id}")
+public String showEditForm(@PathVariable int id, Model model) {
+    Optional<Booking> bookingOpt = bookingService.getReservationById(id);
+    
+    if (bookingOpt.isEmpty()) {
+        model.addAttribute("error", "Reserva no encontrada");
+        return "redirect:/booking/listaReservas";
+    }
+    
+    Booking booking = bookingOpt.get();
+    
+    // Cargar todos los datos necesarios para el formulario
+    List<Tour> tours = tourService.getAll();
+    List<Transportation> transportations = transportationService.getAll();
+    List<Dishe> dishes = disheService.getAll();
+    List<Cabin> cabins = cabinService.getAll();
+    
+    model.addAttribute("booking", booking);
+    model.addAttribute("tours", tours);
+    model.addAttribute("transportations", transportations);
+    model.addAttribute("dishes", dishes);
+    model.addAttribute("cabins", cabins);
+    
+    return "booking/editBooking";
+}
 
-//    @GetMapping("/edit/{id}")
-//    public String showEditForm(@PathVariable int id, Model model) {
-//        bookingService.getReservationById(id).ifPresentOrElse(
-//            booking -> model.addAttribute("booking", booking),
-//            () -> model.addAttribute("error", "Booking not found")
-//        );
+@PostMapping("/update/{id}")
+public String updateBooking(@PathVariable int id,
+                          @ModelAttribute("booking") Booking booking,
+                          BindingResult bindingResult,
+                          @RequestParam(value = "selectedTourId", required = false) Integer tourId,
+                          @RequestParam(value = "selectedTransportationId", required = false) Integer transportationId,
+                          @RequestParam(value = "selectedDisheId", required = false) Integer disheId,
+                          @RequestParam(value = "selectedCabinId", required = true) Integer cabinId,
+                          @RequestParam(value = "services", required = false) List<String> services,
+                          Model model,
+                          RedirectAttributes redirectAttributes) {
+    
+    // Validar que la reserva existe
+    Optional<Booking> existingBookingOpt = bookingService.getReservationById(id);
+    if (existingBookingOpt.isEmpty()) {
+        redirectAttributes.addFlashAttribute("error", "Reserva no encontrada");
+        return "redirect:/booking/listaReservas";
+    }
+    
+    // Validar cabaña
+    Cabin cabin = cabinService.getById(cabinId);
+    if (cabin == null) {
+        bindingResult.rejectValue("cabin", "cabin.notFound", "Debe seleccionar una cabaña válida");
+    }
+    
+    // Validar servicios adicionales
+    if (services != null) {
+        if (services.contains("tour") && tourId == null) {
+            bindingResult.rejectValue("tour", "tour.required", "Debe seleccionar un Tour");
+        }
+        if (services.contains("transporte") && transportationId == null) {
+            bindingResult.rejectValue("transportation", "transportation.required", "Debe seleccionar un Transporte");
+        }
+        if (services.contains("alimentacion") && disheId == null) {
+            bindingResult.rejectValue("dishe", "dishe.required", "Debe seleccionar un Platillo");
+        }
+    }
+    
+    if (bindingResult.hasErrors()) {
+        // Recargar los datos necesarios para mostrar el formulario nuevamente
+        model.addAttribute("tours", tourService.getAll());
+        model.addAttribute("transportations", transportationService.getAll());
+        model.addAttribute("dishes", disheService.getAll());
+        model.addAttribute("cabins", cabinService.getAll());
+        
+        return "booking/editBooking";
+    }
+    
+    try {
+          Booking existingBooking = bookingService.getReservationById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        
+        // Actualizar los campos básicos
+        existingBooking.setCheckInDate(booking.getCheckInDate());
+        existingBooking.setCheckOutDate(booking.getCheckOutDate());
+        existingBooking.setNumberGuests(booking.getNumberGuests());
+        existingBooking.setBookingType(booking.getBookingType());
+        existingBooking.setReserveStatus(booking.getReserveStatus());
+        existingBooking.setSpecialRequirements(booking.getSpecialRequirements());
+        existingBooking.setPromotionCode(booking.getPromotionCode());
+        
+        
+        
+        // Actualizar relaciones
+        existingBooking.setCabin(cabin);
+        
+        // Procesar servicios adicionales
+      // Manejo de additionalServices
+        boolean hasAdditionalServices = services != null && !services.isEmpty();
+        existingBooking.setAdditionalServices(hasAdditionalServices);
+        
+        if (hasAdditionalServices) {
+            // Tour
+            if (services.contains("tour") && tourId != null) {
+                Tour tour = tourService.findById(tourId).orElse(null);
+                existingBooking.setTour(tour);
+            } else {
+                existingBooking.setTour(null);
+            }
+            
+            // Transporte
+            if (services.contains("transporte") && transportationId != null) {
+                Transportation transportation = transportationService.findById(transportationId).orElse(null);
+                existingBooking.setTransportation(transportation);
+            } else {
+                existingBooking.setTransportation(null);
+            }
+            
+            // Platillo
+            if (services.contains("alimentacion") && disheId != null) {
+                Dishe dishe = disheService.findById(disheId).orElse(null);
+                existingBooking.setDishe(dishe);
+            } else {
+                existingBooking.setDishe(null);
+            }
+        } else {
+            existingBooking.setTour(null);
+            existingBooking.setTransportation(null);
+            existingBooking.setDishe(null);
+        }
+        
+        bookingService.save(existingBooking);
+        redirectAttributes.addFlashAttribute("success", "Reserva actualizada exitosamente");
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("error", "Error al actualizar la reserva: " + e.getMessage());
+        return "redirect:/booking/edit/" + id;
+    }
+    
+    return "redirect:/booking/listaReservas";
+}
+//@GetMapping("/edit/{id}")
+//public String showEditForm(@PathVariable int id, Model model) {
+//    Optional<Booking> bookingOpt = bookingService.getReservationById(id);
+//    
+//    if (bookingOpt.isEmpty()) {
+//        model.addAttribute("error", "Reserva no encontrada");
+//        return "redirect:/booking/listaReservas";
+//    }
+//    
+//    Booking booking = bookingOpt.get();
+//    
+//    // Cargar todos los datos necesarios para el formulario
+//    List<Tour> tours = tourService.getAll();
+//    List<Transportation> transportations = transportationService.getAll();
+//    List<Dishe> dishes = disheService.getAll();
+//    List<Cabin> cabins = cabinService.getAll();
+//    
+//    model.addAttribute("booking", booking);
+//    model.addAttribute("tours", tours);
+//    model.addAttribute("transportations", transportations);
+//    model.addAttribute("dishes", dishes);
+//    model.addAttribute("cabins", cabins);
+//    
+//    return "booking/editBooking";
+//}
+//
+//@PostMapping("/update/{id}")
+//public String updateBooking(@PathVariable int id,
+//                          @ModelAttribute("booking") Booking booking,
+//                          BindingResult bindingResult,
+//                          @RequestParam(value = "selectedTourId", required = false) Integer tourId,
+//                          @RequestParam(value = "selectedTransportationId", required = false) Integer transportationId,
+//                          @RequestParam(value = "selectedDisheId", required = false) Integer disheId,
+//                          @RequestParam(value = "selectedCabinId", required = true) Integer cabinId,
+//                          @RequestParam(value = "services", required = false) List<String> services,
+//                          Model model,
+//                          RedirectAttributes redirectAttributes) {
+//    
+//    // Validar que la reserva existe
+//    Optional<Booking> existingBookingOpt = bookingService.getReservationById(id);
+//    if (existingBookingOpt.isEmpty()) {
+//        redirectAttributes.addFlashAttribute("error", "Reserva no encontrada");
+//        return "redirect:/booking/listaReservas";
+//    }
+//    
+//    // Validar cabaña
+//    Cabin cabin = cabinService.getById(cabinId);
+//    if (cabin == null) {
+//        bindingResult.rejectValue("cabin", "cabin.notFound", "Debe seleccionar una cabaña válida");
+//    }
+//    
+//    // Validar servicios adicionales
+//    if (services != null) {
+//        if (services.contains("tour") && tourId == null) {
+//            bindingResult.rejectValue("tour", "tour.required", "Debe seleccionar un Tour");
+//        }
+//        if (services.contains("transporte") && transportationId == null) {
+//            bindingResult.rejectValue("transportation", "transportation.required", "Debe seleccionar un Transporte");
+//        }
+//        if (services.contains("alimentacion") && disheId == null) {
+//            bindingResult.rejectValue("dishe", "dishe.required", "Debe seleccionar un Platillo");
+//        }
+//    }
+//    
+//    if (bindingResult.hasErrors()) {
+//        // Recargar los datos necesarios para mostrar el formulario nuevamente
+//        model.addAttribute("tours", tourService.getAll());
+//        model.addAttribute("transportations", transportationService.getAll());
+//        model.addAttribute("dishes", disheService.getAll());
+//        model.addAttribute("cabins", cabinService.getAll());
+//        
 //        return "booking/editBooking";
 //    }
-//
-//    @PostMapping("/update/{id}")
-//    public String updateBooking(@PathVariable int id,
-//                              @ModelAttribute Booking booking,
-//                              RedirectAttributes redirectAttributes) {
+//    
+//    try {
+//        Booking existingBooking = existingBookingOpt.get();
 //        
-//        try {
-//            booking.setId_booking(id);
-//            bookingService.updateReservation(id, booking);
-//            redirectAttributes.addFlashAttribute("success", "Booking updated successfully");
-//        } catch (Exception e) {
-//            redirectAttributes.addFlashAttribute("error", "Error updating booking: " + e.getMessage());
+//        // Actualizar los campos básicos
+//        existingBooking.setCheckInDate(booking.getCheckInDate());
+//        existingBooking.setCheckOutDate(booking.getCheckOutDate());
+//        existingBooking.setNumberGuests(booking.getNumberGuests());
+//        existingBooking.setBookingType(booking.getBookingType());
+//        existingBooking.setReserveStatus(booking.getReserveStatus());
+//        existingBooking.setSpecialRequirements(booking.getSpecialRequirements());
+//        existingBooking.setPromotionCode(booking.getPromotionCode());
+//        
+//        // Actualizar relaciones
+//        existingBooking.setCabin(cabin);
+//        
+//        // Procesar servicios adicionales
+//        if (services != null && !services.isEmpty()) {
+//            existingBooking.setAdditionalServices(true);
+//            
+//            // Tour
+//            if (services.contains("tour") && tourId != null) {
+//                Tour tour = tourService.findById(tourId).orElse(null);
+//                existingBooking.setTour(tour);
+//            } else {
+//                existingBooking.setTour(null);
+//            }
+//            
+//            // Transporte
+//            if (services.contains("transporte") && transportationId != null) {
+//                Transportation transportation = transportationService.findById(transportationId).orElse(null);
+//                existingBooking.setTransportation(transportation);
+//            } else {
+//                existingBooking.setTransportation(null);
+//            }
+//            
+//            // Platillo
+//            if (services.contains("alimentacion") && disheId != null) {
+//                Dishe dishe = disheService.findById(disheId).orElse(null);
+//                existingBooking.setDishe(dishe);
+//            } else {
+//                existingBooking.setDishe(null);
+//            }
+//        } else {
+//            existingBooking.setAdditionalServices(false);
+//            existingBooking.setTour(null);
+//            existingBooking.setTransportation(null);
+//            existingBooking.setDishe(null);
 //        }
-//        return "redirect:/booking";
+//        
+//        bookingService.save(existingBooking);
+//        redirectAttributes.addFlashAttribute("success", "Reserva actualizada exitosamente");
+//    } catch (Exception e) {
+//        redirectAttributes.addFlashAttribute("error", "Error al actualizar la reserva: " + e.getMessage());
+//        return "redirect:/booking/edit/" + id;
 //    }
-
+//    
+//    return "redirect:/booking/listaReservas";
+//}
+//----------------------------ELIMINAR-----------------------------------------------------------------------------------------------
     @GetMapping("/delete/{id}")
     public String deleteBooking(@PathVariable int id, RedirectAttributes redirectAttributes) {
         try {
@@ -420,55 +602,55 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
         }
         return "redirect:/booking/listaReservas";
     }
-
-   private void loadRelatedData(Model model, List<Booking> bookings) {
-    Map<Integer, String> clientNames = new HashMap<>();
-    Map<Integer, String> cabinNames = new HashMap<>();
-    Map<Integer, String> tourNames = new HashMap<>();
-    Map<Integer, String> vehicleNames = new HashMap<>();
-    Map<Integer, String> disheNames = new HashMap<>();
-    Map<Integer, String> clientIdentifications = new HashMap<>();
+//---------------------------------------------------------------------------------------------------------------------------
+//   private void loadRelatedData(Model model, List<Booking> bookings) {
+//    Map<Integer, String> clientNames = new HashMap<>();
+//    Map<Integer, String> cabinNames = new HashMap<>();
+//    Map<Integer, String> tourNames = new HashMap<>();
+//    Map<Integer, String> vehicleNames = new HashMap<>();
+//    Map<Integer, String> disheNames = new HashMap<>();
+//    Map<Integer, String> clientIdentifications = new HashMap<>();
+//    
+//    bookings.forEach(booking -> {
+//        if (booking.getClient() != null) {
+//            clientNames.put(booking.getClient().getId_user(), 
+//                booking.getClient().getName() + " " + booking.getClient().getLast_name());
+//        }
+//        if (booking.getCabin() != null) {
+//            cabinNames.put(booking.getCabin().getCabinID(), booking.getCabin().getName());
+//        }
+//        if (booking.getTour() != null) {
+//            tourNames.put(booking.getTour().getId_tour(), booking.getTour().getNameTour());
+//        }
+//        if (booking.getTransportation() != null) {
+//            vehicleNames.put(booking.getTransportation().getId_transportation(),
+//                booking.getTransportation().getPlate() + " " + booking.getTransportation().getDriver());
+//        }
+//        if (booking.getDishe() != null) {
+//            disheNames.put(booking.getDishe().getDisheID(), booking.getDishe().getName());
+//        }
+//         if (booking.getClient() != null) {
+//            clientNames.put(booking.getClient().getId_user(), 
+//                booking.getClient().getName() + " " + booking.getClient().getLast_name());
+//            clientIdentifications.put(booking.getClient().getId_user(), 
+//                booking.getClient().getIdentification());
+//        }
+//    });
+//    
+//    model.addAttribute("clientNames", clientNames);
+//    model.addAttribute("cabinNames", cabinNames);
+//    model.addAttribute("tourNames", tourNames);
+//    model.addAttribute("vehicleNames", vehicleNames);
+//    model.addAttribute("disheNames", disheNames);
+//    model.addAttribute("clientIdentifications", clientIdentifications);
+//}
+//
+//    private boolean isAjaxRequest(HttpServletRequest request) {
+//        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+//    }
     
-    bookings.forEach(booking -> {
-        if (booking.getClient() != null) {
-            clientNames.put(booking.getClient().getId_user(), 
-                booking.getClient().getName() + " " + booking.getClient().getLast_name());
-        }
-        if (booking.getCabin() != null) {
-            cabinNames.put(booking.getCabin().getCabinID(), booking.getCabin().getName());
-        }
-        if (booking.getTour() != null) {
-            tourNames.put(booking.getTour().getId_tour(), booking.getTour().getNameTour());
-        }
-        if (booking.getTransportation() != null) {
-            vehicleNames.put(booking.getTransportation().getId_transportation(),
-                booking.getTransportation().getPlate() + " " + booking.getTransportation().getDriver());
-        }
-        if (booking.getDishe() != null) {
-            disheNames.put(booking.getDishe().getDisheID(), booking.getDishe().getName());
-        }
-         if (booking.getClient() != null) {
-            clientNames.put(booking.getClient().getId_user(), 
-                booking.getClient().getName() + " " + booking.getClient().getLast_name());
-            clientIdentifications.put(booking.getClient().getId_user(), 
-                booking.getClient().getIdentification());
-        }
-    });
     
-    model.addAttribute("clientNames", clientNames);
-    model.addAttribute("cabinNames", cabinNames);
-    model.addAttribute("tourNames", tourNames);
-    model.addAttribute("vehicleNames", vehicleNames);
-    model.addAttribute("disheNames", disheNames);
-    model.addAttribute("clientIdentifications", clientIdentifications);
-}
-
-    private boolean isAjaxRequest(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-    }
-    
-    
-    
+//-----------------------DETALLES---------------------------------------------------------------------------------------------------- 
     @GetMapping("/details/{id}")
 public String showBookingDetails(@PathVariable int id, Model model) {
     try {
@@ -476,14 +658,9 @@ public String showBookingDetails(@PathVariable int id, Model model) {
         Booking booking = bookingService.getReservationWithDetails(id)
             .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada"));
         
-        // Calcular totales
-//        double totalPaid = booking.getPayment().stream()
-//            .filter(p -> "Completado".equals(p.getStatus()))
-//            .mapToDouble(Payment::getAmount)
-//            .sum();
+
         double totalPaid=34000.34;
         double totalPrice = 300000;
-//                bookingService.calculateTotalPrice(booking);
         
         // Agregar atributos al modelo
         model.addAttribute("booking", booking);
@@ -500,84 +677,5 @@ public String showBookingDetails(@PathVariable int id, Model model) {
     
     return "booking/detailsBooking";
 }
-//@GetMapping("/clients/findByIdentification")
-//@ResponseBody
-//public ResponseEntity<?> findClientByIdentification(@RequestParam String identification) {
-//    try {
-//        User user = userService.findByIdentification(identification)
-//            .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
-//        
-//        if (!(user instanceof Client)) {
-//            throw new EntityNotFoundException("El usuario no es un cliente");
-//        }
-//
-//        Client client = (Client) user;
-//        
-//        Map<String, String> response = new HashMap<>();
-//        response.put("name", client.getName());
-//        response.put("lastName", client.getLast_name());
-////        response.put("phone", client.getPhone() != null ? client.getPhone() : "No registrado");
-//        response.put("email", client.getEmail());
-//        response.put("status", "success");
-//        
-//        return ResponseEntity.ok(response);
-//    } catch (EntityNotFoundException e) {
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//            .body(Map.of("status", "error", "message", e.getMessage()));
-//    } catch (Exception e) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//            .body(Map.of("status", "error", "message", "Error en el servidor"));
-//    }
-//}
-//@GetMapping("/tours/search")
-//@ResponseBody
-//public ResponseEntity<List<Tour>> searchTours(@RequestParam String name) {
-//    try {
-//        List<Tour> tours = tourService.findByNameContaining(name);
-//        return ResponseEntity.ok(tours);
-//    } catch (Exception e) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//    }
-//}
-//
-//@GetMapping("/tours/listForReservation")
-//public String listToursForReservation(Model model,
-//                                    @RequestParam(required = false) String search,
-//                                    @RequestParam(defaultValue = "0") int page,
-//                                    @RequestParam(defaultValue = "10") int size) {
-//    try {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<Tour> tourPage = search != null && !search.isEmpty() ?
-//            tourService.findByNameContaining(search, pageable) :
-//            tourService.findAll(pageable);
-//        
-//        model.addAttribute("tours", tourPage.getContent());
-//        model.addAttribute("currentPage", page);
-//        model.addAttribute("totalPages", tourPage.getTotalPages());
-//        model.addAttribute("pageSize", size);
-//        model.addAttribute("searchTerm", search);
-//        
-//        return "booking/tourSelection";
-//    } catch (Exception e) {
-//        model.addAttribute("error", "Error al cargar tours: " + e.getMessage());
-//        return "error";
-//    }
-//}
-//
-//@GetMapping("/tours/getMultiple")
-//@ResponseBody
-//public ResponseEntity<List<Tour>> getMultipleTours(@RequestParam String ids) {
-//    try {
-//        List<Integer> tourIds = Arrays.stream(ids.split(","))
-//            .map(Integer::parseInt)
-//            .collect(Collectors.toList());
-//        List<Tour> tours = tourService.findByIdIn(tourIds);
-//        return ResponseEntity.ok(tours);
-//    } catch (Exception e) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//    }
-//}
-//    return "bookings/listBooking :: #bookings-table"; // For AJAX
-//return "bookings/listBooking"; // For normal
 }
 

@@ -11,7 +11,7 @@
         
         <form th:action="@{/booking/save}" method="post" th:object="${booking}" class="reservation-form" onsubmit="return validateForm()">
 
-           <!-- Sección de cliente (existente) -->
+           <!-- Sección de cliente-->
            <div class="form-group">
                 <label for="clientIdentification">Identificación del Cliente:</label>
                 <div class="search-container">
@@ -26,7 +26,7 @@
                 <div id="clientError" class="error-message" style="display: none;"></div>
             </div>
             
-            <!-- Sección de fechas (existente) -->
+            <!-- Sección de fechas-->
             <div class="form-section">
                 <h2>Fechas</h2>
                 <div class="form-group">
@@ -40,7 +40,7 @@
                 </div>
             </div>
             
-            <!-- Sección de detalles principales (existente) -->
+            <!-- Sección de detalles principales -->
             <div class="form-section">
                 <h2>Detalles Principales</h2>
                 <div class="form-group">

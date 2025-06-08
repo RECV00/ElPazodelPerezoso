@@ -117,20 +117,20 @@
                 <h2>Servicios Adicionales</h2>
                 
                 <!-- Comida -->
-                <div class="service-item" th:if="${booking.food != null}">
+                <div class="service-item" th:if="${booking.dishe != null}">
                     <h3>Servicio de Comida</h3>
                     <div class="details-grid">
                         <div class="detail-item">
-                            <span class="detail-label">Menú Seleccionado:</span>
-                            <span class="detail-value" th:text="${booking.food.selectedMenu}"></span>
+                            <span class="detail-label">Platillo:</span>
+                            <span class="detail-value" th:text="${booking.dishe.name}"></span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Precio:</span>
-                            <!--<span class="detail-value" th:text="${'₡' + #numbers.formatDecimal(booking.food.dishe.price, 0, 'COMMA', 2, 'POINT')}"></span>-->
+                            <span class="detail-label">Categoria:</span>
+                            <span class="detail-value" th:text="${booking.dishe.category}"></span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Fecha de Servicio:</span>
-                            <span class="detail-value" th:text="${#temporals.format(booking.food.dateService, 'dd/MM/yyyy')}"></span>
+                            <span class="detail-label">Descripción:</span>
+                            <span class="detail-value" th:text="${booking.dishe.description}"></span>
                         </div>
                     </div>
                 </div>
@@ -174,7 +174,7 @@
                     </div>
                 </div>
                 
-                <div th:if="${booking.food == null and booking.transportation == null and booking.tour == null}">
+                <div th:if="${booking.dishe == null and booking.transportation == null and booking.tour == null}">
                     <p>No se han agregado servicios adicionales a esta reservación.</p>
                 </div>
             </div>
