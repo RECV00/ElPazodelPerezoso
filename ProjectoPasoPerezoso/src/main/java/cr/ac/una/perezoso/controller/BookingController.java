@@ -171,7 +171,7 @@ public String showBookings(
         model.addAttribute("errorMessage", "Error al cargar las reservaciones: " + e.getMessage());
     }
     
-    return "booking/listBooking";
+    return "/booking/listBooking";
 }
 //
 //@GetMapping("/search")
@@ -237,7 +237,7 @@ public String showBookings(
         model.addAttribute("transportations", transportations);
         model.addAttribute("dishes", dishes);
         model.addAttribute("cabins", cabins);
-        return "booking/addBooking";
+        return "/booking/addBooking";
     }
 @PostMapping("/save")
 public String saveBooking(@ModelAttribute("booking") Booking booking,
@@ -280,7 +280,7 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
         model.addAttribute("transportations", transportationService.getAll());
         model.addAttribute("dishes", disheService.getAll());
          
-        return "booking/addBooking";
+        return "/booking/addBooking";
     }
     
     try {
@@ -346,7 +346,7 @@ public String showEditForm(@PathVariable int id, Model model) {
     model.addAttribute("dishes", dishes);
     model.addAttribute("cabins", cabins);
     
-    return "booking/editBooking";
+    return "/booking/editBooking";
 }
 
 @PostMapping("/update/{id}")
@@ -394,7 +394,7 @@ public String updateBooking(@PathVariable int id,
         model.addAttribute("dishes", disheService.getAll());
         model.addAttribute("cabins", cabinService.getAll());
         
-        return "booking/editBooking";
+        return "/booking/editBooking";
     }
     
     try {
@@ -675,7 +675,7 @@ public String showBookingDetails(@PathVariable int id, Model model) {
         return "redirect:/booking/listaReservas";
     }
     
-    return "booking/detailsBooking";
+    return "/booking/detailsBooking";
 }
 }
 

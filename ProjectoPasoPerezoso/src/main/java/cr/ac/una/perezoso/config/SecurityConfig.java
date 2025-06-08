@@ -21,6 +21,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 /**
  *
  * @author keyna
@@ -31,9 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     
 
-    
-       private final UserDetailsService userDetailsService;
-
+    private final UserDetailsService userDetailsService;
 
     public SecurityConfig(@Qualifier("customUserDetailsService") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -42,7 +41,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-
 
             .csrf(csrf -> csrf.disable()) // Deshabilitado solo para ejemplo - ajustar según necesidades
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
