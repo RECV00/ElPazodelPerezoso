@@ -5,388 +5,145 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    font-family: 'Arial', sans-serif;
-    color: white;
-    margin: 0;
-    padding: 0;
     min-height: 100vh;
 }
 
-/* ========== BARRA DE NAVEGACIÓN ========== */
-nav {
-    background-color: rgba(174, 182, 191, 0.7);
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-}
-
-nav .logo a {
-    color: white;
-    font-size: 1.5em;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-nav .nav-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-nav .nav-links li {
-    margin-left: 20px;
-}
-
-nav .nav-links a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1em;
-    padding: 5px 10px;
-    border-radius: 3px;
-    transition: background-color 0.3s;
-}
-
-nav .nav-links a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* ========== CONTENEDORES PRINCIPALES ========== */
-.container {
-    max-width: 1200px;
-    margin: 100px auto 30px;
-    background-color: rgba(52, 58, 64, 0.8);
-    padding: 25px;
+/* ========== TARJETA DE RESERVA ========== */
+.booking-card {
+    background-color: rgba(52, 58, 64, 0.9);
     border-radius: 10px;
-    width: 95%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    color: white;
+    margin-top: 80px;
+    margin-bottom: 30px;
     animation: fadeIn 0.5s ease-out;
 }
 
-.booking-details-container {
-    background: rgba(255, 255, 255, 0.1);
+/* ========== ENCABEZADOS DE SECCIÓN ========== */
+.section-header {
+    border-bottom: 2px solid #6f7e14;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #f8f9fa;
+}
+
+/* ========== TARJETAS DE DETALLE ========== */
+.detail-card {
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 25px;
-    margin-top: 20px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.3s, background-color 0.3s;
 }
 
-/* ========== SECCIONES Y GRID ========== */
-.details-section {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-}
-
-.detail-item {
-    margin-bottom: 10px;
+.detail-card:hover {
+    transform: translateY(-3px);
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 .detail-label {
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.8);
-    display: block;
+    color: #adb5bd;
     margin-bottom: 5px;
+    font-size: 0.9rem;
 }
 
 .detail-value {
     color: white;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 8px 12px;
-    border-radius: 4px;
-}
-
-.service-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-}
-
-/* ========== TABLAS ========== */
-.payments-table, .bookings-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.payments-table th, 
-.payments-table td,
-.bookings-table th,
-.bookings-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.payments-table th,
-.bookings-table th {
-    background-color: #6f7e14;
-    color: white;
-}
-
-.bookings-table tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.bookings-table tr:hover {
-    background-color: rgba(111, 126, 20, 0.3);
-}
-
-.total-row {
-    text-align: right;
-    font-size: 1.1em;
-}
-
-.balance-label {
-    margin-left: 30px;
-}
-
-/* ========== RESUMEN FINANCIERO ========== */
-.financial-summary .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-.summary-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.summary-item.total {
-    font-weight: bold;
-    font-size: 1.1em;
-    border-top: 2px solid #6f7e14;
-    margin-top: 10px;
-    padding-top: 15px;
-}
-
-/* ========== BOTONES Y ACCIONES ========== */
-.action-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
-    justify-content: center;
-}
-
-.button, .btn-add, .btn-edit, .btn-delete, .btn-clear, .page-link {
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-    font-size: 16px;
-}
-
-/* Variantes de botones */
-.back-btn {
-    background-color: #6c757d;
-    color: white;
-}
-
-.back-btn:hover {
-    background-color: #5a6268;
-}
-
-.edit-btn, .btn-edit {
-    background-color: #17a2b8;
-    color: white;
-}
-
-.edit-btn:hover, .btn-edit:hover {
-    background-color: #138496;
-}
-
-.delete-btn, .btn-delete {
-    background-color: #dc3545;
-    color: white;
-}
-
-.delete-btn:hover, .btn-delete:hover {
-    background-color: #c82333;
-}
-
-.payment-btn {
-    background-color: #28a745;
-    color: white;
-}
-
-.payment-btn:hover {
-    background-color: #218838;
-}
-
-.view-btn {
-    background-color: #ffc107;
-    color: #212529;
-    padding: 5px 10px;
-    font-size: 0.85em;
-}
-
-.view-btn:hover {
-    background-color: #e0a800;
-}
-
-.btn-add {
-    background-color: #6f7e14;
-    color: white;
-}
-
-.btn-add:hover {
-    background-color: #a2a26e;
-}
-
-.btn-clear {
-    background-color: #f44336;
-}
-
-.btn-clear:hover {
-    background-color: #d32f2f;
+    font-size: 1.05rem;
 }
 
 /* ========== BADGES ========== */
-.status-badge, .badge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.85em;
-    font-weight: 600;
-    display: inline-block;
+.badge-status {
+    font-size: 0.9rem;
+    padding: 0.5em 0.8em;
 }
-
-.status-badge.pendiente {
+.badge-tipe {
+    font-size: 0.9rem;
+    padding: 0.5em 0.8em;
+}
+.status-pendiente {
     background-color: #fff3cd;
     color: #856404;
 }
 
-.status-badge.confirmada {
+.status-confirmada {
     background-color: #d4edda;
     color: #155724;
 }
 
-.status-badge.cancelada {
+.status-cancelada {
     background-color: #f8d7da;
     color: #721c24;
 }
 
-.badge.premium-badge {
+.badge-premium {
     background-color: #d4b8ff;
     color: #4b0082;
 }
 
-.badge.standard-badge {
+.badge-standard {
     background-color: #b8e0ff;
     color: #005b96;
 }
 
-/* ========== PAGINACIÓN ========== */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
+/* ========== TARJETAS DE SERVICIO ========== */
+.service-card {
+    background-color: rgba(111, 126, 20, 0.2);
+    border-left: 4px solid #6f7e14;
+    margin-bottom: 20px;
+    border-radius: 8px;
 }
 
-.page-link {
-    background-color: #6f7e14;
+.service-title {
+    color: #e9ecef;
+    font-size: 1.2rem;
+}
+
+/* ========== BOTONES ========== */
+.back-btn {
+    background-color: #6c757d;
+    color: white;
+    transition: all 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #5a6268;
+    transform: translateX(-3px);
     color: white;
 }
 
-.page-link:hover {
-    background-color: #a2a26e;
+/* ========== CONTENEDOR DE ALERTAS ========== */
+.alert-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1100;
+    min-width: 300px;
 }
 
-.page-link.active {
-    background-color: #4a5410;
-    font-weight: bold;
-}
-
-/* ========== FORMULARIOS ========== */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-form input, form select {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    width: 95%;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #333;
-}
-
-form button {
-    padding: 10px;
-    background-color: #6f7e14;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-form button:hover {
-    background-color: #a2a26e;
-}
-
-/* ========== ANIMACIONES Y RESPONSIVE ========== */
+/* ========== ANIMACIONES ========== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
-    .container {
+    .booking-card {
+        margin-top: 70px;
         padding: 15px;
-        margin-top: 80px;
     }
     
-    .details-grid {
-        grid-template-columns: 1fr;
+    .alert-container {
+        top: 60px;
+        left: 20px;
+        right: 20px;
+        min-width: auto;
     }
     
-    .financial-summary .summary-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .bookings-table, .payments-table {
-        display: block;
-        overflow-x: auto;
-    }
-    
-    nav .nav-links {
-        display: none;
-    }
-    
-    .action-buttons {
-        flex-direction: column;
+    .detail-card {
+        padding: 10px;
     }
 }
