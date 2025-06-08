@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Listado de Artículos</title>
@@ -12,6 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesList_article.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
     <meta name="theme-color" content="#e1b822">
 </head>
@@ -55,7 +51,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <table class="cabin-table">
                 <thead>
                     <tr>
-<!--                        <th>ID</th>-->
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Cantidad</th>
@@ -102,6 +97,32 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 $('#supplier').val('');
                 loadArticles(0);
             });
+            
+            $('.filter-group input').focus(function() {
+                $(this).parent().find('label').css('color', '#a2a26e');
+            }).blur(function() {
+                $(this).parent().find('label').css('color', 'white');
+            });
+            
+            // Configuración de SweetAlert
+            window.showAlert = function(type, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                
+                Toast.fire({
+                    icon: type,
+                    title: message
+                });
+            };
         });
 
         function loadArticles(page) {
@@ -126,8 +147,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     $('#articleTableBody').fadeIn(300);
                 },
                 error: function(xhr) {
-                    $('#articleTableBody').html('<tr><td colspan="9" class="no-data">Error al cargar los datos</td></tr>');
+                    $('#articleTableBody').html('<tr><td colspan="8" class="no-data">Error al cargar los datos</td></tr>');
                     $('#articleTableBody').show();
+                    showAlert('error', 'Error al cargar los artículos');
                     console.error('Error:', xhr.responseText);
                 },
                 complete: function() {
@@ -142,19 +164,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             tbody.empty();
             
             if (articles.length === 0) {
-                tbody.append('<tr><td colspan="9" class="no-data">No se encontraron artículos con los filtros aplicados</td></tr>');
+                tbody.append('<tr><td colspan="8" class="no-data">No se encontraron artículos con los filtros aplicados</td></tr>');
                 return;
             }
             
             articles.forEach(article => {
                 const row = `
                     <tr>
-                        
                         <td>${article.productName}</td>
                         <td>${article.description}</td>
                         <td>${article.productQuantity}</td>
                         <td>${article.unitOfMeasurement}</td>
-                         <td>${formatDate(article.expirationDate)}</td>
+                        <td>${formatDate(article.expirationDate)}</td>
                         <td>${article.supplier}</td>
                         <td>₡${article.unitPrice.toFixed(2)}</td>
                         <td class="article-actions">
@@ -174,9 +195,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             
                             <button class="action-btn btn-delete" title="Eliminar"
                                 onclick="deleteArticle(${article.id_article}); return false;">
-                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                        </button>
-              
+                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -184,27 +204,25 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             });
         }
         
-        // Función para mostrar fechas en la tabla (formato legible)
         function formatDate(dateString) {
-        if (!dateString || dateString === 'NULL' || dateString === 'null') {
-            return 'N/A';
-        }
+            if (!dateString || dateString === 'NULL' || dateString === 'null') {
+                return 'N/A';
+            }
 
-        try {
-            // Si es una fecha ISO (YYYY-MM-DD) o similar
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'N/A';
 
-            return date.toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
-        } catch (e) {
-            console.error('Error formateando fecha:', e);
-            return 'N/A';
+                return date.toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+            } catch (e) {
+                console.error('Error formateando fecha:', e);
+                return 'N/A';
+            }
         }
-    }
         
         function updatePagination(totalPages, currentPage) {
             const pagination = $('#paginationControls');
@@ -256,35 +274,100 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             pagination.append(nextBtn);
         }
         
-        function deleteArticle(articleId) {
-            if (confirm('¿Estás seguro que deseas eliminar este artículo?')) {
-                fetch('/Article/delete/' + articleId, {
-                    method: 'DELETE',
-                    redirect: 'follow'
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Error al eliminar el artículo');
-                });
-            }
-        }
+        $('#editArticleModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            modal.find('#editArticleId').val(button.data('article-id'));
+            modal.find('#editProductName').val(button.data('article-name'));
+            modal.find('#editDescription').val(button.data('article-description'));
+            modal.find('#editQuantity').val(button.data('article-quantity'));
+            modal.find('#editUnit').val(button.data('article-unit'));
+            modal.find('#editExpiration').val(button.data('article-expiration'));
+            modal.find('#editSupplier').val(button.data('article-supplier'));
+            modal.find('#editPrice').val(button.data('article-price'));
+        });
 
-        function showAlert(type, message) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            $('.top-actions').prepend(alertHtml);
-            setTimeout(() => $('.alert').alert('close'), 5000);
+        $('#addArticleForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Agregar artículo?',
+                text: "¿Estás seguro de que deseas agregar este artículo?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+        $('#editArticleForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar artículo?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+        function deleteArticle(articleId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/Article/delete/' + articleId, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: 'El artículo ha sido eliminado.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el artículo',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
         }
     </script>
 </body>
 </html>
-

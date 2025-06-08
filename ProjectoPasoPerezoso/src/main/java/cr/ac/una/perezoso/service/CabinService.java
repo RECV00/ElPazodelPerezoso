@@ -64,6 +64,10 @@ public class CabinService implements CRUD<Cabin, Integer>{
         return cabinRepository.findByLocationContainingIgnoreCase(location,pageable);
     }
 
+     public List<Cabin> findByLocation(String location) {
+        return cabinRepository.findByLocationContainingIgnoreCase(location);
+    }
+     
     public List<Cabin> findByCapacityGreaterThanEqual(int capacity) {
         return cabinRepository.findByCapacityGreaterThanEqual(capacity);
     }
@@ -77,35 +81,10 @@ public class CabinService implements CRUD<Cabin, Integer>{
     public boolean existsById(Integer id) {
         return cabinRepository.existsById(id);
     }
+
     public Optional<Cabin> findById(int cabinId) {
     return cabinRepository.findById(cabinId);
     }
-     
-//    public Page<Cabin> findByFilters(String location, Integer minCapacity, 
-//                               Double minPrice, Double maxPrice, Pageable pageable) {
-//    Specification<Cabin> spec = Specification.where(null);
-//    
-//    if (location != null && !location.isEmpty()) {
-//        spec = spec.and((root, query, cb) -> 
-//            cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%"));
-//    }
-//    
-//    if (minCapacity != null) {
-//        spec = spec.and((root, query, cb) -> 
-//            cb.greaterThanOrEqualTo(root.get("capacity"), minCapacity));
-//    }
-//    
-//    if (minPrice != null) {
-//        spec = spec.and((root, query, cb) -> 
-//            cb.greaterThanOrEqualTo(root.get("pricePerNight"), minPrice));
-//    }
-//    
-//    if (maxPrice != null) {
-//        spec = spec.and((root, query, cb) -> 
-//            cb.lessThanOrEqualTo(root.get("pricePerNight"), maxPrice));
-//    }
-//    
-//    return cabinRepository.findAll(spec, pageable);
-//}
+   
     
 }

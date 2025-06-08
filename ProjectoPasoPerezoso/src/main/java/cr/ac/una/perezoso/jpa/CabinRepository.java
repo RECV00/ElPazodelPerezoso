@@ -25,6 +25,8 @@ public interface CabinRepository extends JpaRepository<Cabin, Integer>,JpaSpecif
     List<Cabin> findByNameContainingIgnoreCase(String name);
     
    Page<Cabin> findByLocationContainingIgnoreCase(String location,Pageable pageable);
+   
+    List<Cabin> findByLocationContainingIgnoreCase(String location);
     
     List<Cabin> findByCapacityGreaterThanEqual(int capacity);
     

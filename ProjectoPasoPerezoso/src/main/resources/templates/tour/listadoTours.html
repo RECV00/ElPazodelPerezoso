@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
@@ -97,6 +98,32 @@
                 $('#startingPoint').val('');
                 loadTours(0);
             });
+            
+            $('.filter-group input').focus(function() {
+                $(this).parent().find('label').css('color', '#a2a26e');
+            }).blur(function() {
+                $(this).parent().find('label').css('color', 'white');
+            });
+            
+            // Configuración de SweetAlert
+            window.showAlert = function(type, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                
+                Toast.fire({
+                    icon: type,
+                    title: message
+                });
+            };
         });
 
         function loadTours(page) {
@@ -123,6 +150,7 @@
                 error: function(xhr) {
                     $('#tourTableBody').html('<tr><td colspan="10" class="no-data">Error al cargar los datos</td></tr>');
                     $('#tourTableBody').show();
+                    showAlert('error', 'Error al cargar los tours');
                     console.error('Error:', xhr.responseText);
                 },
                 complete: function() {
@@ -255,33 +283,85 @@
             }
         });
         
-        function deleteTour(tourId) {
-            if (confirm('¿Estás seguro que deseas eliminar este tour?')) {
-                fetch('/tours/delete/' + tourId, {
-                    method: 'DELETE',
-                    redirect: 'follow'
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Error al eliminar el tour');
-                });
-            }
-        }
+        $('#addTourForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Agregar tour?',
+                text: "¿Estás seguro de que deseas agregar este tour?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
 
-        function showAlert(type, message) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            $('.top-actions').prepend(alertHtml);
-            setTimeout(() => $('.alert').alert('close'), 5000);
+        $('#editTourForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar tour?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+        function deleteTour(tourId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/tours/delete/' + tourId, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: 'El tour ha sido eliminado.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el tour',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
         }
     </script>
 </body>

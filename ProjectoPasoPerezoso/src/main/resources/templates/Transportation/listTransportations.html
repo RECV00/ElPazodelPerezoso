@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Listado de Transportes</title>
@@ -12,6 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesList_transportation.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
@@ -111,6 +107,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 $('#status').val('');
                 loadTransports(0);
             });
+            
+            // Configuración de SweetAlert
+            window.showAlert = function(type, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                
+                Toast.fire({
+                    icon: type,
+                    title: message
+                });
+            };
         });
 
         function loadTransports(page) {
@@ -137,6 +153,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 error: function(xhr) {
                     $('#transportTableBody').html('<tr><td colspan="9" class="no-data">Error al cargar los datos</td></tr>');
                     $('#transportTableBody').show();
+                    showAlert('error', 'Error al cargar los transportes');
                     console.error('Error:', xhr.responseText);
                 },
                 complete: function() {
@@ -158,7 +175,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             transports.forEach(transport => {
                 const row = `
                     <tr>
-                       
                         <td>${transport.plate}</td>
                         <td>${transport.driver}</td>
                         <td>${formatDateTime(transport.dataTimeService)}</td>
@@ -186,9 +202,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             </a>
                             <button class="action-btn btn-delete" title="Eliminar"
                                 onclick="deleteTransport(${transport.id}); return false;">
-                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                        </button>
-                           
+                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -267,118 +282,100 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             pagination.append(nextBtn);
         }
         
-        function deleteTransport(transportId) {
-            if (confirm('¿Estás seguro que deseas eliminar este transporte?')) {
-                fetch('/transportation/delete/' + transportId, {
-                    method: 'DELETE',
-                    redirect: 'follow'
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Error al eliminar el transporte');
-                });
-            }
-        }
+        $('#editTransportModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            modal.find('#editTransportId').val(button.data('transport-id'));
+            modal.find('#editPlate').val(button.data('transport-plate'));
+            modal.find('#editDriver').val(button.data('transport-driver'));
+            modal.find('#editDateTime').val(button.data('transport-datetime'));
+            modal.find('#editInitialLocation').val(button.data('transport-initial'));
+            modal.find('#editFinalLocation').val(button.data('transport-final'));
+            modal.find('#editStatus').val(button.data('transport-status'));
+            modal.find('#editDuration').val(button.data('transport-duration'));
+        });
 
-        function showAlert(type, message) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            $('.top-actions').prepend(alertHtml);
-            setTimeout(() => $('.alert').alert('close'), 5000);
+        $('#addTransportForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Agregar transporte?',
+                text: "¿Estás seguro de que deseas agregar este transporte?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+        $('#editTransportForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar transporte?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+        
+        function deleteTransport(transportId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/transportation/delete/' + transportId, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: 'El transporte ha sido eliminado.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el transporte',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
         }
     </script>
 </body>
 </html>
-
-
-
-<!--<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Transportes</title>
-     Incluir Font Awesome 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link th:href="@{/css/stylesListTransportation.css}" rel="stylesheet">
-    <script>
-        function confirmDelete() {
-            return confirm("¿Estás seguro de que deseas eliminar este transporte?");
-        }
-    </script>
-</head>
-<body>
-     Incluir la barra de navegación 
-    <div th:replace="~{/fragments/navbar :: navbar}"></div>
-    
-    <div class="container">
-        <h1>Lista de Transportes</h1>
-        
-         Mensaje de éxito 
-        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
-        
-         Formulario para filtrar 
-        <form action="/transportation/filter" method="get" class="filter-form">
-            <label for="filter">Filtrar por conductor o placa:</label>
-            <input type="text" id="filter" name="filter" placeholder="Placa del vehículo">
-            <button type="submit" class="button filter-btn">Filtrar</button>
-        </form>
-
-         Botones de acción 
-        <div class="action-buttons">
-            <a href="/transportation/add" class="button add-btn">
-                <i class="fas fa-plus"></i> Agregar Nuevo Transporte</a>
-            <a href="/transportation/listTransport" class="button show-all-btn">
-                <i class="fas fa-list"></i>Mostrar Todos</a>
-        </div>
-        
-         Tabla de transportes 
-        <table class="transport-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Placa</th>
-                    <th>Conductor</th>
-                    <th>Fecha y Hora</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Estado</th>
-                    <th>Duración (min)</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="transportation : ${transportations}">
-                    <td th:text="${transportation.id_transportation}"></td>
-                    <td th:text="${transportation.plate}"></td>
-                    <td th:text="${transportation.driver}"></td>
-                    <td th:text="${#temporals.format(transportation.dataTimeService, 'dd/MM/yyyy HH:mm')}"></td>
-                    <td th:text="${transportation.initialLocation}"></td>
-                    <td th:text="${transportation.finalLocation}"></td>
-                    <td>
-                        <span th:class="${transportation.serviceStatus == 'Programado' ? 'status-scheduled' : 
-                                        transportation.serviceStatus == 'Cancelado' ? 'status-cancelled' : 
-                                        'status-completed'}"
-                              th:text="${transportation.serviceStatus}"></span>
-                    </td>
-                    <td th:text="${transportation.serviceDuration}"></td>
-                    <td class="action-cells">
-                        <a th:href="@{/transportation/edit/{id}(id=${transportation.id_transportation})}" class="button edit-btn">
-                            <i class="fas fa-edit"></i> Editar</a>
-                        <a th:href="@{/transportation/delete/{id}(id=${transportation.id_transportation})}" 
-                           class="button delete-btn" onclick="return confirmDelete()">
-                            <i class="fas fa-trash-alt"></i>Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>-->
