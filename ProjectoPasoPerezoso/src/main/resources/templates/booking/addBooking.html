@@ -2,17 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Agregar Booking</title>
+    <title>Agregar Reservas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link th:href="@{/css/stylesAddBooking.css}" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>Agregar Nueva Booking</h1>
+        <h1>Agregar Nueva Reserva</h1>
         
-        <form th:action="@{/booking/save}" method="post" th:object="${booking}" class="reservation-form" onsubmit="return validateForm()">
-
+        <form th:action="@{/booking/save}" method="post" th:object="${booking}" class="reservation-form" id="bookingForm">
            <!-- Sección de cliente-->
-           <div class="form-group">
+            <div class="form-group">
                 <label for="clientIdentification">Identificación del Cliente:</label>
                 <div class="search-container">
                     <input type="text" id="clientIdentification" name="clientIdentification" required
@@ -20,7 +21,8 @@
                     <button type="button" class="search-btn" onclick="searchClient()">Buscar</button>
                 </div>
                 <div id="clientInfo" class="client-info" style="display: none;">
-                    <p><strong>Nombre:</strong> <span id="clientName"></span></p>
+                    <div style="font-size: 0.9em; color: white;">
+                    <p><strong>Nombre:</strong> <span id="clientName"></span><span id="clientLastName"></span></p>
                     <p><strong>Email:</strong> <span id="clientEmail"></span></p>
                 </div>
                 <div id="clientError" class="error-message" style="display: none;"></div>
@@ -118,7 +120,7 @@
                                                 <label class="cabin-option">
                                                     <input type="radio" name="selectedCabinId" 
                                                            th:value="${cabin.cabinID}">
-                                                    <img th:src="@{'/' + ${cabin.image}}" alt="Cabaña" style="width: 80px; height: 60px; object-fit: cover;">
+                                                    <img th:src="@{'/' + ${cabin.image}}" alt="Cabaña" style="width: 100px; height: 100px; object-fit: cover;">
                                                     <div class="cabin-info">
                                                         <div style="font-size: 0.9em; color: black;">
                                                     <strong th:text="${cabin.name}"></strong>
@@ -150,6 +152,7 @@
                                                th:value="${tour.id_tour}" 
                                                th:id="'tour_' + ${tour.id_tour}"
                                                style="margin-right: 10px;">
+                                        <img th:src="@{'/' + ${tour.multimedia}}" alt="Tour" style="width: 100px; height: 100px; object-fit: cover;">
                                         <div>
                                             <div style="font-size: 0.9em; color: black;">
                                             <strong th:text="${tour.nameTour}"></strong>
@@ -178,6 +181,7 @@
                                            th:value="${dishe.disheID}" 
                                            th:id="'dishe_' + ${dishe.disheID}"
                                            style="margin-right: 10px;">
+                                    <img th:src="@{'/' + ${dishe.imageUrl}}" alt="Alimentacion" style="width: 100px; height: 100px; object-fit: cover;">
                                     <div>
                                         <div style="font-size: 0.9em; color: black;">
                                         <strong th:text="${dishe.name}"></strong>
@@ -240,10 +244,16 @@
             </div>
     
             <!-- Botón de enviar -->
-            <div class="form-actions">
-                <button type="submit" class="button save-btn">Guardar Booking</button>
-                <a th:href="@{/booking/listaReservas}" class="button cancel-btn">Cancelar</a>
+             <div class="form-actions d-flex justify-content-end gap-3 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-check-circle"></i> Confirmar Reserva
+                </button>
+                <a th:href="@{/booking/listaReservas}" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
             </div>
+        </form>
+    </div>
         </form>
     </div>
 
@@ -260,7 +270,7 @@
             setupDates();
         });
 
-        function searchClient() {
+         function searchClient() {
             const identification = document.getElementById('clientIdentification').value.trim();
             const errorDiv = document.getElementById('clientError');
             const infoDiv = document.getElementById('clientInfo');
@@ -283,8 +293,8 @@
                     return response.json();
                 })
                 .then(clientData => {
-                    document.getElementById('clientName').textContent = 
-                        `${clientData.name} ${clientData.lastName}`;
+                    document.getElementById('clientName').textContent = clientData.name;
+                    document.getElementById('clientLastName').textContent = clientData.lastName;
                     document.getElementById('clientEmail').textContent = clientData.email;
                     infoDiv.style.display = 'block';
                 })
@@ -387,5 +397,8 @@
             return confirm("¿Estás seguro de que deseas agregar esta Reserva?");
         }
     </script>
+    
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

@@ -2,12 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Reservas</title>
     <link th:href="@{/css/stylesListReservations.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
+    
     <div class="container">
         <h1>Lista de Reservas</h1>
         
@@ -15,45 +18,45 @@
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         
+        <div class="top-actions">
+            <a th:href="@{/booking/new}" class="btn-add">
+                <i class="fas fa-plus"></i> Nueva Reserva
+            </a>
+        </div>
+        
         <!-- Filtros -->
-        <div class="filters-section">
-            <!-- Filtro por cédula de cliente -->
-                      
-            <div class="filter-form">
-                <label for="clientId">Filtrar por Cédula Cliente:</label>
-                <input type="text" id="clientId" name="clientId" placeholder="Cédula del cliente"
-                       oninput="filtrarPorCliente()">
-                <span id="client-filter-loading" class="loading-spinner" style="display: none;"></span>
+        <div class="filter-container">
+            <div class="filter-row">
+                <!-- Filtro por cédula de cliente -->
+                <div class="filter-group">
+                    <label for="clientId">Cédula Cliente:</label>
+                    <input type="text" id="clientId" name="clientId" placeholder="Buscar por cédula">
+                </div>
+                
+                <!-- Filtro por estado -->
+                <div class="filter-group">
+                    <label for="status">Estado:</label>
+                    <select id="status" name="status" onchange="filtrarPorEstado()">
+                        <option value="">Todos</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+                
+                <!-- Filtro por rango de fechas -->
+                <div class="filter-group">
+                    <label>Fechas:</label>
+                    <input type="date" id="startDate" name="startDate" onchange="validarRangoFechas()">
+                    <span>a</span>
+                    <input type="date" id="endDate" name="endDate" onchange="validarRangoFechas()">
+                    <span id="date-error" class="error-message" style="display: none;"></span>
+                </div>
+                
+                <button onclick="reiniciarFiltros()" class="btn-reset">
+                    <i class="fas fa-broom"></i> Limpiar
+                </button>
             </div>
-
-            <!-- Filtro por estado -->
-            <div class="filter-form">
-                <label for="status">Filtrar por Estado:</label>
-                <select id="status" name="status" onchange="filtrarPorEstado()">
-                    <option value="">Todos</option>
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Confirmada">Confirmada</option>
-                    <option value="Cancelada">Cancelada</option>
-                </select>
-                <span id="status-filter-loading" class="loading-spinner" style="display: none;"></span>
-            </div>
-
-            <!-- Filtro por rango de fechas -->
-            <div class="filter-form">
-                <label>Filtrar por Fechas:</label>
-                <input type="date" id="startDate" name="startDate" onchange="validarRangoFechas()">
-                <span>a</span>
-                <input type="date" id="endDate" name="endDate" onchange="validarRangoFechas()">
-                <span id="date-filter-loading" class="loading-spinner" style="display: none;"></span>
-                <span id="date-error" class="error-message" style="display: none;"></span>
-            </div>
-
-<!-- Botón para reiniciar filtros (opcional) 
-<button onclick="reiniciarFiltros()" class="button reset-btn">Reiniciar Filtros</button>
-        -->
-        <!-- Botones de acción -->
-        <div class="action-buttons">
-            <a th:href="@{/booking/new}" class="button add-btn">Nueva Reserva</a>
         </div>
         
         <!-- Contenedor de reservas -->
@@ -94,7 +97,6 @@
                         </td>
                         <td>
                             <div th:if="${booking.cabin != null}">
-                                <!--<strong>Cabaña:</strong>--> 
                                 <span th:text="${cabinNames.get(booking.cabin.cabinID)}"></span>
                             </div>
                             <div th:unless="${booking.cabin != null}">
@@ -126,40 +128,49 @@
                                   th:class="${'status-badge ' + booking.reserveStatus.toLowerCase()}"></span>
                         </td>
                         <td class="action-cells">
-                             <!--Comentado hasta implementar-->
                             <a th:href="@{/booking/edit/{id}(id=${booking.id_booking})}" 
-                               class="button edit-btn">Editar</a>
+                               class="action-btn btn-edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             <a th:href="@{/booking/details/{id}(id=${booking.id_booking})}" 
-                               class="button details-btn">Detalles</a>
-                            
+                               class="action-btn btn-view">
+                                <i class="fas fa-eye"></i>
+                            </a>
                             <a th:href="@{/booking/delete/{id}(id=${booking.id_booking})}" 
-                                class="button delete-btn" 
-                                onclick="confirmDelete(event, this.href)">Eliminar</a>
+                                class="action-btn btn-delete" 
+                                onclick="confirmDelete(event, this.href)">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                 </tbody>
             </table>
             
             <!-- Paginación -->
-            <div class="pagination" th:if="${totalPages > 1}">
-                <a th:href="@{/booking/listaReservas(page=0, size=${pageSize})}" 
-                   class="page-link" th:classappend="${currentPage == 0} ? 'disabled'">« Primera</a>
-                
-                <a th:href="@{/booking/listaReservas(page=${currentPage - 1}, size=${pageSize})}" 
-                   class="page-link" th:classappend="${currentPage == 0} ? 'disabled'">‹ Anterior</a>
-                
-                <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                    <a th:href="@{/booking/listaReservas(page=${i}, size=${pageSize})}" 
-                       th:text="${i + 1}"
-                       th:classappend="${currentPage == i} ? 'active' : ''" 
-                       class="page-link"></a>
-                </span>
-                
-                <a th:href="@{/booking/listaReservas(page=${currentPage + 1}, size=${pageSize})}" 
-                   class="page-link" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">Siguiente ›</a>
-                
-                <a th:href="@{/booking/listaReservas(page=${totalPages - 1}, size=${pageSize})}" 
-                   class="page-link" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">Última »</a>
+            <div class="pagination-container" th:if="${totalPages > 1}">
+                <ul class="pagination">
+                    <li th:class="${currentPage == 0} ? 'disabled'">
+                        <a th:href="@{/booking/listaReservas(page=0, size=${pageSize})}">« Primera</a>
+                    </li>
+                    
+                    <li th:class="${currentPage == 0} ? 'disabled'">
+                        <a th:href="@{/booking/listaReservas(page=${currentPage - 1}, size=${pageSize})}">‹ Anterior</a>
+                    </li>
+                    
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                        th:classappend="${currentPage == i} ? 'active'">
+                        <a th:href="@{/booking/listaReservas(page=${i}, size=${pageSize})}" 
+                           th:text="${i + 1}"></a>
+                    </li>
+                    
+                    <li th:class="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a th:href="@{/booking/listaReservas(page=${currentPage + 1}, size=${pageSize})}">Siguiente ›</a>
+                    </li>
+                    
+                    <li th:class="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a th:href="@{/booking/listaReservas(page=${totalPages - 1}, size=${pageSize})}">Última »</a>
+                    </li>
+                </ul>
                 
                 <div class="page-size-selector">
                     <span>Mostrar:</span>
@@ -174,7 +185,7 @@
             
             <!-- Mensaje cuando no hay resultados -->
             <div th:if="${bookings != null && bookings.empty}" class="no-results">
-                No se encontraron reservaciones con los criterios seleccionados.
+                <i class="fas fa-info-circle"></i> No se encontraron reservaciones con los criterios seleccionados.
             </div>
         </div>
     </div>
@@ -250,265 +261,17 @@
         function changePageSize(size) {
             window.location.href = `/booking/listaReservas?page=0&size=${size}`;
         }
-    </script>
-</body>
-</html>
-
-<!--
-DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Reservas</title>
-    <link th:href="@{/css/stylesListReservations.css}" rel="stylesheet">
-    <script th:src="@{/js/reservationsAjax.js}" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <div class="container">
-        <h1>Lista de Reservas</h1>
         
-         Mensajes de éxito/error 
-        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-        
-         Filtros 
-        <div class="filters-section">
-             Filtro por ID de cliente 
-            <div class="filter-form">
-                <label for="id_client">Filtrar por ID Cliente:</label>
-                <input type="number" id="id_client" name="id_client" placeholder="ID del cliente" 
-                       min="1" oninput="filterByClient()">
-                <span id="client-filter-loading" class="loading-spinner" style="display: none;"></span>
-            </div>
-            
-             Filtro por estado 
-            <div class="filter-form">
-                <label for="reservationStatus">Filtrar por Estado:</label>
-                <select id="reservationStatus" name="status" onchange="filterByStatus()">
-                    <option value="">Todos</option>
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Confirmada">Confirmada</option>
-                    <option value="Cancelada">Cancelada</option>
-                </select>
-                <span id="status-filter-loading" class="loading-spinner" style="display: none;"></span>
-            </div>
-            
-             Filtro por rango de fechas 
-            <div class="filter-form">
-                <label>Filtrar por Fechas:</label>
-                <input type="date" id="startDate" name="startDate" onchange="validateDateRange()">
-                <span>a</span>
-                <input type="date" id="endDate" name="endDate" onchange="validateDateRange()">
-                <span id="date-filter-loading" class="loading-spinner" style="display: none;"></span>
-                <span id="date-error" class="error-message" style="display: none;"></span>
-            </div>
-        </div>
-        
-         Botones de acción 
-        <div class="action-buttons">
-            <a href="/reservations/add" class="button add-btn">Nueva Reserva</a>
-        </div>
-        
-         Contenedor de reservas que se actualizará via AJAX 
-        <div id="reservations-container">
-             Tabla de reservas 
-            <table class="reservations-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Fechas</th>
-                        <th>Huéspedes</th>
-                        <th>Tipo</th>
-                        <th>Cliente</th>
-                        <th>Cabaña</th>
-                        <th>Servicios</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="reservation : ${reservations}">
-                        <td style="display: none;" th:text="${reservation.id_reservation}"></td>
-                        <td>
-                            <div><strong>Entrada:</strong> <span th:text="${#temporals.format(reservation.checkInDate, 'dd/MM/yyyy')}"></span></div>
-                            <div><strong>Salida:</strong> <span th:text="${#temporals.format(reservation.checkOutDate, 'dd/MM/yyyy')}"></span></div>
-                        </td>
-                        <td th:text="${reservation.numberGuests}"></td>
-                        <td>
-                            <span th:text="${reservation.reservationType ? 'Alquiler Temporal' : 'Hospedaje'}" 
-                                  th:class="${reservation.reservationType ? 'premium-badge' : 'standard-badge'}"></span>
-                        </td>
-                        <td>
-                            <div th:if="${reservation.id_client != 0}">
-                                <strong th:text="${clientNames.get(reservation.id_client)}"></strong>
-                                <div th:text="${reservation.id_client}"></div>
-                            </div>
-                            <div th:unless="${reservation.id_client != 0}">
-                                Cliente no asignado
-                            </div>
-                        </td>
-                        <td>
-                            <div th:if="${reservation.id_cabin != 0}">
-                                <strong th:text="${cabinNames.get(reservation.id_cabin)}"></strong>
-                                <div th:text="${reservation.id_cabin}"></div>
-                            </div>
-                            <div th:unless="${reservation.id_cabin != 0}">
-                                Sin cabaña asignada
-                            </div>
-                        </td>
-                        <td>
-                            <div th:if="${reservation.additionalServices}">
-                                <div th:if="${reservation.id_food != 0}">
-                                    <strong>Comida:</strong> 
-                                    <span th:text="${reservation.id_food}"></span>
-                                    <span th:if="${menuNames != null && menuNames.containsKey(reservation.id_food)}"
-                                          th:text="${' (' + menuNames.get(reservation.id_food) + ')'}"></span>
-                                </div>
-
-                                <div th:if="${reservation.id_transportation != 0}">
-                                    <strong>Transporte:</strong> 
-                                    <span th:text="${driverNames.get(reservation.id_transportation)}"></span>
-                                </div>
-                                <div th:if="${reservation.id_tour != 0}">
-                                    <strong>Tour:</strong> 
-                                    <span th:text="${tourNames.get(reservation.id_tour)}"></span>
-                                </div>
-                            </div>
-                            <span th:unless="${reservation.additionalServices}">No</span>
-                        </td>
-                        <td>
-                            <span th:text="${reservation.reservationStatus}" 
-                                  th:class="${'status-badge ' + reservation.reservationStatus.toLowerCase()}"></span>
-                        </td>
-                        <td class="action-cells">
-                            <a th:href="@{/reservations/edit/{id}(id=${reservation.id_reservation})}" 
-                               class="button edit-btn">Editar</a>
-                            <a th:href="@{/reservations/delete/{id}(id=${reservation.id_reservation})}" 
-                               class="button delete-btn" 
-                               onclick="return confirmDelete()">Eliminar</a>
-                            <a th:href="@{/reservations/delete/{id}(id=${reservation.id_reservation})}" 
-                                class="button delete-btn" 
-                                onclick="confirmDelete(event, this.href)">Eliminar</a>
-                            <a th:href="@{/reservations/details/{id}(id=${reservation.id_reservation})}" 
-                               class="button details-btn">Detalles</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-             Paginación 
-<div class="pagination" th:if="${totalPages > 1}">
-    <a th:href="@{/reservations/listaReservas(page=0, size=${size})}" 
-       class="page-link" th:classappend="${currentPage == 0} ? 'disabled'">« Primera</a>
-    
-    <a th:href="@{/reservations/listaReservas(page=${currentPage - 1}, size=${size})}" 
-       class="page-link" th:classappend="${currentPage == 0} ? 'disabled'">‹ Anterior</a>
-    
-    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-        <a th:href="@{/reservations/listaReservas(page=${i}, size=${size})}" 
-           th:text="${i + 1}"
-           th:classappend="${currentPage == i} ? 'active' : ''" 
-           class="page-link"></a>
-    </span>
-    
-    <a th:href="@{/reservations/listaReservas(page=${currentPage + 1}, size=${size})}" 
-       class="page-link" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">Siguiente ›</a>
-    
-    <a th:href="@{/reservations/listaReservas(page=${totalPages - 1}, size=${size})}" 
-       class="page-link" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">Última »</a>
-    
-    <div class="page-size-selector">
-        <span>Mostrar:</span>
-        <select onchange="changePageSize(this.value)">
-            <option value="5" th:selected="${size == 5}">5</option>
-            <option value="10" th:selected="${size == 10}">10</option>
-            <option value="20" th:selected="${size == 20}">20</option>
-            <option value="50" th:selected="${size == 50}">50</option>
-        </select>
-    </div>
-</div>
-             Mensaje cuando no hay resultados 
-            <div th:if="${reservations != null && reservations.empty}" class="no-results">
-                No se encontraron reservaciones con los criterios seleccionados.
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Función para confirmar eliminación Alert
-//        function confirmDelete() {
-//            return confirm("¿Estás seguro de que deseas eliminar esta reserva?");
-//        }
-//     sweetalert
-            function confirmDelete(event, deleteUrl) {
-                event.preventDefault(); // Evita que el enlace se ejecute inmediatamente
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esta acción!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Si el usuario confirma, redirige a la URL de eliminación
-                        window.location.href = deleteUrl;
-
-                        // Opcional: Mostrar mensaje de éxito después de eliminar
-                        // Esto requeriría manejo adicional desde el backend
-                    }
-                });
-}
-
-
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Mostrar mensaje de éxito
-                        const successMessage = /*[[${successMessage}]]*/ null;
-                        if (successMessage) {
-                            Swal.fire({
-                                title: 'Éxito',
-                                text: successMessage,
-                                icon: 'success',
-                                confirmButtonText: 'Aceptar'
-                            });
-                        }
-
-                        // Mostrar mensaje de error
-                        const errorMessage = /*[[${errorMessage}]]*/ null;
-                        if (errorMessage) {
-                            Swal.fire({
-                                title: 'Error',
-                                text: errorMessage,
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar'
-                            });
-                        }
-                    });
-        // Función para validar el rango de fechas antes de filtrar
-        function validateDateRange() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const errorElement = document.getElementById('date-error');
-            
-            if ((startDate && !endDate) || (!startDate && endDate)) {
-                errorElement.textContent = 'Debe seleccionar ambas fechas para filtrar';
-                errorElement.style.display = 'inline-block';
-                return false;
-            }
-            
-            if (startDate && endDate && startDate > endDate) {
-                errorElement.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
-                errorElement.style.display = 'inline-block';
-                return false;
-            }
-            
-            errorElement.style.display = 'none';
-            filterByDateRange();
-            return true;
+        // Función para reiniciar filtros
+        function reiniciarFiltros() {
+            document.getElementById('clientId').value = '';
+            document.getElementById('status').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('date-error').style.display = 'none';
+            // Aquí deberías recargar la tabla sin filtros
+            window.location.href = '/booking/listaReservas?page=0';
         }
     </script>
 </body>
-</html>-->
+</html>

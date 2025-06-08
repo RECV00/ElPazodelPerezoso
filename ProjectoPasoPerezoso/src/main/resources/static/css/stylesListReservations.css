@@ -1,27 +1,59 @@
-/* Estilos generales */
+/* ========== ESTILOS GENERALES ========== */
 body {
-    background-image: url('/img/fondo.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    background-image: url('/img/fondo.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: white;
+    line-height: 1.6;
 }
 
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: rgba(52, 58, 64, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(111, 126, 20, 0.3);
+}
 
-/* Barra de navegación */
+h1 {
+    color: white;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 15px;
+    font-size: 2.2em;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+h1::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #a0b320, #6f7e14);
+    border-radius: 2px;
+}
+
+/* ========== NAVEGACIÓN ========== */
 nav {
     background-color: rgba(174, 182, 191, 0.7);
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -53,61 +85,67 @@ nav .nav-links a {
     font-size: 1.1em;
     padding: 8px 15px;
     border-radius: 4px;
+    transition: all 0.3s;
     font-weight: 500;
-    transition: background-color 0.3s;
 }
 
 nav .nav-links a:hover {
     background-color: rgba(255, 255, 255, 0.2);
-     transform: translateY(-2px);
+    transform: translateY(-2px);
+}
+/* ========== CONTROLES SUPERIORES ========== */
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(160, 179, 32, 0.3);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-/* Contenedor principal */
-.container {
-    margin: 100px auto 30px;
-    background-color: rgba(52, 58, 64, 0.8);
-    padding: 25px;
-    border-radius: 10px;
-    max-width: 1200px;
-    width: 95%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
-    animation: fadeIn 0.5s ease-out;
-}
-
-/* Títulos */
-h1, h2, h3 {
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 22px;
+    background: linear-gradient(135deg, #a0b320, #6f7e14);
     color: white;
-    text-align: center;
-}
-
-h1 {
-    font-size: 2.5em;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #6f7e14;
-    padding-bottom: 10px;
-}
-
-h2 {
-    font-size: 1.8em;
-    margin-top: 0;
-    color: rgba(255, 255, 255, 0.8);
-}
-
-/* Sección de agregar reserva */
-.add-section {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
+    text-decoration: none;
     border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
 }
 
-/* Filtros */
-.filters {
+.btn-add:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #b5c92c, #8a9a1a);
+}
+
+.btn-add:active {
+    transform: translateY(1px);
+}
+
+.btn-add i {
+    font-size: 1.2em;
+}
+
+/* ========== FILTROS ========== */
+.filter-container {
+    margin-bottom: 25px;
+}
+
+.filter-row {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
-    margin-bottom: 20px;
+    align-items: flex-end;
 }
 
 .filter-group {
@@ -117,212 +155,385 @@ h2 {
 
 .filter-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: white;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95em;
 }
 
-.filter-group input, 
+.filter-group input,
 .filter-group select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.btn-clear {
-    background-color: #f44336;
-    color: white;
-    border: none;
     padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    align-self: flex-end;
-}
-
-.btn-clear:hover {
-    background-color: #d32f2f;
-}
-
-/* Tabla de reservas */
-.bookings-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
-    background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.bookings-table th {
-    background-color: #6f7e14;
-    color: white;
-    padding: 12px 15px;
-    text-align: left;
-}
-
-.bookings-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.bookings-table tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.bookings-table tr:hover {
-    background-color: rgba(111, 126, 20, 0.3);
-}
-
-/* Acciones */
-.actions {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-edit, .btn-delete {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.3s;
-}
-
-.btn-edit {
-    background-color: #2196F3;
-    color: white;
-}
-
-.btn-edit:hover {
-    background-color: #0b7dda;
-}
-
-.btn-delete {
-    background-color: #f44336;
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #d32f2f;
-}
-
-/* Botones */
-.btn-add {
-    display: inline-block;
-    background-color: #6f7e14;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    transition: background-color 0.3s;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-add:hover {
-    background-color: #a2a26e;
-}
-
-.button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin-top: 10px;
-    background-color: #a2a26e;
-    color: white;
-    text-decoration: none;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: center;
-    transition: background-color 0.3s;
-}
-
-.button:hover {
-    background-color: #6f7e14;
-}
-
-/* Paginación */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.page-link {
-    padding: 8px 15px;
-    background-color: #6f7e14;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.page-link:hover {
-    background-color: #a2a26e;
-}
-
-.page-link.active {
-    background-color: #4a5410;
-    font-weight: bold;
-}
-
-/* Formularios */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-form input, form select {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    width: 95%;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    border-radius: 6px;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
     background-color: rgba(255, 255, 255, 0.9);
     color: #333;
 }
 
-form button {
-    padding: 10px;
-    background-color: #6f7e14;
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #a0b320;
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+.btn-reset {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
-form button:hover {
-    background-color: #a2a26e;
+.btn-reset:hover {
+    background: linear-gradient(135deg, #7f8c8d, #6c7a7b);
+    transform: translateY(-2px);
 }
 
-/* Efectos y responsive */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.btn-reset i {
+    font-size: 0.95em;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+/* ========== TABLA DE RESERVAS ========== */
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.bookings-table.loading {
+    opacity: 0.5;
+}
+
+.bookings-table thead tr {
+    background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+    color: white;
+    text-align: left;
+    font-weight: 600;
+}
+
+.bookings-table th {
+    padding: 17px 15px;
+    position: relative;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 0.95em;
+    color: white;
+}
+
+.bookings-table th:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.bookings-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(160, 179, 32, 0.1);
+    vertical-align: middle;
+    transition: all 0.2s ease;
+}
+
+.bookings-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.bookings-table tbody tr:nth-child(even) {
+     background-color: rgba(255, 255, 255, 0.05);
+}
+
+.bookings-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.bookings-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.services-container div {
+    margin-bottom: 5px;
+}
+
+.services-container div:last-child {
+    margin-bottom: 0;
+}
+
+/* ========== BADGES ========== */
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.standard-badge {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.premium-badge {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.status-badge.pendiente {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.status-badge.confirmada {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.status-badge.cancelada {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+/* ========== BOTONES DE ACCIÓN ========== */
+.action-cells {
+    white-space: nowrap;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.action-btn i {
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important;
+}
+
+.btn-view {
+     background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+}
+
+.btn-edit {
+     background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+/* ========== PAGINACIÓN ========== */
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pagination li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(111, 126, 20, 0.3);
+}
+
+.pagination li.active a {
+    background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+    color: white;
+    border-color: #8a9a1a;
+}
+
+.pagination li a:hover:not(.active) {
+    background-color: rgba(111, 126, 20, 0.2);
+    border-color: rgba(111, 126, 20, 0.5);
+}
+
+.pagination li.disabled a {
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    background-color: transparent;
+}
+
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    font-size: 0.95em;
+}
+
+.page-size-selector label {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.page-size-selector select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.page-size-selector select:focus {
+    outline: none;
+    border-color: #a0b320;
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+/* ========== MENSAJES ESPECIALES ========== */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    font-size: 1.1em;
+    background-color: rgba(44, 53, 57, 0.5);
+    border-radius: 8px;
+    border: 1px dashed rgba(111, 126, 20, 0.3);
+}
+
+.no-results i {
+    font-size: 2em;
+    margin-bottom: 15px;
+    display: block;
+    color: rgba(111, 126, 20, 0.5);
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid transparent;
+}
+
+.alert i {
+    font-size: 1.3em;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* ========== RESPONSIVIDAD ========== */
+@media (max-width: 1200px) {
+    .container {
+        margin: 20px 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .filter-group {
+        min-width: 180px;
+    }
 }
 
 @media (max-width: 768px) {
-    .container {
+    body {
         padding: 15px;
-        margin-top: 80px;
     }
     
-    .filters {
+    .filter-row {
         flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .top-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
     }
     
     .bookings-table {
@@ -330,7 +541,50 @@ form button:hover {
         overflow-x: auto;
     }
     
-    nav .nav-links {
-        display: none;
+    .bookings-table th,
+    .bookings-table td {
+        padding: 12px 15px;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 5px;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .page-size-selector {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    .pagination li a {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9em;
+    }
+    
+    .alert {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px 10px;
+    }
+    
+    .alert i {
+        margin-bottom: 8px;
     }
 }
