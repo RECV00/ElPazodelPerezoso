@@ -7,6 +7,7 @@ import cr.ac.una.perezoso.jpa.MaintenanceRepository;
 import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -73,6 +74,11 @@ public class MaintenanceService implements CRUD<Maintenance, Integer> {
     public List<Maintenance> findByState(String state) {
     return mr.findByStateIgnoreCase(state);
     }
+    
+    public Optional<Maintenance> findById(int id) {
+    return mr.findById(id);
+}
+
 public List<String> getAllStates() {
     return mr.findAll()
             .stream()
