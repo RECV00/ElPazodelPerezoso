@@ -19,7 +19,7 @@
 
 /* Contenido del modal - FORMULARIO */
 .modal-content {
-    background-color: rgba(52, 58, 64, 0.95);
+    background-color: rgba(52, 58, 64, 0.8);
     color: white;
     width: 90%;
     max-width: 60%;
@@ -114,7 +114,7 @@
 .modal-content .form-group input,
 .modal-content .form-group select,
 .modal-content .form-group textarea {
-    width: 95%;
+    width: 40%;
     padding: 8px;
     border: 1px solid black;
     border-radius: 5px;
