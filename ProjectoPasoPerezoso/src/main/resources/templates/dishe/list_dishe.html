@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Listado de Platos</title>
@@ -12,8 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesList_dishe.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
-    <!-- SweetAlert CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
@@ -29,16 +23,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-            <div th:if="${deleteSuccess}" class="alert alert-success">
-                <i class="fas fa-check-circle"></i> Plato eliminado correctamente.
-            </div>
         </div>
         
         <div class="filter-container">         
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" placeholder="Buscar por nombre">
+                    <input type="text" id="name" name="name" placeholder="Buscar por nombre (presiona Enter)">
                     
                     <button type="button" id="resetButton" class="btn-reset">
                         <i class="fas fa-broom"></i> Limpiar
@@ -64,6 +55,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <table class="cabin-table">
                 <thead>
                     <tr>
+                        <!--<th>ID</th>-->
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Precio</th>
@@ -96,8 +88,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </div>
     
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
-    <!-- SweetAlert JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
             let currentPage = 0;
@@ -121,46 +111,31 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 loadDishes(0);
             });
             
-            // Configuración de los formularios con SweetAlert
-            $('#addDishForm').on('submit', function(e) {
-                e.preventDefault();
-                const form = this;
-                
-                Swal.fire({
-                    title: '¿Agregar nuevo plato?',
-                    text: "¿Estás seguro de que deseas agregar este plato?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#a0b320',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Sí, agregar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
+            $('.filter-group input, .filter-group select').focus(function() {
+                $(this).parent().find('label').css('color', '#a2a26e');
+            }).blur(function() {
+                $(this).parent().find('label').css('color', 'white');
             });
             
-            $('#editDishForm').on('submit', function(e) {
-                e.preventDefault();
-                const form = this;
-                
-                Swal.fire({
-                    title: '¿Actualizar plato?',
-                    text: "¿Estás seguro de que deseas guardar los cambios?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#a0b320',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Sí, actualizar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
+            // Configuración de SweetAlert
+            window.showAlert = function(type, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
                     }
                 });
-            });
+                
+                Toast.fire({
+                    icon: type,
+                    title: message
+                });
+            };
         });
 
         function loadDishes(page) {
@@ -188,6 +163,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 error: function(xhr) {
                     $('#dishTableBody').html('<tr><td colspan="9" class="no-data">Error al cargar los datos</td></tr>');
                     $('#dishTableBody').show();
+                    showAlert('error', 'Error al cargar los platos');
                     console.error('Error:', xhr.responseText);
                 },
                 complete: function() {
@@ -225,7 +201,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                               'Sin imagen'}
                         </td>
                         <td class="dishe-actions">
-                            <a href="#" class="action-btn btn-edit" title="Editar"
+                             <a href="#" class="action-btn btn-edit" title= "Editar"
+                               data-bs-toggle="modal" 
+                               data-bs-target="#editDishModal"
                                data-dish-id="${dish.disheID}"
                                data-dish-name="${dish.name}"
                                data-dish-description="${dish.description}"
@@ -237,56 +215,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
                             <button class="action-btn btn-delete" title="Eliminar"
-                                onclick="deleteDish(${dish.disheID}, '${dish.name.replace(/'/g, "\\'")}'); return false;">
-                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                            </button>
+                                onclick="deleteDish(${dish.disheID}); return false;">
+                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                        </button>
                         </td>
                     </tr>
                 `;
                 tbody.append(row);
-            });
-            
-            // Asignar el evento de clic para editar después de crear las filas
-            $('.btn-edit').click(function(e) {
-                e.preventDefault();
-                const dishId = $(this).data('dish-id');
-                const dishName = $(this).data('dish-name');
-                
-                Swal.fire({
-                    title: `¿Editar plato ${dishName}?`,
-                    text: "Podrás modificar la información de este plato",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#a0b320',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Sí, editar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Configurar los datos del modal
-                        const button = $(this);
-                        const modal = $('#editDishModal');
-                        
-                        modal.find('#editDishId').val(button.data('dish-id'));
-                        modal.find('#editName').val(button.data('dish-name'));
-                        modal.find('#editDescription').val(button.data('dish-description'));
-                        modal.find('#editPrice').val(button.data('dish-price'));
-                        modal.find('#editCategory').val(button.data('dish-category'));
-                        modal.find('#editAvailable').prop('checked', button.data('dish-available') === 'true');
-                        modal.find('#editPreparationTime').val(button.data('dish-preparation-time'));
-                        
-                        var imagePath = button.data('dish-image');
-                        if(imagePath) {
-                            modal.find('#currentImage').attr('src', '/' + imagePath);
-                            modal.find('#currentImageContainer').show();
-                        } else {
-                            modal.find('#currentImageContainer').hide();
-                        }
-                        
-                        // Abrir el modal de edición
-                        $('#editDishModal').modal('show');
-                    }
-                });
             });
         }
         
@@ -340,30 +275,88 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             pagination.append(nextBtn);
         }
         
-        function deleteDish(dishID, dishName) {
+        $('#editDishModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            modal.find('#editDishId').val(button.data('dish-id'));
+            modal.find('#editName').val(button.data('dish-name'));
+            modal.find('#editDescription').val(button.data('dish-description'));
+            modal.find('#editPrice').val(button.data('dish-price'));
+            modal.find('#editCategory').val(button.data('dish-category'));
+            modal.find('#editAvailable').prop('checked', button.data('dish-available') === 'true');
+            modal.find('#editPreparationTime').val(button.data('dish-preparation-time'));
+            
+            var imagePath = button.data('dish-image');
+            if(imagePath) {
+                modal.find('#currentImage').attr('src', '/' + imagePath);
+                modal.find('#currentImageContainer').show();
+            } else {
+                modal.find('#currentImageContainer').hide();
+            }
+        });
+        
+        $('#addDishForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
             Swal.fire({
-                title: `¿Eliminar plato ${dishName}?`,
-                text: "Esta acción no se puede deshacer",
-                icon: 'warning',
+                title: '¿Agregar plato?',
+                text: "¿Estás seguro de que deseas agregar este plato?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                dangerMode: true
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Usar fetch para seguir la redirección
+                    form.submit();
+                }
+            });
+        });
+        
+        $('#editDishForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar plato?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+        
+        function deleteDish(dishID) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     fetch('/dishes/delete/' + dishID, {
                         method: 'DELETE',
                         redirect: 'follow'
                     })
                     .then(response => {
                         if (response.redirected) {
-                            // Mostrar mensaje de éxito antes de redirigir
                             Swal.fire({
                                 title: '¡Eliminado!',
-                                text: 'El plato ha sido eliminado',
+                                text: 'El plato ha sido eliminado.',
                                 icon: 'success',
                                 timer: 1500,
                                 showConfirmButton: false
@@ -382,17 +375,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     });
                 }
             });
-        }
-
-        function showAlert(type, message) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            $('.top-actions').prepend(alertHtml);
-            setTimeout(() => $('.alert').alert('close'), 5000);
         }
     </script>
 </body>

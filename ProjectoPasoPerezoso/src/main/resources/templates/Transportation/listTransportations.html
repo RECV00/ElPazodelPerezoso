@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Listado de Transportes</title>
@@ -12,8 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesList_transportation.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
@@ -35,7 +29,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="plate">Placa:</label>
-                    <input type="text" id="plate" name="plate" placeholder="Buscar por placa (presiona Enter)">
+                    <input type="text" id="plate" name="plate" placeholder="Buscar por placa">
                     
                     <button type="button" id="resetButton" class="btn-reset">
                         <i class="fas fa-broom"></i> Limpiar
@@ -62,6 +56,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <table class="cabin-table">
                 <thead>
                     <tr>
+                        <!--<th>ID</th>-->
                         <th>Placa</th>
                         <th>Conductor</th>
                         <th>Fecha y Hora</th>
@@ -90,8 +85,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </div>
     
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
             let currentPage = 0;
@@ -114,113 +107,29 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 $('#status').val('');
                 loadTransports(0);
             });
-
-            // Manejar el formulario de agregar con SweetAlert y cierre de modal
-            $('#addTransportForm').on('submit', function(e) {
-                e.preventDefault();
-                
-                const form = this;
-                const formData = $(this).serialize();
-                
-                Swal.fire({
-                    title: '¿Agregar transporte?',
-                    text: "¿Estás seguro de que deseas agregar este transporte?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, agregar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: '/transportation/add',
-                            type: 'POST',
-                            data: formData,
-                            success: function(response) {
-                                $('#addTransportModal').modal('hide');
-                                form.reset();
-                                
-                                Swal.fire({
-                                    title: '¡Éxito!',
-                                    text: 'Transporte agregado correctamente',
-                                    icon: 'success',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    loadTransports(0); // Recargar la lista
-                                });
-                            },
-                            error: function(xhr) {
-                                let errorMsg = 'Ocurrió un error al agregar el transporte';
-                                if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMsg = xhr.responseJSON.message;
-                                }
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: errorMsg,
-                                    icon: 'error'
-                                });
-                            }
-                        });
+            
+            // Configuración de SweetAlert
+            window.showAlert = function(type, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
                     }
                 });
-            });
-
-            // Manejar el formulario de editar con SweetAlert y cierre de modal
-            $('#editTransportForm').on('submit', function(e) {
-                e.preventDefault();
                 
-                const form = this;
-                const formData = $(this).serialize();
-                
-                Swal.fire({
-                    title: '¿Actualizar transporte?',
-                    text: "¿Estás seguro de que deseas guardar los cambios?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, actualizar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: '/transportation/update',
-                            type: 'POST',
-                            data: formData,
-                            success: function(response) {
-                                $('#editTransportModal').modal('hide');
-                                
-                                Swal.fire({
-                                    title: '¡Éxito!',
-                                    text: 'Transporte actualizado correctamente',
-                                    icon: 'success',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    loadTransports(currentPage); // Recargar manteniendo la página actual
-                                });
-                            },
-                            error: function(xhr) {
-                                let errorMsg = 'Ocurrió un error al actualizar el transporte';
-                                if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMsg = xhr.responseJSON.message;
-                                }
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: errorMsg,
-                                    icon: 'error'
-                                });
-                            }
-                        });
-                    }
+                Toast.fire({
+                    icon: type,
+                    title: message
                 });
-            });
+            };
         });
 
         function loadTransports(page) {
-            currentPage = page;
             const filters = {
                 plate: $('#plate').val(),
                 status: $('#status').val(),
@@ -242,8 +151,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     $('#transportTableBody').fadeIn(300);
                 },
                 error: function(xhr) {
-                    $('#transportTableBody').html('<tr><td colspan="8" class="no-data">Error al cargar los datos</td></tr>');
+                    $('#transportTableBody').html('<tr><td colspan="9" class="no-data">Error al cargar los datos</td></tr>');
                     $('#transportTableBody').show();
+                    showAlert('error', 'Error al cargar los transportes');
                     console.error('Error:', xhr.responseText);
                 },
                 complete: function() {
@@ -258,7 +168,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             tbody.empty();
             
             if (transports.length === 0) {
-                tbody.append('<tr><td colspan="8" class="no-data">No se encontraron transportes con los filtros aplicados</td></tr>');
+                tbody.append('<tr><td colspan="9" class="no-data">No se encontraron transportes con los filtros aplicados</td></tr>');
                 return;
             }
             
@@ -277,7 +187,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         </td>
                         <td>${transport.serviceDuration}</td>
                         <td class="transport-actions">
-                            <a href="#" class="action-btn btn-edit" title="Editar"
+                            <a href="#" class="action-btn btn-edit" title= "Editar"
+                               data-bs-toggle="modal" 
+                               data-bs-target="#editTransportModal"
                                data-transport-id="${transport.id}"
                                data-transport-plate="${transport.plate}"
                                data-transport-driver="${transport.driver}"
@@ -289,32 +201,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
                             <button class="action-btn btn-delete" title="Eliminar"
-                                onclick="deleteTransport(${transport.id}, '${transport.plate.replace(/'/g, "\\'")}'); return false;">
+                                onclick="deleteTransport(${transport.id}); return false;">
                                 <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
                             </button>
                         </td>
                     </tr>
                 `;
                 tbody.append(row);
-            });
-            
-            // Configurar evento para editar
-            $('.btn-edit').click(function(e) {
-                e.preventDefault();
-                const button = $(this);
-                const modal = $('#editTransportModal');
-                
-                // Llenar el modal con los datos
-                modal.find('#editTransportId').val(button.data('transport-id'));
-                modal.find('#editPlate').val(button.data('transport-plate'));
-                modal.find('#editDriver').val(button.data('transport-driver'));
-                modal.find('#editDateTime').val(formatDateTimeForInput(button.data('transport-datetime')));
-                modal.find('#editInitialLocation').val(button.data('transport-initial'));
-                modal.find('#editFinalLocation').val(button.data('transport-final'));
-                modal.find('#editStatus').val(button.data('transport-status'));
-                modal.find('#editDuration').val(button.data('transport-duration'));
-                
-                modal.modal('show');
             });
         }
         
@@ -327,12 +220,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 hour: '2-digit',
                 minute: '2-digit'
             });
-        }
-        
-        function formatDateTimeForInput(dateTime) {
-            const date = new Date(dateTime);
-            const pad = num => num.toString().padStart(2, '0');
-            return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
         
         function getStatusClass(status) {
@@ -395,53 +282,96 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             pagination.append(nextBtn);
         }
         
-        function deleteTransport(transportId, transportPlate) {
+        $('#editTransportModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            modal.find('#editTransportId').val(button.data('transport-id'));
+            modal.find('#editPlate').val(button.data('transport-plate'));
+            modal.find('#editDriver').val(button.data('transport-driver'));
+            modal.find('#editDateTime').val(button.data('transport-datetime'));
+            modal.find('#editInitialLocation').val(button.data('transport-initial'));
+            modal.find('#editFinalLocation').val(button.data('transport-final'));
+            modal.find('#editStatus').val(button.data('transport-status'));
+            modal.find('#editDuration').val(button.data('transport-duration'));
+        });
+
+        $('#addTransportForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
             Swal.fire({
-                title: `¿Eliminar transporte ${transportPlate}?`,
-                text: "Esta acción no se puede deshacer",
-                icon: 'warning',
+                title: '¿Agregar transporte?',
+                text: "¿Estás seguro de que deseas agregar este transporte?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                dangerMode: true
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/transportation/delete/' + transportId,
-                        type: 'DELETE',
-                        success: function(response) {
-                            if (response.redirect) {
-                                Swal.fire({
-                                    title: '¡Eliminado!',
-                                    text: 'El transporte ha sido eliminado',
-                                    icon: 'success',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    window.location.href = response.redirect;
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: '¡Eliminado!',
-                                    text: 'El transporte ha sido eliminado',
-                                    icon: 'success',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    loadTransports(currentPage);
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            console.error('Error:', xhr.responseText);
+                    form.submit();
+                }
+            });
+        });
+
+        $('#editTransportForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar transporte?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+        
+        function deleteTransport(transportId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/transportation/delete/' + transportId, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
                             Swal.fire({
-                                title: 'Error',
-                                text: 'No se pudo eliminar el transporte',
-                                icon: 'error'
+                                title: '¡Eliminado!',
+                                text: 'El transporte ha sido eliminado.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
                             });
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el transporte',
+                            icon: 'error'
+                        });
                     });
                 }
             });
