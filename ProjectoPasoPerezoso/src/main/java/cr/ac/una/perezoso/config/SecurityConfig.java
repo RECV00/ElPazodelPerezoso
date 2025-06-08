@@ -41,6 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
             .csrf(csrf -> csrf.disable()) // Deshabilitado solo para ejemplo - ajustar según necesidades
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
@@ -64,6 +65,7 @@ public class SecurityConfig {
                 .requestMatchers("/Transportation/**").authenticated()
                 .requestMatchers("/maintenance/**").authenticated()
                 
+
 
                 .anyRequest().authenticated()
             )
