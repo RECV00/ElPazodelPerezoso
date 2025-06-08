@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:href="@{/css/stylesListadoTours.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
@@ -48,7 +50,6 @@
             <table class="tour-table">
                 <thead>
                     <tr>
-                        <!--<th>ID</th>-->
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Precio</th>
@@ -78,6 +79,8 @@
     </div>
     
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
             let currentPage = 0;
@@ -95,6 +98,91 @@
                 $('#nameTour').val('');
                 $('#startingPoint').val('');
                 loadTours(0);
+            });
+            
+            // Configuración de los formularios con SweetAlert
+            $('#addTourForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                
+                Swal.fire({
+                    title: '¿Agregar nuevo tour?',
+                    text: "¿Estás seguro de que deseas agregar este tour?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, agregar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+            
+            $('#editTourForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                
+                Swal.fire({
+                    title: '¿Actualizar tour?',
+                    text: "¿Estás seguro de que deseas guardar los cambios?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, actualizar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+            
+            // Configurar el evento de clic para editar con SweetAlert
+            $(document).on('click', '.btn-edit', function(e) {
+                e.preventDefault();
+                const tourId = $(this).data('tour-id');
+                const tourName = $(this).data('tour-name');
+                
+                Swal.fire({
+                    title: `¿Editar tour ${tourName}?`,
+                    text: "Podrás modificar la información de este tour",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, editar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Configurar los datos del modal
+                        const button = $(this);
+                        const modal = $('#editTourModal');
+                        
+                        modal.find('#editTourId').val(button.data('tour-id'));
+                        modal.find('#editNameTour').val(button.data('tour-name'));
+                        modal.find('#editDescription').val(button.data('tour-description'));
+                        modal.find('#editPrice').val(button.data('tour-price'));
+                        modal.find('#editDate').val(button.data('tour-date'));
+                        modal.find('#editStartTime').val(button.data('tour-starttime'));
+                        modal.find('#editDuration').val(button.data('tour-duration'));
+                        modal.find('#editStartingPoint').val(button.data('tour-startingpoint'));
+                        
+                        var imagePath = button.data('tour-multimedia');
+                        if(imagePath) {
+                            modal.find('#currentImage').attr('src', '/' + imagePath);
+                            modal.find('#currentImageContainer').show();
+                        } else {
+                            modal.find('#currentImageContainer').hide();
+                        }
+                        
+                        // Abrir el modal de edición
+                        $('#editTourModal').modal('show');
+                    }
+                });
             });
         });
 
@@ -143,7 +231,6 @@
             tours.forEach(tour => {
                 const row = `
                     <tr>
-                        
                         <td>${tour.nameTour}</td>
                         <td>${tour.description}</td>
                         <td>$${tour.price.toFixed(2)}</td>
@@ -155,9 +242,7 @@
                             ${tour.multimedia ? `<img src="/${tour.multimedia}" alt="Imagen del tour" style="width: 100px; height: auto;">` : 'Sin imagen'}
                         </td>
                         <td class="tour-actions">
-                            <a href="#" class="action-btn btn-edit" title= "Editar"
-                               data-bs-toggle="modal" 
-                               data-bs-target="#editTourModal"
+                            <a href="#" class="action-btn btn-edit" title="Editar"
                                data-tour-id="${tour.id_Tour}"
                                data-tour-name="${tour.nameTour}"
                                data-tour-description="${tour.description}"
@@ -171,10 +256,9 @@
                             </a>
                             
                             <button class="action-btn btn-delete" title="Eliminar"
-                                onclick="deleteTour(${tour.id_Tour}); return false;">
-                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                        </button>
-             
+                                onclick="deleteTour(${tour.id_Tour}, '${tour.nameTour.replace(/'/g, "\\'")}'); return false;">
+                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -232,44 +316,48 @@
             pagination.append(nextBtn);
         }
         
-        $('#editTourModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            
-            modal.find('#editTourId').val(button.data('tour-id'));
-            modal.find('#editNameTour').val(button.data('tour-name'));
-            modal.find('#editDescription').val(button.data('tour-description'));
-            modal.find('#editPrice').val(button.data('tour-price'));
-            modal.find('#editDate').val(button.data('tour-date'));
-            modal.find('#editStartTime').val(button.data('tour-starttime'));
-            modal.find('#editDuration').val(button.data('tour-duration'));
-            modal.find('#editStartingPoint').val(button.data('tour-startingpoint'));
-            
-            var imagePath = button.data('tour-multimedia');
-            if(imagePath) {
-                modal.find('#currentImage').attr('src', '/' + imagePath);
-                modal.find('#currentImageContainer').show();
-            } else {
-                modal.find('#currentImageContainer').hide();
-            }
-        });
-        
-        function deleteTour(tourId) {
-            if (confirm('¿Estás seguro que deseas eliminar este tour?')) {
-                fetch('/tours/delete/' + tourId, {
-                    method: 'DELETE',
-                    redirect: 'follow'
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Error al eliminar el tour');
-                });
-            }
+        function deleteTour(tourId, tourName) {
+            Swal.fire({
+                title: `¿Eliminar tour ${tourName}?`,
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                dangerMode: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Usar fetch para seguir la redirección
+                    fetch('/tours/delete/' + tourId, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // Mostrar mensaje de éxito antes de redirigir
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: 'El tour ha sido eliminado',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el tour',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
         }
 
         function showAlert(type, message) {

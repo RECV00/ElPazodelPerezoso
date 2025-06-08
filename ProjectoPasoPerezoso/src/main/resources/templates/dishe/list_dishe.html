@@ -12,6 +12,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/stylesList_dishe.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
@@ -62,7 +64,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <table class="cabin-table">
                 <thead>
                     <tr>
-                        <!--<th>ID</th>-->
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Precio</th>
@@ -95,6 +96,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </div>
     
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
             let currentPage = 0;
@@ -116,6 +119,47 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 $('#name').val('');
                 $('#category').val('');
                 loadDishes(0);
+            });
+            
+            // Configuración de los formularios con SweetAlert
+            $('#addDishForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                
+                Swal.fire({
+                    title: '¿Agregar nuevo plato?',
+                    text: "¿Estás seguro de que deseas agregar este plato?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, agregar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+            
+            $('#editDishForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                
+                Swal.fire({
+                    title: '¿Actualizar plato?',
+                    text: "¿Estás seguro de que deseas guardar los cambios?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, actualizar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         });
 
@@ -165,7 +209,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             dishes.forEach(dish => {
                 const row = `
                     <tr>
-                        
                         <td>${dish.name}</td>
                         <td>${dish.description}</td>
                         <td>$${dish.price.toFixed(2)}</td>
@@ -182,9 +225,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                               'Sin imagen'}
                         </td>
                         <td class="dishe-actions">
-                             <a href="#" class="action-btn btn-edit" title= "Editar"
-                               data-bs-toggle="modal" 
-                               data-bs-target="#editDishModal"
+                            <a href="#" class="action-btn btn-edit" title="Editar"
                                data-dish-id="${dish.disheID}"
                                data-dish-name="${dish.name}"
                                data-dish-description="${dish.description}"
@@ -196,14 +237,56 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
                             <button class="action-btn btn-delete" title="Eliminar"
-                                onclick="deleteDish(${dish.disheID}); return false;">
-                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                        </button>
-               
+                                onclick="deleteDish(${dish.disheID}, '${dish.name.replace(/'/g, "\\'")}'); return false;">
+                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                            </button>
                         </td>
                     </tr>
                 `;
                 tbody.append(row);
+            });
+            
+            // Asignar el evento de clic para editar después de crear las filas
+            $('.btn-edit').click(function(e) {
+                e.preventDefault();
+                const dishId = $(this).data('dish-id');
+                const dishName = $(this).data('dish-name');
+                
+                Swal.fire({
+                    title: `¿Editar plato ${dishName}?`,
+                    text: "Podrás modificar la información de este plato",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, editar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Configurar los datos del modal
+                        const button = $(this);
+                        const modal = $('#editDishModal');
+                        
+                        modal.find('#editDishId').val(button.data('dish-id'));
+                        modal.find('#editName').val(button.data('dish-name'));
+                        modal.find('#editDescription').val(button.data('dish-description'));
+                        modal.find('#editPrice').val(button.data('dish-price'));
+                        modal.find('#editCategory').val(button.data('dish-category'));
+                        modal.find('#editAvailable').prop('checked', button.data('dish-available') === 'true');
+                        modal.find('#editPreparationTime').val(button.data('dish-preparation-time'));
+                        
+                        var imagePath = button.data('dish-image');
+                        if(imagePath) {
+                            modal.find('#currentImage').attr('src', '/' + imagePath);
+                            modal.find('#currentImageContainer').show();
+                        } else {
+                            modal.find('#currentImageContainer').hide();
+                        }
+                        
+                        // Abrir el modal de edición
+                        $('#editDishModal').modal('show');
+                    }
+                });
             });
         }
         
@@ -257,22 +340,48 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             pagination.append(nextBtn);
         }
         
-        function deleteDish(dishID) {
-            if (confirm('¿Estás seguro que deseas eliminar este plato?')) {
-                fetch('/dishes/delete/' + dishID, {
-                    method: 'DELETE',
-                    redirect: 'follow'
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Error al eliminar el plato');
-                });
-            }
+        function deleteDish(dishID, dishName) {
+            Swal.fire({
+                title: `¿Eliminar plato ${dishName}?`,
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                dangerMode: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Usar fetch para seguir la redirección
+                    fetch('/dishes/delete/' + dishID, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // Mostrar mensaje de éxito antes de redirigir
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: 'El plato ha sido eliminado',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el plato',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
         }
 
         function showAlert(type, message) {
@@ -288,5 +397,3 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </script>
 </body>
 </html>
-
-

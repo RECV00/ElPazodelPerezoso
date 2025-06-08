@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
-
-    
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
@@ -25,7 +25,7 @@
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
         </div>
         
-         <div class="filter-container">         
+        <div class="filter-container">         
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="name">Nombre:</label>
@@ -38,9 +38,7 @@
                 <div class="filter-group">
                     <label for="location">Ubicación:</label>
                     <input type="text" id="location" name="location" placeholder="Buscar por ubicación (presiona Enter)">
-
                 </div>
-
             </div>
         </div>
         
@@ -52,13 +50,11 @@
             <table class="cabin-table">
                 <thead>
                     <tr>
-                        <!--<th>ID</th>-->
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Ubicación</th>
                         <th>Capacidad</th>
                         <th>Precio/Noche</th>
-<!--                    <th>includedServices</th>-->
                         <th>Múltimedia</th>
                         <th>Acciones</th>
                     </tr>
@@ -80,13 +76,15 @@
     </div>
     
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         $(document).ready(function() {
             let currentPage = 0;
             
             loadCabins(0);
             
-            // Cambio aquí: Filtrado al presionar Enter
+            // Filtrado al presionar Enter
             $('#name, #location').on('keypress', function(e) {
                 if (e.which === 13) { // 13 es el código de tecla para Enter
                     loadCabins(0);
@@ -144,27 +142,23 @@
             tbody.empty();
             
             if (cabins.length === 0) {
-                tbody.append('<tr><td colspan="6" class="no-data">No se encontraron cabañas con los filtros aplicados</td></tr>');
+                tbody.append('<tr><td colspan="7" class="no-data">No se encontraron cabañas con los filtros aplicados</td></tr>');
                 return;
             }
             
             cabins.forEach(cabin => {
                 const row = `
                     <tr>
-//                        
                         <td>${cabin.name}</td>
                         <td>${cabin.description}</td>
                         <td>${cabin.location}</td>
                         <td>${cabin.capacity}</td>
                         <td>$${cabin.pricePerNight.toFixed(2)}</td>
-                        
                         <td>
-                            ${cabin.image ? `<img src="/${cabin.image}" alt="Imagen del la cabaña" style="width: 100px; height: auto;">` : 'Sin imagen'}
-                        </td>"
+                            ${cabin.image ? `<img src="/${cabin.image}" alt="Imagen de la cabaña" style="width: 100px; height: auto;">` : 'Sin imagen'}
+                        </td>
                         <td class="cabin-actions">
-                            <a href="#" class="action-btn btn-edit" title= "Editar"
-                               data-bs-toggle="modal" 
-                               data-bs-target="#editCabinModal"
+                            <a href="#" class="action-btn btn-edit" title="Editar"
                                data-cabin-id="${cabin.cabinID}"
                                data-cabin-name="${cabin.name}"
                                data-cabin-description="${cabin.description}"
@@ -173,16 +167,59 @@
                                data-cabin-location="${cabin.location}"
                                data-cabin-services="${cabin.includedServices}"
                                data-cabin-image="${cabin.image}">
-                                 <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
+                                <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
                             </a>
                             <button class="action-btn btn-delete" title="Eliminar"
-                                onclick="deleteCabin(${cabin.cabinID}); return false;">
-                            <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
-                        </button>
+                                onclick="deleteCabin(${cabin.cabinID}, '${cabin.name.replace(/'/g, "\\'")}'); return false;">
+                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                            </button>
                         </td>
                     </tr>
                 `;
                 tbody.append(row);
+            });
+            
+            // Asignar el evento de clic para editar después de crear las filas
+            $('.btn-edit').click(function(e) {
+                e.preventDefault();
+                const cabinId = $(this).data('cabin-id');
+                const cabinName = $(this).data('cabin-name');
+                
+                Swal.fire({
+                    title: `¿Editar cabaña ${cabinName}?`,
+                    text: "Podrás modificar la información de esta cabaña",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#a0b320',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, editar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Configurar los datos del modal
+                        const button = $(this);
+                        const modal = $('#editCabinModal');
+                        
+                        modal.find('#editCabinId').val(button.data('cabin-id'));
+                        modal.find('#editName').val(button.data('cabin-name'));
+                        modal.find('#editDescription').val(button.data('cabin-description'));
+                        modal.find('#editCapacity').val(button.data('cabin-capacity'));
+                        modal.find('#editPrice').val(button.data('cabin-price'));
+                        modal.find('#editLocation').val(button.data('cabin-location'));
+                        modal.find('#editServices').val(button.data('cabin-services'));
+                        
+                        var imagePath = button.data('cabin-image');
+                        if(imagePath) {
+                            modal.find('#currentImage').attr('src', '/' + imagePath);
+                            modal.find('#currentImageContainer').show();
+                        } else {
+                            modal.find('#currentImageContainer').hide();
+                        }
+                        
+                        // Abrir el modal de edición
+                        $('#editCabinModal').modal('show');
+                    }
+                });
             });
         }
         
@@ -200,7 +237,7 @@
             </li>`;
             pagination.append(prevBtn);
 
-            // Números de página (mostrar solo páginas cercanas)
+            // Números de página
             const startPage = Math.max(0, currentPage - 2);
             const endPage = Math.min(totalPages - 1, currentPage + 2);
             
@@ -236,55 +273,90 @@
             pagination.append(nextBtn);
         }
         
-        $('#editCabinModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            
-            modal.find('#editCabinId').val(button.data('cabin-id'));
-            modal.find('#editName').val(button.data('cabin-name'));
-            modal.find('#editDescription').val(button.data('cabin-description'));
-            modal.find('#editCapacity').val(button.data('cabin-capacity'));
-            modal.find('#editPrice').val(button.data('cabin-price'));
-            modal.find('#editLocation').val(button.data('cabin-location'));
-            modal.find('#editServices').val(button.data('cabin-services'));
-            
-            var imagePath = button.data('cabin-image');
-            if(imagePath) {
-                modal.find('#currentImage').attr('src', '/' + imagePath);
-                modal.find('#currentImageContainer').show();
-            } else {
-                modal.find('#currentImageContainer').hide();
-            }
-        });
-        
-        $('#addCabinForm').on('submit', function() {
-            return confirm('¿Estás seguro de que deseas agregar esta cabaña?');
-        });
-        
-        $('#editCabinForm').on('submit', function() {
-            return confirm('¿Estás seguro de que deseas actualizar esta cabaña?');
-        });
-        
-        
-       function deleteCabin(cabinID) {
-    if (confirm('¿Estás seguro que deseas eliminar esta cabaña?')) {
-        // Usar fetch para seguir la redirección
-        fetch('/cabins/delete/' + cabinID, {
-            method: 'DELETE',
-            redirect: 'follow' // Importante para seguir la redirección
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showAlert('danger', 'Error al eliminar la cabaña');
-        });
-    }
+        function deleteCabin(cabinID, cabinName) {
+            Swal.fire({
+                title: `¿Eliminar cabaña ${cabinName}?`,
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                dangerMode: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Usar fetch para seguir la redirección
+                    fetch('/cabins/delete/' + cabinID, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // Mostrar mensaje de éxito antes de redirigir
+                            Swal.fire({
+                                title: '¡Eliminada!',
+                                text: 'La cabaña ha sido eliminada',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar la cabaña',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
+        }
 
-}
+        // Configuración de los formularios con SweetAlert
+        $('#addCabinForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Agregar nueva cabaña?',
+                text: "¿Estás seguro de que deseas agregar esta cabaña?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#a0b320',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+        
+        $('#editCabinForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar cabaña?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#a0b320',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
 
         // Función auxiliar para mostrar alertas
         function showAlert(type, message) {
