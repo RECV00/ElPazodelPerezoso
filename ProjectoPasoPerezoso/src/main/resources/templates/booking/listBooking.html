@@ -234,17 +234,17 @@ function validateDateRange() {
     const startDate = startDateInput.value;
     const endDate = endDateInput.value;
 
-    // Reset error message
+   
     errorElement.style.display = 'none';
 
-    // Validation 1: Both dates or none
+  
     if ((startDate && !endDate) || (!startDate && endDate)) {
         errorElement.textContent = 'Debe seleccionar ambas fechas para filtrar';
         errorElement.style.display = 'inline-block';
         return false;
     }
 
-    // Validation 2: Start date before end date
+
     if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
         errorElement.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
         errorElement.style.display = 'inline-block';
@@ -256,7 +256,7 @@ function validateDateRange() {
     startDateInput.classList.remove('is-invalid');
     endDateInput.classList.remove('is-invalid');
 
-    // Prepare URL parameters
+ 
     const urlParams = new URLSearchParams();
     
     if (startDate && endDate) {
@@ -265,7 +265,7 @@ function validateDateRange() {
     }
     urlParams.set('page', '0');
     
-    // Get current status filter if exists
+    
     const currentStatus = document.getElementById('status').value;
     if (currentStatus) {
         urlParams.set('status', currentStatus);
@@ -358,407 +358,20 @@ function filtrarPorEstado() {
             window.location.href = '/booking/listaReservas';
         }
 
-    // Configurar eventos al cargar la página
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Configurar evento para el input de cédula (buscar al presionar Enter)
-        document.getElementById('clientId').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                filtrarPorCedula();
-            }
-        });
-    
-    // Configurar eventos para los inputs de fecha
-    document.getElementById('startDate').addEventListener('change', validarRangoFechas);
-    document.getElementById('endDate').addEventListener('change', validarRangoFechas);
-    
-    // Cargar valores de filtros desde la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('status')) {
-        document.getElementById('status').value = urlParams.get('status');
-    }
-    if (urlParams.has('startDate')) {
-        document.getElementById('startDate').value = urlParams.get('startDate');
-    }
-    if (urlParams.has('endDate')) {
-        document.getElementById('endDate').value = urlParams.get('endDate');
-    }
-});
-    </script>
-</body>
-</html><!--<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Reservas</title>
-    <link th:href="@{/css/stylesListReservations.css}" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <div th:replace="~{/fragments/navbar :: navbar}"></div>
-    
-    <div class="container">
-        <h1>Lista de Reservas</h1>
-        
-         Mensajes de éxito/error 
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-        
-        <div class="top-actions">
-            <a th:href="@{/booking/new}" class="btn-add">
-                <i class="fas fa-plus"></i> Nueva Reserva
-            </a>
-        </div>
-        
-         Filtros 
-                
-                 Filtro por estado 
-                <div class="filter-group">
-                    <label for="status">Estado:  </label>
-                    <select id="status" name="status" onchange="filtrarPorEstado()">
-                        <option value="">Todos</option>
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="Confirmada">Confirmada</option>
-                        <option value="Cancelada">Cancelada</option>
-                    </select>
-                </div>
-                
-                 Filtro por rango de fechas 
-                <div class="filter-group">
-                    <label>Fechas: </label>
-                    <input type="date" id="startDate" name="startDate" 
-                           th:value="${startDate != null} ? ${#temporals.format(startDate, 'yyyy-MM-dd')} : ''" 
-                           onchange="validateDateRange()"
-                           class="form-control">
-                    <span> a </span>
-                    <input type="date" id="endDate" name="endDate" 
-                           th:value="${endDate != null} ? ${#temporals.format(endDate, 'yyyy-MM-dd')} : ''" 
-                           onchange="validateDateRange()"
-                           class="form-control">
-                    <span id="date-error" class="error-message" style="display: none; color: red;"></span>
-                </div>
-                
-                 Tabla de reservas 
-            <table class="bookings-table" id="bookings-table">
-                <thead>
-                    <tr>
-                        <th>Fechas</th>
-                        <th>Huéspedes</th>
-                        <th>Tipo</th>
-                        <th>Cliente</th>
-                        <th>Cabaña</th>
-                        <th>Servicios</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="booking : ${bookings}">
-                        <td style="display: none;" th:text="${booking.id_booking}"></td>
-                        <td>
-                            <div><strong>Entrada:</strong> <span th:text="${#temporals.format(booking.checkInDate, 'dd/MM/yyyy')}"></span></div>
-                            <div><strong>Salida:</strong> <span th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy')}"></span></div>
-                        </td>
-                        <td th:text="${booking.numberGuests}"></td>
-                        <td>
-                            <span th:text="${booking.bookingType}" 
-                                  th:class="${'badge ' + (booking.bookingType == 'Premium' ? 'premium-badge' : 'standard-badge')}"></span>
-                        </td>
-                        <td>
-                            <div th:if="${booking.client != null}">
-                                <strong th:text="${clientNames.get(booking.client.id_user)}"></strong>
-                            </div>
-                            <div th:unless="${booking.client != null}">
-                                Cliente no asignado
-                            </div>
-                        </td>
-                        <td>
-                            <div th:if="${booking.cabin != null}">
-                                <span th:text="${cabinNames.get(booking.cabin.cabinID)}"></span>
-                            </div>
-                            <div th:unless="${booking.cabin != null}">
-                                Sin cabaña asignada
-                            </div>
-                        </td>
-                        <td class="services-container">
-                             Comida 
-                            <div th:if="${booking.dishe != null}">
-                                <strong>Comida:</strong> 
-                                <span th:text="${disheNames.get(booking.dishe.disheID)}"></span>
-                            </div>
-                             Transporte 
-                            <div th:if="${booking.transportation != null}">
-                                <strong>Transporte:</strong> 
-                                <span th:text="${vehicleNames.get(booking.transportation.id_transportation)}"></span>
-                            </div>
-                             Tour 
-                            <div th:if="${booking.tour != null}">
-                                <strong>Tour:</strong> 
-                                <span th:text="${tourNames.get(booking.tour.id_tour)}"></span>
-                            </div>
-                            <span th:if="${booking.dishe == null and booking.transportation == null and booking.tour == null}">
-                                Sin servicios adicionales
-                            </span>
-                        </td>
-                        <td>
-                            <span th:text="${booking.reserveStatus}" 
-                                  th:class="${'status-badge ' + booking.reserveStatus.toLowerCase()}"></span>
-                        </td>
-                        <td class="action-cells">
-                            <a th:href="@{/booking/edit/{id}(id=${booking.id_booking})}" 
-                               class="action-btn btn-edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a th:href="@{/booking/details/{id}(id=${booking.id_booking})}" 
-                               class="action-btn btn-view">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a th:href="@{/booking/delete/{id}(id=${booking.id_booking})}" 
-                                class="action-btn btn-delete" 
-                                onclick="confirmDelete(event, this.href)">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            
-             Paginación 
-            <div class="pagination-container" th:if="${totalPages > 1}">
-                <ul class="pagination">
-                    <li th:class="${currentPage == 0} ? 'disabled'">
-                        <a th:href="@{/booking/listaReservas(page=0, size=${pageSize})}">« Primera</a>
-                    </li>
-                    
-                    <li th:class="${currentPage == 0} ? 'disabled'">
-                        <a th:href="@{/booking/listaReservas(page=${currentPage - 1}, size=${pageSize})}">‹ Anterior</a>
-                    </li>
-                    
-                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
-                        th:classappend="${currentPage == i} ? 'active'">
-                        <a th:href="@{/booking/listaReservas(page=${i}, size=${pageSize})}" 
-                           th:text="${i + 1}"></a>
-                    </li>
-                    
-                    <li th:class="${currentPage == totalPages - 1} ? 'disabled'">
-                        <a th:href="@{/booking/listaReservas(page=${currentPage + 1}, size=${pageSize})}">Siguiente ›</a>
-                    </li>
-                    
-                    <li th:class="${currentPage == totalPages - 1} ? 'disabled'">
-                        <a th:href="@{/booking/listaReservas(page=${totalPages - 1}, size=${pageSize})}">Última »</a>
-                    </li>
-                </ul>
-                
-                <div class="page-size-selector">
-                    <span>Mostrar:</span>
-                    <select onchange="changePageSize(this.value)">
-                        <option value="5" th:selected="${pageSize == 5}">5</option>
-                        <option value="10" th:selected="${pageSize == 10}">10</option>
-                        <option value="20" th:selected="${pageSize == 20}">20</option>
-                        <option value="50" th:selected="${pageSize == 50}">50</option>
-                    </select>
-                </div>
-            </div>
-            
-             No hay resultados 
-            <div th:if="${bookings != null && bookings.empty}" class="no-results">
-                <i class="fas fa-info-circle"></i> No se encontraron reservaciones con los criterios seleccionados.
-            </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Función para confirmar eliminación con SweetAlert
-        function confirmDelete(event, deleteUrl) {
-            event.preventDefault();
-
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡No podrás revertir esta acción!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = deleteUrl;
-                }
-            });
-        }
-
-        // Mostrar mensajes flash con SweetAlert
-        document.addEventListener('DOMContentLoaded', function() {
-            const successMessage = /*[[${success}]]*/ null;
-            if (successMessage) {
-                Swal.fire({
-                    title: 'Éxito',
-                    text: successMessage,
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-
-            const errorMessage = /*[[${error}]]*/ null;
-            if (errorMessage) {
-                Swal.fire({
-                    title: 'Error',
-                    text: errorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
-
-function validateDateRange() {
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-    const errorElement = document.getElementById('date-error');
-
-    const startDate = startDateInput.value;
-    const endDate = endDateInput.value;
-
-    // Reset error message
-    errorElement.style.display = 'none';
-
-    // Validation 1: Both dates or none
-    if ((startDate && !endDate) || (!startDate && endDate)) {
-        errorElement.textContent = 'Debe seleccionar ambas fechas para filtrar';
-        errorElement.style.display = 'inline-block';
-        return false;
-    }
-
-    // Validation 2: Start date before end date
-    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-        errorElement.textContent = 'La fecha de inicio no puede ser mayor que la fecha final';
-        errorElement.style.display = 'inline-block';
-        startDateInput.classList.add('is-invalid');
-        endDateInput.classList.add('is-invalid');
-        return false;
-    }
-
-    startDateInput.classList.remove('is-invalid');
-    endDateInput.classList.remove('is-invalid');
-
-    // Prepare URL parameters
-    const urlParams = new URLSearchParams();
-    
-    if (startDate && endDate) {
-        urlParams.set('startDate', startDate);
-        urlParams.set('endDate', endDate);
-    }
-    urlParams.set('page', '0');
-    
-    // Get current status filter if exists
-    const currentStatus = document.getElementById('status').value;
-    if (currentStatus) {
-        urlParams.set('status', currentStatus);
-    }
-
-    // AJAX 
-    fetch(`/booking/listaReservas?${urlParams.toString()}`)
-        .then(response => response.text())
-        .then(html => {
-            
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newTable = doc.querySelector('#bookings-table'); // Replace with your table's ID
-            const newPagination = doc.querySelector('.pagination'); // Replace with your pagination selector
-            
-            if (newTable) {
-                document.querySelector('#bookings-table').innerHTML = newTable.innerHTML;
-            }
-            if (newPagination) {
-                document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
-            }
-            
       
-            window.history.pushState({}, '', `/booking/listaReservas?${urlParams.toString()}`);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            
-            window.location.href = `/booking/listaReservas?${urlParams.toString()}`;
-        });
-
-    return true;
-}
-
-// estado AJAX
-function filtrarPorEstado() {
-    const estado = document.getElementById('status').value;
-    const urlParams = new URLSearchParams();
-    
-    if (estado) {
-        urlParams.set('status', estado);
-    }
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    
-    if (startDate && endDate) {
-        urlParams.set('startDate', startDate);
-        urlParams.set('endDate', endDate);
-    }
-    
-    urlParams.set('page', '0');
-
-    // AJAX 
-    fetch(`/booking/listaReservas?${urlParams.toString()}`)
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newTable = doc.querySelector('#bookings-table');
-            const newPagination = doc.querySelector('.pagination'); 
-            
-            if (newTable) {
-                document.querySelector('#bookings-table').innerHTML = newTable.innerHTML;
-            }
-            if (newPagination) {
-                document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
-            }
-            
-          
-            window.history.pushState({}, '', `/booking/listaReservas?${urlParams.toString()}`);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            
-            if (estado) {
-                window.location.href = `/booking/listaReservas?status=${encodeURIComponent(estado)}`;
-            } else {
-                window.location.href = '/booking/listaReservas';
-            }
-        });
-}
-        // Reiniciar todos los filtros
-        function reiniciarFiltros() {
-            document.getElementById('clientId').value = '';
-            document.getElementById('status').value = '';
-            document.getElementById('startDate').value = '';
-            document.getElementById('endDate').value = '';
-            document.getElementById('date-error').style.display = 'none';
-
-            window.location.href = '/booking/listaReservas';
-        }
-
-    // Configurar eventos al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        // Configurar evento para el input de cédula (buscar al presionar Enter)
         document.getElementById('clientId').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 filtrarPorCedula();
             }
         });
     
-    // Configurar eventos para los inputs de fecha
+  
     document.getElementById('startDate').addEventListener('change', validarRangoFechas);
     document.getElementById('endDate').addEventListener('change', validarRangoFechas);
     
-    // Cargar valores de filtros desde la URL
+
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('status')) {
         document.getElementById('status').value = urlParams.get('status');
@@ -772,4 +385,4 @@ function filtrarPorEstado() {
 });
     </script>
 </body>
-</html>-->
+</html>
