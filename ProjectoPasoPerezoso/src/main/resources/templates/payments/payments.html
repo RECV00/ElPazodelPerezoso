@@ -50,9 +50,10 @@
                     <label for="selectPaymentMethod">Método de Pago:</label>
                     <select id="selectPaymentMethod">
                         <option value="">Seleccione un método</option>
-                        <option value="1">Tarjeta</option>
-                        <option value="2">Transferencia</option>
-                        <option value="3">Billetera Digital</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Transferencia Digital">Transferencia Digital</option>
+                        <option value="Efectivo">Efectivo</option>
                     </select>
                     <div id="errorSelectPaymentMethod" class="message"></div>
                 </div>
@@ -66,10 +67,9 @@
                 <div class="form-group">
                     <label for="selectPaymentState">Estado de Pago:</label>
                     <select id="selectPaymentState">
-                        <option value="">Seleccione un estado</option>
-                        <option value="1">Pendiente</option>
-                        <option value="2">Completado</option>
-                        <option value="3">Fallido</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Parcial">Parcial</option>
                     </select>
                     <div id="errorSelectPaymentState" class="message"></div>
                 </div>
