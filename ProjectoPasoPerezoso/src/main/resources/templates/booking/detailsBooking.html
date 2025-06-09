@@ -259,6 +259,85 @@
                     </div>
                 </div>
                 
+                
+
+                <!-- Información de Pagos -->
+                <div class="service-card p-3 mb-3" th:if="${booking.payment != null}">
+                    <h3 class="service-title mb-3">
+                        <i class="fas fa-money-bill-wave me-2"></i>Servicio de Pagos
+                    </h3>
+
+                    <!-- Individual Payment Cards -->
+                    <div class="row" th:each="payment : ${booking.payment}">
+                        <div class="col-md-2">
+                            <div class="detail-card">
+                                <div class="detail-label">Monto</div>
+                                <div class="detail-value" th:text="${'₡' + #numbers.formatDecimal(booking.payment.transactionAmount, 0, 'COMMA', 2, 'POINT')}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="detail-card">
+                                <div class="detail-label">Fecha</div>
+                                <div class="detail-value" th:text="${#temporals.format(booking.payment.dateTransfer, 'dd/MM/yyyy')}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="detail-card">
+                                <div class="detail-label">Método</div>
+                                <div class="detail-value">
+                                    <span class="badge rounded-pill" 
+                                          th:classappend="${booking.payment.methodPayment == 'Tarjeta' ? 'bg-primary' : 
+                                                         booking.payment.methodPayment == 'Transferencia' ? 'bg-success' : 
+                                                         'bg-secondary'}"
+                                          th:text="${booking.payment.methodPayment}">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="detail-card">
+                                <div class="detail-label">Referencia</div>
+                                <div class="detail-value" th:text="${booking.payment.numberReference}"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="detail-card">
+                                <div class="detail-label">Estado</div>
+                                <div class="detail-value">
+                                    <span class="badge rounded-pill" 
+                                          th:classappend="${booking.payment.statePayment == 'Completado' ? 'bg-success' : 
+                                                         booking.payment.statePayment == 'Pendiente' ? 'bg-warning' : 
+                                                         'bg-danger'}"
+                                          th:text="${booking.payment.statePayment}">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="detail-card">
+                                <div class="detail-label">Comprobante</div>
+                                <div class="detail-value">
+                                    <a th:if="${booking.payment.proof != null and !booking.payment.proof.isEmpty()}" 
+                                       th:href="@{'/uploads/payment/' + ${booking.payment.proof}}" 
+                                       target="_blank" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-file-invoice"></i> Ver
+                                    </a>
+                                    <span th:unless="${booking.payment.proof != null and !booking.payment.proof.isEmpty()}" class="text-muted">No Aplica</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="service-card p-3 mb-3" th:if="${booking.payment == null}">
+                    <h3 class="service-title mb-3">
+                        <i class="fas fa-money-bill-wave me-2"></i>Servicio de Pagos
+                    </h3>
+                    <div class="alert alert-info m-0">
+                        <i class="fas fa-info-circle me-2"></i>No se han registrado pagos para esta reservación.
+                    </div>
+                </div>
+                
                 <div th:if="${booking.dishe == null and booking.transportation == null and booking.tour == null}">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>No se han agregado servicios adicionales a esta reservación.

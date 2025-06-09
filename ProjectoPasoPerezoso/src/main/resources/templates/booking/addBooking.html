@@ -242,6 +242,49 @@
                            placeholder="Opcional">
                 </div>
             </div>
+            
+            
+            <div class="form-section">
+                <h2>Información de Pago</h2>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Método de Pago:</label>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="">Seleccione un método</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Transferencia Digital">Transferencia Digital</option>
+                        <option value="Efectivo">Efectivo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentAmount">Monto Total:</label>
+                    <input type="number" id="paymentAmount" name="paymentAmount" readonly 
+                           th:value="${totalAmount}" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentReference">Número de Referencia/Transacción:</label>
+                    <input type="text" id="paymentReference" name="paymentReference" 
+                           placeholder="Ingrese el número de referencia" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentStatus">Estado del Pago:</label>
+                    <select id="paymentStatus" name="paymentStatus" required>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Parcial">Parcial</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentProof">Comprobante de Pago:</label>
+                    <input type="file" id="paymentProof" name="paymentProof" 
+                           accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+            </div>
     
             <!-- Botón de enviar -->
              <div class="form-actions d-flex justify-content-end gap-3 mt-4">
@@ -351,7 +394,64 @@
                 }
             }
         }
+        function calculateTotal() {
+            // Obtener precio de la cabaña
+            const selectedCabin = document.querySelector('input[name="selectedCabinId"]:checked');
+            let total = 0;
 
+            if (selectedCabin) {
+                const cabinOption = selectedCabin.closest('.cabin-option');
+                const priceText = cabinOption.querySelector('.cabin-info div:nth-child(2) span:nth-child(2)').textContent;
+                const price = parseFloat(priceText.replace('Precio por Noche: $', '').trim());
+
+                // Calcular noches
+                const checkInDate = new Date(document.getElementById('checkInDate').value);
+                const checkOutDate = new Date(document.getElementById('checkOutDate').value);
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+
+                total += price * nights;
+            }
+
+            // Agregar servicios adicionales
+            if (document.getElementById('tourServiceCheckbox').checked) {
+                const selectedTour = document.querySelector('input[name="selectedTourId"]:checked');
+                if (selectedTour) {
+                    const tourOption = selectedTour.closest('label');
+                    const priceText = tourOption.querySelector('div:nth-child(2) span:nth-child(1)').textContent;
+                    total += parseFloat(priceText.replace('Precio: $', '').trim());
+                }
+            }
+
+            if (document.getElementById('disheServiceCheckbox').checked) {
+                const selectedDishe = document.querySelector('input[name="selectedDisheId"]:checked');
+                if (selectedDishe) {
+                    const disheOption = selectedDishe.closest('label');
+                    const priceText = disheOption.querySelector('div:nth-child(2) span:nth-child(1)').textContent;
+                    total += parseFloat(priceText.replace('Precio: $', '').trim());
+                }
+            }
+
+            document.getElementById('paymentAmount').value = total.toFixed(2);
+        }
+
+        // Agregar event listeners para recalcular el total cuando cambien los elementos
+        document.getElementById('checkInDate').addEventListener('change', calculateTotal);
+        document.getElementById('checkOutDate').addEventListener('change', calculateTotal);
+        document.querySelectorAll('input[name="selectedCabinId"]').forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
+        });
+        document.getElementById('tourServiceCheckbox').addEventListener('change', calculateTotal);
+        document.getElementById('disheServiceCheckbox').addEventListener('change', calculateTotal);
+        document.getElementById('transportationServiceCheckbox').addEventListener('change', calculateTotal);
+        document.querySelectorAll('input[name="selectedTourId"]').forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
+        });
+        document.querySelectorAll('input[name="selectedDisheId"]').forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
+        });
+        document.querySelectorAll('input[name="selectedTransportationId"]').forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
+        });
         function validateForm() {
             
             // Validar selección de cabaña (siempre requerida)
@@ -393,8 +493,21 @@
                     return false;
                 }
             } 
+            
+             // Validar información de pago
+            if (!document.getElementById('paymentMethod').value) {
+                alert('Por favor seleccione un método de pago');
+                return false;
+            }
 
-            return confirm("¿Estás seguro de que deseas agregar esta Reserva?");
+            if (!document.getElementById('paymentReference').value) {
+                alert('Por favor ingrese el número de referencia del pago');
+                return false;
+            }
+
+            return confirm("¿Estás seguro de que deseas agregar esta Reserva y Registrar el Pago?");
+
+//            return confirm("¿Estás seguro de que deseas agregar esta Reserva?");
         }
     </script>
     

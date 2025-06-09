@@ -9,12 +9,14 @@ import cr.ac.una.perezoso.domain.Booking;
 import cr.ac.una.perezoso.domain.Cabin;
 import cr.ac.una.perezoso.domain.Client;
 import cr.ac.una.perezoso.domain.Dishe;
+import cr.ac.una.perezoso.domain.PaymentManagement;
 import cr.ac.una.perezoso.domain.Tour;
 import cr.ac.una.perezoso.domain.Transportation;
 import cr.ac.una.perezoso.jpa.BookingRepository;
 import cr.ac.una.perezoso.service.BookingService;
 import cr.ac.una.perezoso.service.CabinService;
 import cr.ac.una.perezoso.service.DisheService;
+import cr.ac.una.perezoso.service.PaymentsService;
 import cr.ac.una.perezoso.service.TourService;
 import cr.ac.una.perezoso.service.TransportationService;
 import cr.ac.una.perezoso.service.UserService;
@@ -57,6 +59,7 @@ public class BookingController {
     private TransportationService transportationService;
     private DisheService disheService;
     private CabinService cabinService;
+    private PaymentsService paymentsService;
     private static final Logger log = LoggerFactory.getLogger(BookingController.class);
 
     @Autowired
@@ -66,7 +69,8 @@ public class BookingController {
             UserService  userService,
             TransportationService transportationService,
             DisheService disheService,
-            CabinService cabinService) {
+            CabinService cabinService,
+            PaymentsService paymentsService) {
         this.bookingService = bookingService;
         this.bookingRepository = bookingRepository;
         this.tourService = tourService;
@@ -74,6 +78,7 @@ public class BookingController {
         this.transportationService = transportationService;
         this.disheService = disheService;
         this.cabinService = cabinService;
+        this.paymentsService = paymentsService;
     }
   
     
@@ -200,7 +205,8 @@ public String showBookings(
         model.addAttribute("cabins", cabins);
         return "/booking/addBooking";
     }
-@PostMapping("/save")
+    
+    @PostMapping("/save")
 public String saveBooking(@ModelAttribute("booking") Booking booking,
                         BindingResult bindingResult,
                         @RequestParam(value = "clientIdentification", required = true) String identification,
@@ -208,6 +214,11 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
                         @RequestParam(value = "selectedTransportationId", required = false) Integer transportationId,
                         @RequestParam(value = "selectedDisheId", required = false) Integer disheId,
                         @RequestParam(value = "selectedCabinId", required = false) Integer cabinId,
+                        @RequestParam String paymentMethod,
+                        @RequestParam Double paymentAmount,
+                        @RequestParam String paymentReference,
+                        @RequestParam String paymentStatus,
+                        @RequestParam String paymentProof,
                         @RequestParam(value = "services", required = false) List<String> services,
                         Model model,
                         RedirectAttributes redirectAttributes) {
@@ -218,11 +229,12 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
         bindingResult.rejectValue("client", "client.notFound", "Cliente no encontrado");
     }
     
-     // Validar cabaña
+    // Validar cabaña
     Cabin cabin = cabinService.getById(cabinId);
     if (cabin == null) {
         bindingResult.rejectValue("cabin", "cabin.notFound", "Debe seleccionar una cabaña válida");
     }
+    
     // Validar servicios adicionales
     if (services != null) {
         if (services.contains("tour") && tourId == null) {
@@ -236,19 +248,28 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
         }
     }
     
+    // Validar información de pago
+    if (paymentMethod == null || paymentMethod.isEmpty()) {
+        bindingResult.rejectValue("paymentMethod", "payment.method.required", "Método de pago es requerido");
+    }
+    if (paymentReference == null || paymentReference.isEmpty()) {
+        bindingResult.rejectValue("paymentReference", "payment.reference.required", "Número de referencia es requerido");
+    }
+    
     if (bindingResult.hasErrors()) {
         model.addAttribute("tours", tourService.getAll());
         model.addAttribute("transportations", transportationService.getAll());
         model.addAttribute("dishes", disheService.getAll());
-         
+        model.addAttribute("cabins", cabinService.getAll());
         return "/booking/addBooking";
     }
     
     try {
+        // Configurar la reserva
         booking.setClient(client);
         booking.setCabin(cabin);
         
-        //  Servicios adicionales
+        // Servicios adicionales
         if (services != null && !services.isEmpty()) {
             booking.setAdditionalServices(true);
             
@@ -268,9 +289,23 @@ public String saveBooking(@ModelAttribute("booking") Booking booking,
         } else {
             booking.setAdditionalServices(false);
         }
+        // Crear y guardar el pago
+        PaymentManagement payment = new PaymentManagement();
+        payment.setTransactionAmount(paymentAmount.intValue());
+        payment.setDateTransfer(LocalDate.now());
+        payment.setMethodPayment(paymentMethod);
+        payment.setNumberReference(paymentReference);
+        payment.setStatePayment(paymentStatus);
+        payment.setNameClient(client.getName() + " " + client.getLast_name());
+        payment.setIdentificationFiscal(identification);
+        payment.setDirection(client.getAddress());
+        payment.setProof(paymentProof);
+        paymentsService.save(payment);
+        booking.setPayment(payment);
         
-        bookingService.save(booking);
-        redirectAttributes.addFlashAttribute("success", "Reserva guardada exitosamente");
+        Booking savedBooking = bookingService.save(booking);
+        
+        redirectAttributes.addFlashAttribute("success", "Reserva y pago registrados exitosamente");
     } catch (Exception e) {
         redirectAttributes.addFlashAttribute("error", "Error al guardar la reserva: " + e.getMessage());
         return "redirect:/booking/new";
@@ -439,14 +474,8 @@ public String showBookingDetails(@PathVariable int id, Model model) {
         Booking booking = bookingService.getReservationWithDetails(id)
             .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada"));
         
-
-        double totalPaid=34000.34;
-        double totalPrice = 300000;
-        
         // Agregar atributos al modelo
         model.addAttribute("booking", booking);
-        model.addAttribute("totalPaid", totalPaid);
-        model.addAttribute("totalPrice", totalPrice);
         
     } catch (EntityNotFoundException e) {
         model.addAttribute("error", e.getMessage());
