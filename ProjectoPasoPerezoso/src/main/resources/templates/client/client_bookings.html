@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Reservas</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbarUser :: navbar-client}"></div>
+    
+    <div class="container mt-4">
+        <h2>Mis Reservas</h2>
+        
+        <div th:if="${#lists.isEmpty(bookings)}" class="alert alert-info">
+            No tienes reservas actualmente.
+        </div>
+        
+        <div th:each="booking : ${bookings}" class="card mb-3">
+            <div class="card-body">
+                <h5 th:text="${booking.cabin.name}">Nombre Cabaña</h5>
+                <p>Fecha: 
+                    <span th:text="${#temporals.format(booking.checkInDate, 'dd/MM/yyyy')}"></span> - 
+                    <span th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy')}"></span>
+                </p>
+                <p>Estado: <span th:text="${booking.reserveStatus}"></span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

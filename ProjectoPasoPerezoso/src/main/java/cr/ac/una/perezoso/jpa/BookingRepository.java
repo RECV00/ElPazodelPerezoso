@@ -71,4 +71,13 @@ Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identificat
 
 // For filtering by date range
 Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+@Query("SELECT b FROM Booking b WHERE " +
+           "b.cabin.cabinID = :cabinId AND " +
+           "b.reserveStatus <> 'Cancelada' AND " +  // Usando el valor exacto
+           "((b.checkInDate < :checkOut AND b.checkOutDate > :checkIn))")
+    List<Booking> findConflictingBookings(
+            @Param("cabinId") Integer cabinId,
+            @Param("checkIn") LocalDate checkIn,
+            @Param("checkOut") LocalDate checkOut);
 }

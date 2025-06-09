@@ -7,11 +7,17 @@ package cr.ac.una.perezoso.controller;
 import cr.ac.una.perezoso.domain.Booking;
 import cr.ac.una.perezoso.domain.Cabin;
 import cr.ac.una.perezoso.domain.Client;
+import cr.ac.una.perezoso.service.BookingService;
 import cr.ac.una.perezoso.service.CabinService;
 import cr.ac.una.perezoso.service.UserService;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +36,12 @@ public class ClientController {
    @Autowired
     private UserService userService;
     
-
    @Autowired
     private CabinService cabinService;
+    
+    @Autowired
+    private BookingService bookingService;
+   
     
     // Perfil del cliente
     @GetMapping("/detalle")
@@ -50,16 +59,19 @@ public class ClientController {
         }
     }
     
-    // Listado de cabañas
+     // Listado de cabañas con filtros y verificación de disponibilidad
     @GetMapping("/cabins")
     public String listCabins(
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Integer capacity,
             @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
             Model model) {
         
         List<Cabin> cabins;
         
+        // Filtrado básico
         if (location != null && !location.isEmpty()) {
             cabins = cabinService.findByLocation(location);
         } else if (capacity != null) {
@@ -70,52 +82,88 @@ public class ClientController {
             cabins = cabinService.getAll();
         }
         
-        model.addAttribute("cabins", cabins);
-        model.addAttribute("reservationMode", false);
-        return "/client/cliente_cabins";
-    }
+        // Nuevo: Crear mapa de disponibilidad
+    Map<Integer, Boolean> availabilityMap = new HashMap<>();
     
-    // Formulario de reserva
-    @GetMapping("/cabins/reserve/{id}")
-    public String showReservationForm(
-            @PathVariable Integer id,
-            Model model,
-            Authentication authentication) {
-        
-        try {
-            Cabin cabin = cabinService.getById(id);
-            if (cabin == null) {
-                return "redirect:/client/cabins";
-            }
-            
-            // Obtener cliente autenticado
-            String username = authentication.getName();
-            Client client = userService.getClientByIdentification(username);
-            
-            model.addAttribute("cabin", cabin);
-            model.addAttribute("client", client);
-            model.addAttribute("reservationMode", true);
-            
-            return "/client/cliente_cabins";
-            
-        } catch (RuntimeException e) {
-            model.addAttribute("error", "Error al cargar la cabaña: " + e.getMessage());
-            return "error";
+    if (checkIn != null && checkOut != null) {
+        for (Cabin cabin : cabins) {
+            boolean isAvailable = bookingService.isCabinAvailable(cabin.getCabinID(), checkIn, checkOut);
+            availabilityMap.put(cabin.getCabinID(), isAvailable);
         }
+        model.addAttribute("checkIn", checkIn);
+        model.addAttribute("checkOut", checkOut);
+    } else {
+        // Si no hay fechas, todas están disponibles
+        cabins.forEach(cabin -> availabilityMap.put(cabin.getCabinID(), true));
     }
     
-    // Procesar reserva
+    model.addAttribute("cabins", cabins);
+    model.addAttribute("availabilityMap", availabilityMap);
+    model.addAttribute("reservationMode", false);
+    return "/client/cliente_cabins";
+    
+    }  
+     // Formulario de reserva
+    @GetMapping("/cabins/reserve/{id}")
+public String showReservationForm(
+        @PathVariable Integer id,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
+        Model model,
+        Authentication authentication) {
+    
+    try {
+        Cabin cabin = cabinService.getById(id);
+        if (cabin == null) {
+            return "redirect:/client/cabins";
+        }
+        
+        if (checkIn != null && checkOut != null) {
+            boolean isAvailable = bookingService.isCabinAvailable(cabin.getCabinID(), checkIn, checkOut);
+            if (!isAvailable) {
+                model.addAttribute("error", "La cabaña no está disponible en las fechas seleccionadas");
+                return "redirect:/client/cabins?checkIn=" + checkIn + "&checkOut=" + checkOut;
+            }
+            model.addAttribute("checkIn", checkIn);
+            model.addAttribute("checkOut", checkOut);
+        }
+        
+        String username = authentication.getName();
+        Client client = userService.getClientByIdentification(username);
+        
+        model.addAttribute("cabin", cabin);
+        model.addAttribute("client", client);
+        model.addAttribute("reservationMode", true);
+        
+        return "/client/cliente_cabins";
+        
+    } catch (RuntimeException e) {
+        model.addAttribute("error", "Error al cargar la cabaña: " + e.getMessage());
+        return "error";
+    }
+}
+    
+    // Procesar reserva con validación de disponibilidad
     @PostMapping("/cabins/book")
     public String processReservation(
             @RequestParam Integer cabinId,
-            @RequestParam String checkInDate,
-            @RequestParam String checkOutDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
             @RequestParam Integer guests,
             @RequestParam(required = false) String specialRequests,
             Authentication authentication,
             Model model) {
         
         try {
+            // Verificar disponibilidad primero
+            if (!bookingService.isCabinAvailable(cabinId, checkInDate, checkOutDate)) {
+                model.addAttribute("error", "La cabaña ya no está disponible en las fechas seleccionadas");
+                Cabin cabin = cabinService.getById(cabinId);
+                model.addAttribute("cabin", cabin);
+                model.addAttribute("reservationMode", true);
+                return "/client/cliente_cabins";
+            }
+            
             // Obtener cliente autenticado
             String username = authentication.getName();
             Client client = userService.getClientByIdentification(username);
@@ -123,10 +171,18 @@ public class ClientController {
             // Obtener cabaña
             Cabin cabin = cabinService.getById(cabinId);
             
-            // Aquí iría la lógica para crear la reserva
-            // Booking booking = new Booking(...);
-            // userService.saveBooking(booking);
-            
+//            // Crear y guardar la reserva
+//            Booking booking = new Booking();
+//            booking.setClient(client);
+//            booking.setCabin(cabin);
+//            booking.setCheckInDate(checkInDate);
+//            booking.setCheckOutDate(checkOutDate);
+//            booking.setGuests(guests);
+//            booking.setSpecialRequests(specialRequests);
+//            booking.setStatus("CONFIRMED"); // Estado por defecto
+//            
+//            userService.saveBooking(booking);
+//            
             return "redirect:/client/detalle";
             
         } catch (RuntimeException e) {
@@ -135,5 +191,20 @@ public class ClientController {
         }
     }
     
-    
+    @GetMapping("/bookings")
+    public String showClientBookings(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName(); // Asumiendo que el username es el email
+        
+         Client client = userService.getClientByIdentification(email);  
+        List<Booking> bookings = bookingService.findByClient(client);
+                 
+//        List<Booking> bookings = userService.getClientBookings(client.getId_user()); 
+            
+        model.addAttribute("bookings", bookings);
+        model.addAttribute("client", client);
+        
+        return "client/bookings";
+    }
 }
+
