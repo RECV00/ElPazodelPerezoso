@@ -48,8 +48,6 @@ public class BookingService {
         this.disheRepository = disheRepository;
         this.transportationRepository = transportationRepository;
     }
-
-    
     @Transactional
     public Optional<Booking> findById(Integer id) {
         return bookingRepository.findById(id);
@@ -60,20 +58,16 @@ public class BookingService {
     }
      @Transactional
     public Booking save(Booking booking) {
-        // Validaciones adicionales pueden ir aquí
         return bookingRepository.save(booking);
     }
     @Transactional(readOnly = true)
     public List<Tour> findAllTours() {
         return tourRepository.findAll();
     }
-
-    
     @Transactional(readOnly = true)
     public List<Booking> findByClient(Client client) {
         return bookingRepository.findByClient(client);
     }
-    
     @Transactional(readOnly = true)
     public List<Booking> findByReserveStatus(String status) {
         return bookingRepository.findByReserveStatus(status);
@@ -82,13 +76,10 @@ public class BookingService {
     public Page<Booking> getAllReservations(Pageable pageable) {
         return bookingRepository.findAll(pageable);
     }
-
     @Transactional(readOnly = true)
     public Optional<Booking> getReservationById(int id) {
         return bookingRepository.findById(id);
     }
-
-
     @Transactional
     public void deleteReservation(int id) {
         if (!bookingRepository.existsById(id)) {
@@ -96,14 +87,10 @@ public class BookingService {
         }
         bookingRepository.deleteById(id);
     }
-
-
     @Transactional(readOnly = true)
     public Page<Booking> searchByBookingType(String bookingType, Pageable pageable) {
         return bookingRepository.findByBookingTypeContainingIgnoreCase(bookingType, pageable);
     }
-   
-    
     @Transactional(readOnly = true)
     public List<Booking> getReservationsByCabinId(int cabinId) {
         return bookingRepository.findByCabinId(cabinId);
@@ -112,67 +99,56 @@ public class BookingService {
     public Page<Booking> getReservationsByCabinId(int cabinId, Pageable pageable) {
         return bookingRepository.findByCabinId(cabinId, pageable);
     }
-    
     @Transactional(readOnly = true)
     public Page<Booking> getReservationsByTourId(int tourId, Pageable pageable) {
         return bookingRepository.findByTourId(tourId, pageable);
     }
-    
     @Transactional(readOnly = true)
     public Page<Booking> getReservationsByVehicleId(int vehicleId, Pageable pageable) {
         return bookingRepository.findByVehicleId(vehicleId, pageable);
     }
-    
     @Transactional(readOnly = true)
     public Page<Booking> getReservationsByDisheId(int disheId, Pageable pageable) {
         return bookingRepository.findByDisheId(disheId, pageable);
     }
-    
     @Transactional(readOnly = true)
     public Page<Booking> getReservationsByClientId(int clientId, Pageable pageable) {
         return bookingRepository.findByClientId(clientId, pageable);
     }
-    
     @Transactional(readOnly = true)
     public Page<Booking> getReservationsByStatus(String status, Pageable pageable) {
         return bookingRepository.findByReserveStatus(status, pageable);
     }
-    
     public Optional<Booking> getReservationWithDetails(int id) {
     return bookingRepository.findByIdWithDetails(id);
-}
+    }
     public Optional<Tour> getTourById(int tourId) {
         return tourRepository.findById(tourId);
 
     }
-
     public Dishe getDisheById(Integer id) {
         return disheRepository.findById(id).orElse(null);
     }
-
     public Transportation getTransportationById(Integer id) {
         return transportationRepository.findById(id).orElse(null);
     }
     @Transactional(readOnly = true)
-public Page<Booking> filterByStatus(String status, Pageable pageable) {
-    return bookingRepository.findByReserveStatus(status, pageable);
-}
-
-@Transactional(readOnly = true)
-public Page<Booking> filterByIdentification(String identification, Pageable pageable) {
-    return bookingRepository.findByClient_IdentificationContainingIgnoreCase(identification, pageable);
-}
-
-@Transactional(readOnly = true)
-public Page<Booking> filterByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-    return bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
-}
-
-public boolean isCabinAvailable(Integer cabinId, LocalDate checkIn, LocalDate checkOut) {
-    // Implementación que verifica si no hay reservas conflictivas
-    List<Booking> conflictingBookings = bookingRepository.findConflictingBookings(
-        cabinId, checkIn, checkOut);
-    return conflictingBookings.isEmpty();
-}
+    public Page<Booking> filterByStatus(String status, Pageable pageable) {
+        return bookingRepository.findByReserveStatus(status, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> filterByIdentification(String identification, Pageable pageable) {
+        return bookingRepository.findByClient_IdentificationContainingIgnoreCase(identification, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> filterByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
+    }
+    public boolean isCabinAvailable(Integer cabinId, LocalDate checkIn, LocalDate checkOut) {
+        // Implementación que verifica si no hay reservas conflictivas
+        List<Booking> conflictingBookings = bookingRepository.findConflictingBookings(
+            cabinId, checkIn, checkOut);
+        return conflictingBookings.isEmpty();
+    }
 
 }

@@ -13,7 +13,7 @@
         
         <form th:action="@{/booking/update/{id}(id=${booking.id_booking})}" method="post" th:object="${booking}" class="reservation-form" id="bookingForm">
 
-            <!-- Sección de cliente-->
+            <!-- Sección de clienete-->
             <div class="form-group">
                 <label for="clientIdentification">Identificación del Cliente:</label>
                 <div class="search-container">
@@ -111,7 +111,7 @@
                             </label>
                         </div>
                         
-                        <!-- Contenedor del selector Cabañas-->
+                        <!-- selector Cabañas-->
                         <div class="form-section">
                             <h2>Selección de Cabaña</h2>
                             <div class="form-group">
@@ -145,7 +145,7 @@
                             </div>
                         </div>
                         
-                        <!-- Contenedor del selector de tours -->
+                        <!-- selector de tours -->
                         <div id="tourSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
                             <h4>Seleccione un Tour</h4>
                             <div id="tourResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
@@ -176,7 +176,7 @@
                             </div>
                         </div>
                         
-                        <!-- Contenedor del selector de platillos -->
+                        <!-- selector de platillos -->
                         <div id="disheSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
                             <h4>Seleccione Platillos</h4>
                             <div id="disheResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
@@ -208,7 +208,7 @@
                             </div>
                         </div>
                         
-                        <!-- Contenedor del selector de transportes -->
+                        <!-- selector de transportes -->
                         <div id="transportationSelectorContainer" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #ddd;">
                             <h4>Seleccione un Transporte</h4>
                             <div id="transportationResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 10px;">
@@ -273,8 +273,7 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Configurar fechas mínimas
-            setupDates();
+            setupDates();//fevhas
         });
 
         function setupDates() {

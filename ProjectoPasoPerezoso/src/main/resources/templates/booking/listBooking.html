@@ -183,7 +183,6 @@
     </div>
     
     <script>
-        // Función para confirmar eliminación con SweetAlert
         function confirmDelete(event, deleteUrl) {
             event.preventDefault();
 
@@ -300,53 +299,53 @@ function validateDateRange() {
     return true;
 }
 
-// estado AJAX
-function filtrarPorEstado() {
-    const estado = document.getElementById('status').value;
-    const urlParams = new URLSearchParams();
-    
-    if (estado) {
-        urlParams.set('status', estado);
-    }
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    
-    if (startDate && endDate) {
-        urlParams.set('startDate', startDate);
-        urlParams.set('endDate', endDate);
-    }
-    
-    urlParams.set('page', '0');
+    // estado AJAX
+    function filtrarPorEstado() {
+        const estado = document.getElementById('status').value;
+        const urlParams = new URLSearchParams();
 
-    // AJAX 
-    fetch(`/booking/listaReservas?${urlParams.toString()}`)
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newTable = doc.querySelector('#bookings-table');
-            const newPagination = doc.querySelector('.pagination'); 
-            
-            if (newTable) {
-                document.querySelector('#bookings-table').innerHTML = newTable.innerHTML;
-            }
-            if (newPagination) {
-                document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
-            }
-            
-          
-            window.history.pushState({}, '', `/booking/listaReservas?${urlParams.toString()}`);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            
-            if (estado) {
-                window.location.href = `/booking/listaReservas?status=${encodeURIComponent(estado)}`;
-            } else {
-                window.location.href = '/booking/listaReservas';
-            }
-        });
-}
+        if (estado) {
+            urlParams.set('status', estado);
+        }
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (startDate && endDate) {
+            urlParams.set('startDate', startDate);
+            urlParams.set('endDate', endDate);
+        }
+
+        urlParams.set('page', '0');
+
+        // AJAX 
+        fetch(`/booking/listaReservas?${urlParams.toString()}`)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newTable = doc.querySelector('#bookings-table');
+                const newPagination = doc.querySelector('.pagination'); 
+
+                if (newTable) {
+                    document.querySelector('#bookings-table').innerHTML = newTable.innerHTML;
+                }
+                if (newPagination) {
+                    document.querySelector('.pagination').innerHTML = newPagination.innerHTML;
+                }
+
+
+                window.history.pushState({}, '', `/booking/listaReservas?${urlParams.toString()}`);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+                if (estado) {
+                    window.location.href = `/booking/listaReservas?status=${encodeURIComponent(estado)}`;
+                } else {
+                    window.location.href = '/booking/listaReservas';
+                }
+            });
+    }
         // Reiniciar todos los filtros
         function reiniciarFiltros() {
             document.getElementById('clientId').value = '';
