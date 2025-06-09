@@ -3,35 +3,43 @@
 
 /* Sobreescribe algunos estilos específicos para edición */
 .form-container {
-    max-width: 900px;
+    max-width: 65%;
+    background-color: rgba(52, 58, 64, 0.95);
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    padding: 27px;
 }
 
 /* Estilos específicos para la vista previa de imagen */
 #previewImage {
     max-width: 200px;
     max-height: 200px;
-    margin-bottom: 1rem;
+    margin: 0 auto 1rem;
+    display: block;
     border-radius: 4px;
-    border: 2px solid #3498db;
+    border: 2px solid #a2a26e;
 }
 
 #previewImageNew {
     max-width: 200px;
     max-height: 200px;
-    margin-bottom: 1rem;
+    margin: 0 auto 1rem;
+    display: block;
     border-radius: 4px;
-    border: 2px dashed #3498db;
+    border: 2px dashed #a2a26e;
 }
 
 /* Estilo para el campo de contraseña */
 .form-group input[type="password"] {
-    background-color: #f8f9fa;
+    background-color: white;
+    color: black;
 }
 
 /* Estilo para campos deshabilitados */
 .form-group select:disabled {
-    background-color: #f8f9fa;
-    color: #6c757d;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #adb5bd;
     cursor: not-allowed;
 }
 
@@ -39,16 +47,19 @@
 #fileNameEdit {
     margin-top: 0.5rem;
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: #adb5bd;
     font-style: italic;
+    text-align: center;
+    display: block;
 }
 
 /* Estilo para la sección de empleado en edición */
 #empleadoFields {
-    background-color: #f8f9fa;
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 1.5rem;
     border-radius: 6px;
     margin-top: 1.5rem;
+    border: 1px solid #6f7e14;
 }
 
 /* Ajustes para pantallas pequeñas */
@@ -57,4 +68,34 @@
         max-width: 150px;
         max-height: 150px;
     }
+    
+    .form-container {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+}
+
+/* Estilos adicionales para mantener consistencia */
+.form-group .file-upload-label {
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    background: #a2a26e;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+}
+
+.form-group .file-upload-label:hover {
+    background: #6f7e14;
+}
+
+.current-image-label {
+    display: block;
+    text-align: center;
+    color: white;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
 }

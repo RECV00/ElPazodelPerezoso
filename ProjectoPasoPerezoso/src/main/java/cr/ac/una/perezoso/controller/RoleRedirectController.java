@@ -29,7 +29,7 @@ public class RoleRedirectController {
         } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             return "redirect:/employee/detalle";
         } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_CLIENT"))) {
-            return "redirect:/client/detalle";
+            return "redirect:/client/cabins";
         }
         
         return "redirect:/";

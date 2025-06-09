@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Listado de Cabañas</title>
@@ -10,7 +6,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link th:href="@{/css/stylesList_cabin.css}" rel="stylesheet">
     <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div th:replace="~{/fragments/modal_includes :: head}"></div>
+
+    
 </head>
 <body>
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
@@ -18,46 +18,50 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <div class="content">
         <h1>Listado de Cabañas</h1>
         
-        <!-- Contenedor superior con botón Agregar (ahora abre modal) -->
         <div class="top-actions">
             <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#addCabinModal">
-                Agregar Nueva Cabaña
+                <i class="fas fa-plus"></i> Nueva Cabaña
             </button>
             
-            <!-- Mensajes de éxito/error -->
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
         </div>
         
-        <!-- Formulario de Filtros (se mantiene igual) -->
-        <div class="filter-container">
+         <div class="filter-container">         
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" placeholder="Buscar por nombre">
+                    <input type="text" id="name" name="name" placeholder="Buscar por nombre (presiona Enter)">
+
+                    <button type="button" id="resetButton" class="btn-reset">
+                         <i class="fas fa-broom"></i> Limpiar
+                     </button>
                 </div>
                 <div class="filter-group">
                     <label for="location">Ubicación:</label>
-                    <input type="text" id="location" name="location" placeholder="Buscar por ubicación">
+                    <input type="text" id="location" name="location" placeholder="Buscar por ubicación (presiona Enter)">
+
                 </div>
-                <div class="filter-group" style="align-self: flex-end;">
-                    <div class="filter-actions">
-                        <button type="button" id="resetButton" class="btn-reset">Limpiar Filtros</button>
-                    </div>
-                </div>
+
             </div>
         </div>
         
-        <!-- Tabla de resultados -->
         <div id="cabinTableContainer">
+            <div id="loadingIndicator" class="loading-indicator">
+                <div class="loading-spinner"></div> Cargando cabañas...
+            </div>
+            
             <table class="cabin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <!--<th>ID</th>-->
                         <th>Nombre</th>
+                        <th>Descripción</th>
                         <th>Ubicación</th>
                         <th>Capacidad</th>
                         <th>Precio/Noche</th>
+<!--                    <th>includedServices</th>-->
+                        <th>Múltimedia</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -66,198 +70,294 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </tbody>
             </table>
             
-            <!-- Paginación -->
-            <div class="pagination" id="paginationControls">
-                <!-- Los controles de paginación se generarán via JavaScript -->
+            <div class="pagination-container">
+                <ul class="pagination" id="paginationControls">
+                    <!-- Los controles se generarán aquí -->
+                </ul>
             </div>
         </div>
         
-        <!-- Incluir modal de agregar -->
         <div th:replace="~{/cabin/add_cabin_modal :: addModal}"></div>
-        
-        <!-- Incluir modal de editar -->
         <div th:replace="~{/cabin/edit_cabin_modal :: editModal}"></div>
     </div>
     
-    <!-- Scripts -->
     <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
     <script th:inline="javascript">
         $(document).ready(function() {
-            // Variable para almacenar el timeout
-            let filterTimeout;
-            
-            // Cargar datos iniciales
+    let currentPage = 0;
+    
+    loadCabins(0);
+    
+    // Filtrado al presionar Enter
+    $('#name, #location').on('keypress', function(e) {
+        if (e.which === 13) {
             loadCabins(0);
-            
-            // Manejar cambios en los filtros (en tiempo real con debounce)
-            $('#name, #location').on('input', function() {
-                // Cancelar el timeout anterior si existe
-                clearTimeout(filterTimeout);
-                
-                // Establecer un nuevo timeout para esperar 500ms después de la última tecla
-                filterTimeout = setTimeout(function() {
-                    loadCabins(0);
-                }, 500);
-            });
-            
-            // Manejar clic en botón de reset
-            $('#resetButton').click(function() {
-                $('#name').val('');
-                $('#location').val('');
-                loadCabins(0);
-            });
-            
-            // Efecto visual al enfocar inputs
-            $('.filter-group input').focus(function() {
-                $(this).parent().find('label').css('color', '#a2a26e');
-            }).blur(function() {
-                $(this).parent().find('label').css('color', 'white');
-            });
+        }
+    });
+    
+    $('#resetButton').click(function() {
+        $('#name').val('');
+        $('#location').val('');
+        loadCabins(0);
+    });
+    
+    $('.filter-group input').focus(function() {
+        $(this).parent().find('label').css('color', '#a2a26e');
+    }).blur(function() {
+        $(this).parent().find('label').css('color', 'white');
+    });
+    
+    // Configuración de SweetAlert
+    window.showAlert = function(type, message) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
         });
+        
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    };
+});
 
-        function loadCabins(page) {
-            const filters = {
-                name: $('#name').val(),
-                location: $('#location').val(),
-                page: page,
-                size: 4
-            };
-            
-            // Mostrar loading
-            $('#cabinTableBody').html('<tr><td colspan="6" class="no-data">Cargando datos...</td></tr>');
-            
-            $.ajax({
-                url: '/cabins/api/list',
-                type: 'GET',
-                data: filters,
-                success: function(response) {
-                    updateTable(response.content);
-                    updatePagination(response.totalPages, page);
-                },
-                error: function(xhr) {
-                    $('#cabinTableBody').html('<tr><td colspan="6" class="no-data">Error al cargar los datos</td></tr>');
-                    console.error('Error:', xhr.responseText);
+function loadCabins(page) {
+    const filters = {
+        name: $('#name').val(),
+        location: $('#location').val(),
+        page: page,
+        size: 4
+    };
+    
+    $('#loadingIndicator').show();
+    $('.cabin-table').addClass('loading');
+    $('#cabinTableBody').hide();
+    
+    $.ajax({
+        url: '/cabins/api/list',
+        type: 'GET',
+        data: filters,
+        success: function(response) {
+            updateTable(response.content);
+            updatePagination(response.totalPages, page);
+            $('#cabinTableBody').fadeIn(300);
+        },
+        error: function(xhr) {
+            $('#cabinTableBody').html('<tr><td colspan="6" class="no-data">Error al cargar los datos</td></tr>');
+            $('#cabinTableBody').show();
+            showAlert('error', 'Error al cargar las cabañas');
+            console.error('Error:', xhr.responseText);
+        },
+        complete: function() {
+            $('#loadingIndicator').hide();
+            $('.cabin-table').removeClass('loading');
+        }
+    });
+}
+
+function updateTable(cabins) {
+    const tbody = $('#cabinTableBody');
+    tbody.empty();
+    
+    if (cabins.length === 0) {
+        tbody.append('<tr><td colspan="6" class="no-data">No se encontraron cabañas con los filtros aplicados</td></tr>');
+        return;
+    }
+    
+    cabins.forEach(cabin => {
+        const row = `
+            <tr>
+                <td>${cabin.name}</td>
+                <td>${cabin.description}</td>
+                <td>${cabin.location}</td>
+                <td>${cabin.capacity}</td>
+                <td>$${cabin.pricePerNight.toFixed(2)}</td>
+                <td>
+                    ${cabin.image ? `<img src="/${cabin.image}" alt="Imagen del la cabaña" style="width: 100px; height: auto;">` : 'Sin imagen'}
+                </td>
+                <td class="cabin-actions">
+                    <a href="#" class="action-btn btn-edit" title= "Editar"
+                       data-bs-toggle="modal" 
+                       data-bs-target="#editCabinModal"
+                       data-cabin-id="${cabin.cabinID}"
+                       data-cabin-name="${cabin.name}"
+                       data-cabin-description="${cabin.description}"
+                       data-cabin-capacity="${cabin.capacity}"
+                       data-cabin-price="${cabin.pricePerNight}"
+                       data-cabin-location="${cabin.location}"
+                       data-cabin-services="${cabin.includedServices}"
+                       data-cabin-image="${cabin.image}">
+                         <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
+                    </a>
+                    <button class="action-btn btn-delete" title="Eliminar"
+                        onclick="deleteCabin(${cabin.cabinID}); return false;">
+                    <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                </button>
+                </td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
+
+function updatePagination(totalPages, currentPage) {
+    const pagination = $('#paginationControls');
+    pagination.empty();
+
+    if (totalPages <= 1) return;
+
+    // Botón Anterior
+    const prevBtn = `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="${currentPage === 0 ? 'return false;' : `loadCabins(${currentPage - 1}); return false;`}">
+            &laquo;
+        </a>
+    </li>`;
+    pagination.append(prevBtn);
+
+    // Números de página
+    const startPage = Math.max(0, currentPage - 2);
+    const endPage = Math.min(totalPages - 1, currentPage + 2);
+    
+    if (startPage > 0) {
+        pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadCabins(0); return false;">1</a></li>`);
+        if (startPage > 1) {
+            pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+        }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="loadCabins(${i}); return false;">
+                ${i + 1}
+            </a>
+        </li>`;
+        pagination.append(pageBtn);
+    }
+    
+    if (endPage < totalPages - 1) {
+        if (endPage < totalPages - 2) {
+            pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+        }
+        pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadCabins(${totalPages - 1}); return false;">${totalPages}</a></li>`);
+    }
+
+    // Botón Siguiente
+    const nextBtn = `<li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="${currentPage === totalPages - 1 ? 'return false;' : `loadCabins(${currentPage + 1}); return false;`}">
+            &raquo;
+        </a>
+    </li>`;
+    pagination.append(nextBtn);
+}
+
+$('#editCabinModal').on('show.bs.modal', function(event) {
+    var button = $(event.relatedTarget);
+    var modal = $(this);
+    
+    modal.find('#editCabinId').val(button.data('cabin-id'));
+    modal.find('#editName').val(button.data('cabin-name'));
+    modal.find('#editDescription').val(button.data('cabin-description'));
+    modal.find('#editCapacity').val(button.data('cabin-capacity'));
+    modal.find('#editPrice').val(button.data('cabin-price'));
+    modal.find('#editLocation').val(button.data('cabin-location'));
+    modal.find('#editServices').val(button.data('cabin-services'));
+    
+    var imagePath = button.data('cabin-image');
+    if(imagePath) {
+        modal.find('#currentImage').attr('src', '/' + imagePath);
+        modal.find('#currentImageContainer').show();
+    } else {
+        modal.find('#currentImageContainer').hide();
+    }
+});
+
+$('#addCabinForm').on('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    
+    Swal.fire({
+        title: '¿Agregar cabaña?',
+        text: "¿Estás seguro de que deseas agregar esta cabaña?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, agregar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+});
+
+$('#editCabinForm').on('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    
+    Swal.fire({
+        title: '¿Actualizar cabaña?',
+        text: "¿Estás seguro de que deseas guardar los cambios?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+});
+
+function deleteCabin(cabinID) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esta acción!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/cabins/delete/' + cabinID, {
+                method: 'DELETE',
+                redirect: 'follow'
+            })
+            .then(response => {
+                if (response.redirected) {
+                    Swal.fire({
+                        title: '¡Eliminado!',
+                        text: 'La cabaña ha sido eliminada.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = response.url;
+                    });
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo eliminar la cabaña',
+                    icon: 'error'
+                });
             });
         }
-        
-        function updateTable(cabins) {
-            const tbody = $('#cabinTableBody');
-            tbody.empty();
-            
-            if (cabins.length === 0) {
-                tbody.append('<tr><td colspan="6" class="no-data">No se encontraron cabañas con los filtros aplicados</td></tr>');
-                return;
-            }
-            
-            cabins.forEach(cabin => {
-                const row = `
-                    <tr>
-                        <td>${cabin.cabinID}</td>
-                        <td>${cabin.name}</td>
-                        <td>${cabin.location}</td>
-                        <td>${cabin.capacity}</td>
-                        <td>$${cabin.pricePerNight.toFixed(2)}</td>
-                        <td>
-                            <a href="#" class="btn-edit" 
-                               data-bs-toggle="modal" 
-                               data-bs-target="#editCabinModal"
-                               data-cabin-id="${cabin.cabinID}"
-                               data-cabin-name="${cabin.name}"
-                               data-cabin-description="${cabin.description}"
-                               data-cabin-capacity="${cabin.capacity}"
-                               data-cabin-price="${cabin.pricePerNight}"
-                               data-cabin-location="${cabin.location}"
-                               data-cabin-services="${cabin.includedServices}"
-                               data-cabin-image="${cabin.image}">
-                                Editar
-                            </a>
-                            <a href="/cabins/delete?cabinID=${cabin.cabinID}" class="btn-delete" onclick="return confirm('¿Estás seguro que deseas eliminar esta cabaña?')">Eliminar</a>
-                        </td>
-                    </tr>
-                `;
-                tbody.append(row);
-            });
-        }
-        
-        function updatePagination(totalPages, currentPage) {
-            const pagination = $('#paginationControls');
-            pagination.empty();
-            
-            if (totalPages <= 1) return;
-            
-            // Botón Anterior
-            if (currentPage > 0) {
-                pagination.append(`<button onclick="loadCabins(${currentPage - 1})">&laquo; Anterior</button>`);
-            }
-            
-            // Números de página
-            const startPage = Math.max(0, currentPage - 2);
-            const endPage = Math.min(totalPages - 1, currentPage + 2);
-            
-            // Mostrar elipsis al inicio si es necesario
-            if (startPage > 0) {
-                pagination.append(`<button onclick="loadCabins(0)">1</button>`);
-                if (startPage > 1) {
-                    pagination.append('<span>...</span>');
-                }
-            }
-            
-            // Botones de páginas
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === currentPage) {
-                    pagination.append(`<button class="active" onclick="loadCabins(${i})">${i + 1}</button>`);
-                } else {
-                    pagination.append(`<button onclick="loadCabins(${i})">${i + 1}</button>`);
-                }
-            }
-            
-            // Mostrar elipsis al final si es necesario
-            if (endPage < totalPages - 1) {
-                if (endPage < totalPages - 2) {
-                    pagination.append('<span>...</span>');
-                }
-                pagination.append(`<button onclick="loadCabins(${totalPages - 1})">${totalPages}</button>`);
-            }
-            
-            // Botón Siguiente
-            if (currentPage < totalPages - 1) {
-                pagination.append(`<button onclick="loadCabins(${currentPage + 1})">Siguiente &raquo;</button>`);
-            }
-        }
-        
-        // Manejar la apertura del modal de edición
-        $('#editCabinModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            
-            // Obtener datos de los atributos data
-            modal.find('#editCabinId').val(button.data('cabin-id'));
-            modal.find('#editName').val(button.data('cabin-name'));
-            modal.find('#editDescription').val(button.data('cabin-description'));
-            modal.find('#editCapacity').val(button.data('cabin-capacity'));
-            modal.find('#editPrice').val(button.data('cabin-price'));
-            modal.find('#editLocation').val(button.data('cabin-location'));
-            modal.find('#editServices').val(button.data('cabin-services'));
-            
-            // Manejar la imagen actual
-            var imagePath = button.data('cabin-image');
-            if(imagePath) {
-                modal.find('#currentImage').attr('src', '/' + imagePath);
-                modal.find('#currentImageContainer').show();
-            } else {
-                modal.find('#currentImageContainer').hide();
-            }
-        });
-        
-        // Confirmación antes de enviar formularios
-        $('#addCabinForm').on('submit', function() {
-            return confirm('¿Estás seguro de que deseas agregar esta cabaña?');
-        });
-        
-        $('#editCabinForm').on('submit', function() {
-            return confirm('¿Estás seguro de que deseas actualizar esta cabaña?');
-        });
+    });
+}
     </script>
 </body>
 </html>

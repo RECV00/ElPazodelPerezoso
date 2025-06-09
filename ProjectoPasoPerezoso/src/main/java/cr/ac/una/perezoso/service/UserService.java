@@ -44,7 +44,7 @@ public class UserService implements CRUD<User, Integer>{
         }
         repoUser.save(user);
     }
-    
+  
     @Override
     public void delete(Integer id) {
     repoUser.deleteById(id);    
@@ -66,11 +66,11 @@ public class UserService implements CRUD<User, Integer>{
     }
     
     // Métodos específicos para User
-    
    public User findByIdentification(String identification) {
         return repoUser.findByIdentificationIgnoreCase(identification)
             .orElse(null);
     }
+
     
     public void saveUserWithHashedPassword(User user) {
         if (user.getPassword() == null || user.getPassword().isBlank()) {

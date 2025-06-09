@@ -8,6 +8,7 @@ import cr.ac.una.perezoso.domain.Tour;
 import cr.ac.una.perezoso.domain.Transportation;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,12 +28,14 @@ public interface TransportationRepository extends JpaRepository<Transportation, 
            "LOWER(t.driver) LIKE LOWER(CONCAT('%', :filter, '%'))")
     List<Transportation> searchByPlateOrDriver(@Param("filter") String filter);
     
-    List<Transportation> findByServiceStatus(String status);
+    Page<Transportation> findByPlateContaining(String plate, Pageable pageable);
+    Page<Transportation> findByServiceStatus(String status,Pageable pageable);
     
     List<Transportation> findByDataTimeServiceBetween(LocalDateTime start, LocalDateTime end);
     
     Transportation findByPlate(String plate);
     
-    //Page<Transportation> findByNameContainingIgnoreCase(String name,Pageable pageable);
+    Optional<Transportation> findById(Integer id);
+//    Page<Transportation> findByNameContainingIgnoreCase(String name,Pageable pageable);
 }
 

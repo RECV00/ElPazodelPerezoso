@@ -1,86 +1,381 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Listado de Transportes</title>
     <meta charset="UTF-8">
-    <title>Lista de Transportes</title>
-    <!-- Incluir Font Awesome -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link th:href="@{/css/stylesListTransportation.css}" rel="stylesheet">
-    <script>
-        function confirmDelete() {
-            return confirm("¿Estás seguro de que deseas eliminar este transporte?");
-        }
-    </script>
+    <link th:href="@{/css/stylesList_transportation.css}" rel="stylesheet">
+    <link th:href="@{/css/stylesModal.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <div th:replace="~{/fragments/modal_includes :: head}"></div>
 </head>
 <body>
-    <!-- Incluir la barra de navegación -->
     <div th:replace="~{/fragments/navbar :: navbar}"></div>
     
-    <div class="container">
-        <h1>Lista de Transportes</h1>
+    <div class="content">
+        <h1>Listado de Transportes</h1>
         
-        <!-- Mensaje de éxito -->
-        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
-        
-        <!-- Formulario para filtrar -->
-        <form action="/transportation/filter" method="get" class="filter-form">
-            <label for="filter">Filtrar por conductor o placa:</label>
-            <input type="text" id="filter" name="filter" placeholder="Placa del vehículo">
-            <button type="submit" class="button filter-btn">Filtrar</button>
-        </form>
-
-        <!-- Botones de acción -->
-        <div class="action-buttons">
-            <a href="/transportation/add" class="button add-btn">
-                <i class="fas fa-plus"></i> Agregar Nuevo Transporte</a>
-            <a href="/transportation/listTransport" class="button show-all-btn">
-                <i class="fas fa-list"></i>Mostrar Todos</a>
+        <div class="top-actions">
+            <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#addTransportModal">
+                <i class="fas fa-plus"></i> Nuevo Transporte
+            </button>
+            
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
         </div>
         
-        <!-- Tabla de transportes -->
-        <table class="transport-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Placa</th>
-                    <th>Conductor</th>
-                    <th>Fecha y Hora</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Estado</th>
-                    <th>Duración (min)</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="transportation : ${transportations}">
-                    <td th:text="${transportation.id}"></td>
-                    <td th:text="${transportation.plate}"></td>
-                    <td th:text="${transportation.driver}"></td>
-                    <td th:text="${#temporals.format(transportation.dataTimeService, 'dd/MM/yyyy HH:mm')}"></td>
-                    <td th:text="${transportation.initialLocation}"></td>
-                    <td th:text="${transportation.finalLocation}"></td>
-                    <td>
-                        <span th:class="${transportation.serviceStatus == 'Programado' ? 'status-scheduled' : 
-                                        transportation.serviceStatus == 'Cancelado' ? 'status-cancelled' : 
-                                        'status-completed'}"
-                              th:text="${transportation.serviceStatus}"></span>
-                    </td>
-                    <td th:text="${transportation.serviceDuration}"></td>
-                    <td class="action-cells">
-                        <a th:href="@{/transportation/edit/{id}(id=${transportation.id})}" class="button edit-btn">
-                            <i class="fas fa-edit"></i> Editar</a>
-                        <a th:href="@{/transportation/delete/{id}(id=${transportation.id})}" 
-                           class="button delete-btn" onclick="return confirmDelete()">
-                            <i class="fas fa-trash-alt"></i>Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="filter-container">         
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="plate">Placa:</label>
+                    <input type="text" id="plate" name="plate" placeholder="Buscar por placa">
+                    
+                    <button type="button" id="resetButton" class="btn-reset">
+                        <i class="fas fa-broom"></i> Limpiar
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <label for="status">Estado:</label>
+                    <select id="status" name="status" class="form-control">
+                        <option value="">Todos los estados</option>
+                        <option value="Programado">Programado</option>
+                        <option value="En curso">En curso</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div id="transportTableContainer">
+            <div id="loadingIndicator" class="loading-indicator">
+                <div class="loading-spinner"></div> Cargando transportes...
+            </div>
+            
+            <table class="cabin-table">
+                <thead>
+                    <tr>
+                        <!--<th>ID</th>-->
+                        <th>Placa</th>
+                        <th>Conductor</th>
+                        <th>Fecha y Hora</th>
+                        <th>Origen</th>
+                        <th>Destino</th>
+                        <th>Estado</th>
+                        <th>Duración (min)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="transportTableBody">
+                    <!-- Los datos se cargarán via AJAX -->
+                </tbody>
+            </table>
+            
+            <div class="pagination-container">
+                <ul class="pagination" id="paginationControls">
+                    <!-- Los controles se generarán aquí -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Modales -->
+        <div th:replace="~{/Transportation/add_transportation_modal :: addModal}"></div>
+        <div th:replace="~{/Transportation/edit_transportation_modal :: editModal}"></div>
     </div>
+    
+    <div th:replace="~{/fragments/modal_includes :: scripts}"></div>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            let currentPage = 0;
+            
+            loadTransports(0);
+            
+            // Filtrado al presionar Enter o cambiar estado
+            $('#plate').on('keypress', function(e) {
+                if (e.which === 13) {
+                    loadTransports(0);
+                }
+            });
+            
+            $('#status').change(function() {
+                loadTransports(0);
+            });
+            
+            $('#resetButton').click(function() {
+                $('#plate').val('');
+                $('#status').val('');
+                loadTransports(0);
+            });
+            
+            // Configuración de SweetAlert
+            window.showAlert = function(type, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                
+                Toast.fire({
+                    icon: type,
+                    title: message
+                });
+            };
+        });
+
+        function loadTransports(page) {
+            const filters = {
+                plate: $('#plate').val(),
+                status: $('#status').val(),
+                page: page,
+                size: 4
+            };
+            
+            $('#loadingIndicator').show();
+            $('.cabin-table').addClass('loading');
+            $('#transportTableBody').hide();
+            
+            $.ajax({
+                url: '/transportation/api/list',
+                type: 'GET',
+                data: filters,
+                success: function(response) {
+                    updateTable(response.content);
+                    updatePagination(response.totalPages, page);
+                    $('#transportTableBody').fadeIn(300);
+                },
+                error: function(xhr) {
+                    $('#transportTableBody').html('<tr><td colspan="9" class="no-data">Error al cargar los datos</td></tr>');
+                    $('#transportTableBody').show();
+                    showAlert('error', 'Error al cargar los transportes');
+                    console.error('Error:', xhr.responseText);
+                },
+                complete: function() {
+                    $('#loadingIndicator').hide();
+                    $('.cabin-table').removeClass('loading');
+                }
+            });
+        }
+        
+        function updateTable(transports) {
+            const tbody = $('#transportTableBody');
+            tbody.empty();
+            
+            if (transports.length === 0) {
+                tbody.append('<tr><td colspan="9" class="no-data">No se encontraron transportes con los filtros aplicados</td></tr>');
+                return;
+            }
+            
+            transports.forEach(transport => {
+                const row = `
+                    <tr>
+                        <td>${transport.plate}</td>
+                        <td>${transport.driver}</td>
+                        <td>${formatDateTime(transport.dataTimeService)}</td>
+                        <td>${transport.initialLocation}</td>
+                        <td>${transport.finalLocation}</td>
+                        <td>
+                            <span class="${getStatusClass(transport.serviceStatus)}">
+                                ${transport.serviceStatus}
+                            </span>
+                        </td>
+                        <td>${transport.serviceDuration}</td>
+                        <td class="transport-actions">
+                            <a href="#" class="action-btn btn-edit" title= "Editar"
+                               data-bs-toggle="modal" 
+                               data-bs-target="#editTransportModal"
+                               data-transport-id="${transport.id}"
+                               data-transport-plate="${transport.plate}"
+                               data-transport-driver="${transport.driver}"
+                               data-transport-datetime="${transport.dataTimeService}"
+                               data-transport-initial="${transport.initialLocation}"
+                               data-transport-final="${transport.finalLocation}"
+                               data-transport-status="${transport.serviceStatus}"
+                               data-transport-duration="${transport.serviceDuration}">
+                                <i class="fas fa-edit"></i> <span class="sr-only">Editar</span>
+                            </a>
+                            <button class="action-btn btn-delete" title="Eliminar"
+                                onclick="deleteTransport(${transport.id}); return false;">
+                                <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+        
+        function formatDateTime(dateTime) {
+            const date = new Date(dateTime);
+            return date.toLocaleString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Programado': return 'status-scheduled';
+                case 'En curso': return 'status-in-progress';
+                case 'Completado': return 'status-completed';
+                case 'Cancelado': return 'status-cancelled';
+                default: return '';
+            }
+        }
+        
+        function updatePagination(totalPages, currentPage) {
+            const pagination = $('#paginationControls');
+            pagination.empty();
+
+            if (totalPages <= 1) return;
+
+            // Botón Anterior
+            const prevBtn = `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="${currentPage === 0 ? 'return false;' : `loadTransports(${currentPage - 1}); return false;`}">
+                    &laquo;
+                </a>
+            </li>`;
+            pagination.append(prevBtn);
+
+            // Números de página
+            const startPage = Math.max(0, currentPage - 2);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+            
+            if (startPage > 0) {
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadTransports(0); return false;">1</a></li>`);
+                if (startPage > 1) {
+                    pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadTransports(${i}); return false;">
+                        ${i + 1}
+                    </a>
+                </li>`;
+                pagination.append(pageBtn);
+            }
+            
+            if (endPage < totalPages - 1) {
+                if (endPage < totalPages - 2) {
+                    pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+                }
+                pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadTransports(${totalPages - 1}); return false;">${totalPages}</a></li>`);
+            }
+
+            // Botón Siguiente
+            const nextBtn = `<li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="${currentPage === totalPages - 1 ? 'return false;' : `loadTransports(${currentPage + 1}); return false;`}">
+                    &raquo;
+                </a>
+            </li>`;
+            pagination.append(nextBtn);
+        }
+        
+        $('#editTransportModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            
+            modal.find('#editTransportId').val(button.data('transport-id'));
+            modal.find('#editPlate').val(button.data('transport-plate'));
+            modal.find('#editDriver').val(button.data('transport-driver'));
+            modal.find('#editDateTime').val(button.data('transport-datetime'));
+            modal.find('#editInitialLocation').val(button.data('transport-initial'));
+            modal.find('#editFinalLocation').val(button.data('transport-final'));
+            modal.find('#editStatus').val(button.data('transport-status'));
+            modal.find('#editDuration').val(button.data('transport-duration'));
+        });
+
+        $('#addTransportForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Agregar transporte?',
+                text: "¿Estás seguro de que deseas agregar este transporte?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+        $('#editTransportForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Actualizar transporte?',
+                text: "¿Estás seguro de que deseas guardar los cambios?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+        
+        function deleteTransport(transportId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/transportation/delete/' + transportId, {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: 'El transporte ha sido eliminado.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = response.url;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el transporte',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -4,121 +4,151 @@
  */
 package cr.ac.una.perezoso.service;
 
+import cr.ac.una.perezoso.domain.Booking;
+import cr.ac.una.perezoso.domain.Client;
+import cr.ac.una.perezoso.domain.Dishe;
+import cr.ac.una.perezoso.domain.Tour;
+import cr.ac.una.perezoso.domain.Transportation;
 import cr.ac.una.perezoso.jpa.BookingRepository;
+import cr.ac.una.perezoso.jpa.DisheRepository;
+import cr.ac.una.perezoso.jpa.TourRepository;
+import cr.ac.una.perezoso.jpa.TransportationRepository;
+import cr.ac.una.perezoso.jpa.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 /**
  *
- * @author keyna
+ * @author corra
  */
 @Service
 public class BookingService {
    
-//    private final BookingRepository bookingRepository;
-//    private final UserRepository userRepository;
-//    private final CabinService cabinService;
-//    private final TourService tourService;
-//    private final TransportationService transportationService;
-//    private final FoodService foodService;
-//
-//    @Autowired
-//    public BookingService(BookingRepository bookingRepository,
-//                        UserRepository userRepository,
-//                        CabinService cabinService,
-//                        TourService tourService,
-//                        TransportationService transportationService,
-//                        FoodService foodService) {
-//        this.bookingRepository = bookingRepository;
-//        this.userRepository = userRepository;
-//        this.cabinService = cabinService;
-//        this.tourService = tourService;
-//        this.transportationService = transportationService;
-//        this.foodService = foodService;
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public Page<Booking> getAllReservations(Pageable pageable) {
-//        return bookingRepository.findAll(pageable);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public Optional<Booking> getReservationById(int id) {
-//        return bookingRepository.findById(id);
-//    }
-//
-//    @Transactional
-//    public Booking createReservation(Booking booking, String clientIdentification) {
-//        // Buscar cliente por cédula
-//        Optional<Client> clientOpt = userRepository.findClientsByIdentification(clientIdentification);
-//        if (clientOpt.isEmpty()) {
-//            throw new IllegalArgumentException("Cliente no encontrado con cédula: " + clientIdentification);
-//        }
-//        
-//        booking.setClient(clientOpt.get());
-//        return bookingRepository.save(booking);
-//    }
-//
-//    @Transactional
-//    public Booking updateReservation(Booking booking) {
-//        return bookingRepository.save(booking);
-//    }
-//
-//    @Transactional
-//    public void deleteReservation(int id) {
-//        bookingRepository.deleteById(id);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<Booking> getReservationsByClientId(int clientId) {
-//        return bookingRepository.findByClientId(clientId);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<Booking> getReservationsByClientIdentification(String identification) {
-//        Optional<Client> client = userRepository.findClientsByIdentification(identification);
-//        if (client.isEmpty()) {
-//            throw new IllegalArgumentException("Cliente no encontrado");
-//        }
-//        return bookingRepository.findByClientId(client.get().getId_user());
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<Booking> searchReservationsByStatus(String status) {
-//        return bookingRepository.findByReservationStatus(status);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<Booking> searchReservationsByDateRange(LocalDate startDate, LocalDate endDate) {
-//        return bookingRepository.findByDateRange(startDate, endDate);
-//    }
-//
-//
-//    @Transactional(readOnly = true)
-//    public Map<String, String> getRelatedNames(Booking booking) {
-//        // Implementación para obtener nombres relacionados usando los servicios
-//        // ...
-//        return null;
-//    }
-//
-//    // Métodos específicos para empleados/administradores
-//    @Transactional(readOnly = true)
-//    public Page<Booking> getReservationsByEmployee(String employeeIdentification, Pageable pageable) {
-//        Optional<Employee> employee = userRepository.findEmployeeByIdentification(employeeIdentification);
-//        if (employee.isEmpty()) {
-//            throw new IllegalArgumentException("Empleado no encontrado");
-//        }
-//        // Lógica para obtener reservaciones manejadas por este empleado
-//        // ...
-//        return bookingRepository.findAll(pageable);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public Page<Booking> getReservationsByAdmin(String adminIdentification, Pageable pageable) {
-//        Optional<Admin> admin = userRepository.findAdminByIdentification(adminIdentification);
-//        if (admin.isEmpty()) {
-//            throw new IllegalArgumentException("Administrador no encontrado");
-//        }
-//        // Lógica para obtener todas las reservaciones (acceso completo)
-//        return bookingRepository.findAll(pageable);
-//    }
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final TourRepository tourRepository;  
+    private final DisheRepository disheRepository;  
+    private final TransportationRepository transportationRepository; 
+    
+    @Autowired
+    public BookingService(BookingRepository bookingRepository,
+                        UserRepository userRepository,
+                        TourRepository tourRepository,
+                        DisheRepository disheRepository,
+                        TransportationRepository transportationRepository){
+        this.bookingRepository = bookingRepository;
+        this.userRepository = userRepository;
+        this.tourRepository = tourRepository;
+        this.disheRepository = disheRepository;
+        this.transportationRepository = transportationRepository;
+    }
+    @Transactional
+    public Optional<Booking> findById(Integer id) {
+        return bookingRepository.findById(id);
+    }
+    @Transactional(readOnly = true)
+    public Client findClientByIdentification(String identification) {
+        return userRepository.findClientsByIdentification(identification);
+    }
+     @Transactional
+    public Booking save(Booking booking) {
+        return bookingRepository.save(booking);
+    }
+    @Transactional(readOnly = true)
+    public List<Tour> findAllTours() {
+        return tourRepository.findAll();
+    }
+    @Transactional(readOnly = true)
+    public List<Booking> findByClient(Client client) {
+        return bookingRepository.findByClient(client);
+    }
+    @Transactional(readOnly = true)
+    public List<Booking> findByReserveStatus(String status) {
+        return bookingRepository.findByReserveStatus(status);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> getAllReservations(Pageable pageable) {
+        return bookingRepository.findAll(pageable);
+    }
+    @Transactional(readOnly = true)
+    public Optional<Booking> getReservationById(int id) {
+        return bookingRepository.findById(id);
+    }
+    @Transactional
+    public void deleteReservation(int id) {
+        if (!bookingRepository.existsById(id)) {
+            throw new IllegalArgumentException("Reserva no encontrada con ID: " + id);
+        }
+        bookingRepository.deleteById(id);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> searchByBookingType(String bookingType, Pageable pageable) {
+        return bookingRepository.findByBookingTypeContainingIgnoreCase(bookingType, pageable);
+    }
+    @Transactional(readOnly = true)
+    public List<Booking> getReservationsByCabinId(int cabinId) {
+        return bookingRepository.findByCabinId(cabinId);
+    }
+     @Transactional(readOnly = true)
+    public Page<Booking> getReservationsByCabinId(int cabinId, Pageable pageable) {
+        return bookingRepository.findByCabinId(cabinId, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> getReservationsByTourId(int tourId, Pageable pageable) {
+        return bookingRepository.findByTourId(tourId, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> getReservationsByVehicleId(int vehicleId, Pageable pageable) {
+        return bookingRepository.findByVehicleId(vehicleId, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> getReservationsByDisheId(int disheId, Pageable pageable) {
+        return bookingRepository.findByDisheId(disheId, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> getReservationsByClientId(int clientId, Pageable pageable) {
+        return bookingRepository.findByClientId(clientId, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> getReservationsByStatus(String status, Pageable pageable) {
+        return bookingRepository.findByReserveStatus(status, pageable);
+    }
+    public Optional<Booking> getReservationWithDetails(int id) {
+    return bookingRepository.findByIdWithDetails(id);
+    }
+    public Optional<Tour> getTourById(int tourId) {
+        return tourRepository.findById(tourId);
+
+    }
+    public Dishe getDisheById(Integer id) {
+        return disheRepository.findById(id).orElse(null);
+    }
+    public Transportation getTransportationById(Integer id) {
+        return transportationRepository.findById(id).orElse(null);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> filterByStatus(String status, Pageable pageable) {
+        return bookingRepository.findByReserveStatus(status, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> filterByIdentification(String identification, Pageable pageable) {
+        return bookingRepository.findByClient_IdentificationContainingIgnoreCase(identification, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Booking> filterByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
+    }
+    public boolean isCabinAvailable(Integer cabinId, LocalDate checkIn, LocalDate checkOut) {
+        // Implementación que verifica si no hay reservas conflictivas
+        List<Booking> conflictingBookings = bookingRepository.findConflictingBookings(
+            cabinId, checkIn, checkOut);
+        return conflictingBookings.isEmpty();
+    }
+
 }

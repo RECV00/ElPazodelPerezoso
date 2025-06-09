@@ -9,6 +9,7 @@ import cr.ac.una.perezoso.jpa.TransportationRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,28 +43,22 @@ public class TransportationService implements CRUD<Transportation, Integer>{
     public List<Transportation> getAll() {
         return transportationRepository.findAll();
     }
-
-    @Override
-    public Transportation getById(Integer id) {
-        return transportationRepository.findById(id).orElse(null);
+   
+    public Optional<Transportation> findById(int transportationId) {
+    return transportationRepository.findById(transportationId);
     }
-
     public Transportation getByPlate(String plate) {
         return transportationRepository.findByPlate(plate);
     }
 
-    public List<Transportation> searchByPlateOrDriver(String filter) {
-        return transportationRepository.searchByPlateOrDriver(filter);
+    public Page<Transportation> findByPlateContaining(String plate,Pageable pageable) {
+        return transportationRepository.findByPlateContaining(plate,pageable);
     }
 
-    public List<Transportation> findByStatus(String status) {
-        return transportationRepository.findByServiceStatus(status);
+    public Page<Transportation> findByStatus(String status,Pageable pageable) {
+        return transportationRepository.findByServiceStatus(status,pageable);
     }
 
-    public List<Transportation> findByDateRange(LocalDateTime start, LocalDateTime end) {
-        return transportationRepository.findByDataTimeServiceBetween(start, end);
-    }
-    
     @Override
     public Page<Transportation> getAll(Pageable pageable) {
         return transportationRepository.findAll(pageable);
@@ -71,10 +66,14 @@ public class TransportationService implements CRUD<Transportation, Integer>{
 
 //     public Page<Transportation> findByNameContaining(String name, Pageable pageable) {
 //    return transportationRepository.findByNameContainingIgnoreCase(name, pageable);
-//}
-//     
+//}    
      @Override
     public boolean existsById(Integer id) {
         return transportationRepository.existsById(id);
+    }
+
+    @Override
+    public Transportation getById(Integer id) {
+        return transportationRepository.findById(id).orElse(null);
     }
 }

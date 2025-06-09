@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="editModal">
+        <!-- Modal para editar transporte -->
+        <div class="modal fade" id="editTransportModal" tabindex="-1" aria-labelledby="editTransportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="editTransportModalLabel">Editar Transporte</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" th:action="@{/transportation/update}" id="editTransportForm" class="needs-validation" novalidate>
+                        <input type="hidden" name="id" id="editTransportId">
+                        
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="editPlate" class="form-label fw-bold">Placa del Vehículo:</label>
+                                        <input type="text" class="form-control" id="editPlate" name="plate" 
+                                               pattern="[A-Za-z0-9]{3,10}" required>
+                                        <div class="invalid-feedback">Ingrese una placa válida (3-10 caracteres alfanuméricos)</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="editDriver" class="form-label fw-bold">Conductor:</label>
+                                        <input type="text" class="form-control" id="editDriver" name="driver" required>
+                                        <div class="invalid-feedback">Ingrese el nombre del conductor</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="editDateTime" class="form-label fw-bold">Fecha y Hora:</label>
+                                        <input type="datetime-local" class="form-control" id="editDateTime" name="dataTimeService" required>
+                                        <div class="invalid-feedback">Seleccione fecha y hora válidas</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="editInitial" class="form-label fw-bold">Ubicación Inicial:</label>
+                                        <input type="text" class="form-control" id="editInitial" name="initialLocation" required>
+                                        <div class="invalid-feedback">Ingrese ubicación inicial</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="editFinal" class="form-label fw-bold">Ubicación Final:</label>
+                                        <input type="text" class="form-control" id="editFinal" name="finalLocation" required>
+                                        <div class="invalid-feedback">Ingrese ubicación final</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="editStatus" class="form-label fw-bold">Estado:</label>
+                                        <select class="form-control" id="editStatus" name="serviceStatus" required>
+                                            <option value="Programado">Programado</option>
+                                            <option value="En curso">En curso</option>
+                                            <option value="Completado">Completado</option>
+                                            <option value="Cancelado">Cancelado</option>
+                                        </select>
+                                        <div class="invalid-feedback">Seleccione un estado</div>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="editDuration" class="form-label fw-bold">Duración (min):</label>
+                                        <input type="number" class="form-control" id="editDuration" name="serviceDuration" 
+                                               min="1" max="600" required>
+                                        <div class="invalid-feedback">Ingrese duración válida (1-600 min)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-submit">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            const form = document.getElementById('editTransportForm');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+            
+            // Script para manejar la carga de datos en el modal de edición
+            document.addEventListener('DOMContentLoaded', function() {
+                $('#editTransportModal').on('show.bs.modal', function(event) {
+                    var button = $(event.relatedTarget);
+                    var modal = $(this);
+                    
+                    // Cargar datos en los campos del formulario
+                    modal.find('#editTransportId').val(button.data('transport-id'));
+                    modal.find('#editPlate').val(button.data('transport-plate'));
+                    modal.find('#editDriver').val(button.data('transport-driver'));
+                    
+                    // Formatear fecha para el input datetime-local
+                    const dateTime = new Date(button.data('transport-datetime'));
+                    const formattedDateTime = dateTime.toISOString().slice(0, 16);
+                    modal.find('#editDateTime').val(formattedDateTime);
+                    
+                    modal.find('#editInitial').val(button.data('transport-initial'));
+                    modal.find('#editFinal').val(button.data('transport-final'));
+                    modal.find('#editStatus').val(button.data('transport-status'));
+                    modal.find('#editDuration').val(button.data('transport-duration'));
+                });
+
+                // Resetear el modal cuando se cierra
+                $('#editTransportModal').on('hidden.bs.modal', function() {
+                    $(this).find('form')[0].reset();
+                    $(this).find('.was-validated').removeClass('was-validated');
+                });
+            });
+        })();
+        </script>
+    </div>
+</body>
+</html>

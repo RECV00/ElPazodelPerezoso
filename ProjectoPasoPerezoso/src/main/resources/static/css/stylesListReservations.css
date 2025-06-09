@@ -1,0 +1,621 @@
+/* ========== ESTILOS GENERALES ========== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('/img/fondo.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: white;
+    line-height: 1.6;
+}
+
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: rgba(52, 58, 64, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(111, 126, 20, 0.3);
+}
+
+h1 {
+    color: white;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 15px;
+    font-size: 2.2em;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+h1::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #a0b320, #6f7e14);
+    border-radius: 2px;
+}
+
+/* ========== NAVEGACIÓN ========== */
+nav {
+    background-color: rgba(174, 182, 191, 0.7);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav .logo a {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+nav .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 25px;
+    position: relative;
+}
+
+nav .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+nav .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* ========== CONTROLES SUPERIORES ========== */
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(160, 179, 32, 0.3);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 22px;
+    background: linear-gradient(135deg, #a0b320, #6f7e14);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.btn-add:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #b5c92c, #8a9a1a);
+}
+
+.btn-add:active {
+    transform: translateY(1px);
+}
+
+.btn-add i {
+    font-size: 1.2em;
+}
+
+/* ========== FILTROS ========== */
+.filter-container {
+    margin-bottom: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(111, 126, 20, 0.3);
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95em;
+    min-width: 160px;
+}
+
+.filter-group input,
+.filter-group select {
+    margin-left: 20px;
+    padding: 10px 15px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    border-radius: 6px;
+    margin-right: 15px;
+    flex-grow: 1;
+    max-width: 300px;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #a0b320;
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+/* Estilo para el grupo de fechas */
+.date-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-filter-group input {
+    width: auto;
+}
+
+.date-filter-group span {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-reset {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    align-self: flex-end;
+    margin-bottom: 8px;
+}
+
+.btn-reset:hover {
+    background: linear-gradient(135deg, #7f8c8d, #6c7a7b);
+    transform: translateY(-2px);
+}
+
+.btn-reset i {
+    font-size: 0.95em;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+/* ========== TABLA DE RESERVAS ========== */
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.bookings-table.loading {
+    opacity: 0.5;
+}
+
+.bookings-table thead tr {
+    background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+    color: white;
+    text-align: left;
+    font-weight: 600;
+}
+
+.bookings-table th {
+    padding: 17px 15px;
+    position: relative;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 0.95em;
+    color: white;
+    text-align: center;
+}
+
+.bookings-table th:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.bookings-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(160, 179, 32, 0.1);
+    vertical-align: middle;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.bookings-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.bookings-table tbody tr:nth-child(even) {
+     background-color: rgba(255, 255, 255, 0.05);
+}
+
+.bookings-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.bookings-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.services-container div {
+    margin-bottom: 5px;
+}
+
+.services-container div:last-child {
+    margin-bottom: 0;
+}
+
+/* ========== BADGES ========== */
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.standard-badge {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.premium-badge {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.status-badge.pendiente {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.status-badge.confirmada {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.status-badge.cancelada {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+/* ========== BOTONES DE ACCIÓN ========== */
+.action-cells {
+    white-space: nowrap;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.action-btn i {
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    opacity: 1 !important;
+}
+
+.btn-view {
+     background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+}
+
+.btn-edit {
+     background: linear-gradient(135deg, #d1b52a, #b59d22);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+/* ========== PAGINACIÓN ========== */
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pagination li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(160, 179, 32, 0.3);
+}
+
+.pagination li.active a {
+    background: linear-gradient(135deg, #8a9a1a, #6f7e14);
+    color: white;
+    border-color: #8a9a1a;
+}
+
+.pagination li a:hover:not(.active) {
+    background-color: rgba(111, 126, 20, 0.2);
+    border-color: rgba(160, 179, 32, 0.5);
+}
+
+.pagination li.disabled a {
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    background-color: transparent;
+}
+
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    font-size: 0.95em;
+}
+
+.page-size-selector label {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.page-size-selector select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(111, 126, 20, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.page-size-selector select:focus {
+    outline: none;
+    border-color: #a0b320;
+    box-shadow: 0 0 0 3px rgba(160, 179, 32, 0.3);
+}
+
+/* ========== MENSAJES ESPECIALES ========== */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    font-size: 1.1em;
+    background-color: rgba(44, 53, 57, 0.5);
+    border-radius: 8px;
+    border: 1px dashed rgba(111, 126, 20, 0.3);
+}
+
+.no-results i {
+    font-size: 2em;
+    margin-bottom: 15px;
+    display: block;
+    color: rgba(111, 126, 20, 0.5);
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid transparent;
+}
+
+.alert i {
+    font-size: 1.3em;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* ========== RESPONSIVIDAD ========== */
+@media (max-width: 1200px) {
+    .container {
+        margin: 20px 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .filter-group {
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+    
+    .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .top-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .bookings-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .bookings-table th,
+    .bookings-table td {
+        padding: 12px 15px;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 5px;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .page-size-selector {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    .pagination li a {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9em;
+    }
+    
+    .alert {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px 10px;
+    }
+    
+    .alert i {
+        margin-bottom: 8px;
+    }
+}
