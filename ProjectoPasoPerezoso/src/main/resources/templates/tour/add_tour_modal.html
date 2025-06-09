@@ -12,7 +12,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <h5 class="modal-title" id="addTourModalLabel">Agregar Nuevo Tour</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="addTourForm" th:action="@{/tours/add}" method="post" enctype="multipart/form-data" onsubmit="return confirmAdd()">
+                <form id="addTourForm" th:action="@{/tours/add}" method="post" enctype="multipart/form-data" > 
+
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -69,18 +70,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </div>
     
     <script>
-        // Función para establecer la fecha mínima como la fecha actual
         function setMinDate() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date').setAttribute('min', today);
         }
-
-        // Función para confirmar la adición
-        function confirmAdd() {
-            return confirm("¿Estás seguro de que deseas agregar este tour?");
-        }
-
-        // Ejecutar cuando el modal se muestre
         $('#addTourModal').on('shown.bs.modal', function() {
             setMinDate();
         });

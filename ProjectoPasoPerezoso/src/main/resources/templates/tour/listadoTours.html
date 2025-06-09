@@ -62,13 +62,11 @@
                     </tr>
                 </thead>
                 <tbody id="tourTableBody">
-                    <!-- Los datos se cargarán via AJAX -->
                 </tbody>
             </table>
             
             <div class="pagination-container">
                 <ul class="pagination" id="paginationControls">
-                    <!-- Los controles se generarán aquí -->
                 </ul>
             </div>
         </div>
@@ -85,8 +83,6 @@
             let currentPage = 0;
             
             loadTours(0);
-            
-            // Filtrado al presionar Enter
             $('#nameTour, #startingPoint').on('keypress', function(e) {
                 if (e.which === 13) {
                     loadTours(0);
@@ -187,7 +183,7 @@
                             <a href="#" class="action-btn btn-edit" title= "Editar"
                                data-bs-toggle="modal" 
                                data-bs-target="#editTourModal"
-                               data-tour-id="${tour.id_Tour}"
+                               data-tour-id="${tour.id_tour}"
                                data-tour-name="${tour.nameTour}"
                                data-tour-description="${tour.description}"
                                data-tour-price="${tour.price}"
@@ -200,7 +196,7 @@
                             </a>
                             
                             <button class="action-btn btn-delete" title="Eliminar"
-                                onclick="deleteTour(${tour.id_Tour}); return false;">
+                                onclick="deleteTour(${tour.id_tour}); return false;">
                             <i class="fas fa-trash"></i> <span class="sr-only">Eliminar</span>
                         </button>
              

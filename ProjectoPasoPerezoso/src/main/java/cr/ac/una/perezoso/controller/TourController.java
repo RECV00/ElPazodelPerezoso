@@ -115,7 +115,7 @@ public String addTour(
 
     // Procesar el formulario para actualizar un tour
 @PostMapping("/update")
-public String updateTour(@RequestParam("id_Tour") int id_Tour,
+public String updateTour(@RequestParam("id_tour") int id_tour,
                          @RequestParam("nameTour") String nametTour, 
                          @RequestParam("description") String description, 
                          @RequestParam("price") double price, 
@@ -129,7 +129,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
    
  
    
-    Tour tour = tourService.getById(id_Tour);
+    Tour tour = tourService.getById(id_tour);
     
      if (tour == null) {
             return "redirect:/tours/listTours?error=Tour no encontrado";
@@ -152,7 +152,7 @@ public String updateTour(@RequestParam("id_Tour") int id_Tour,
      tourService.save(tour);
     // Redirigir con un mensaje de éxito
     redirectAttributes.addFlashAttribute("successMessage", "Tour actualizado correctamente.");
-    return "redirect:/tours/listTours"; // Redirigir a la lista de tours
+    return "redirect:/tours/listTours"; 
 }
     
 //------------------------------------------ELIMINAR-------------------------------------------------------------------------------

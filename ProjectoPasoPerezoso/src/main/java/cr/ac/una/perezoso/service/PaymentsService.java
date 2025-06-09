@@ -35,22 +35,19 @@ public class PaymentsService implements CRUD<PaymentManagement, Integer>{
     public PaymentManagement getById(Integer id){
         return repoPayments.findById(id).orElse(null);
     }
-    
-    
     public void delete(PaymentManagement p){
         repoPayments.delete(p);
     }
-    
+
     public String getLastReferenceNumber() {
         PaymentManagement lastPayment = repoPayments.findTopByOrderByIdPaymentDesc();
         return lastPayment != null ? lastPayment.getNumberReference() : null;
     }
-    
+
     @Override
     public Page<PaymentManagement> getAll(Pageable pageable) {
         return repoPayments.findAll(pageable);
     }
-    
     @Override
     public boolean existsById(Integer id) {
         return repoPayments.existsById(id);

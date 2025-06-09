@@ -21,16 +21,10 @@ import org.springframework.stereotype.Repository;
 public interface CabinRepository extends JpaRepository<Cabin, Integer>,JpaSpecificationExecutor<Cabin>{
     
     Page<Cabin> findByNameContainingIgnoreCase(String name,Pageable pageable);
-   
     List<Cabin> findByNameContainingIgnoreCase(String name);
-    
-   Page<Cabin> findByLocationContainingIgnoreCase(String location,Pageable pageable);
-   
+    Page<Cabin> findByLocationContainingIgnoreCase(String location,Pageable pageable);
     List<Cabin> findByLocationContainingIgnoreCase(String location);
-    
-    List<Cabin> findByCapacityGreaterThanEqual(int capacity);
-    
+    List<Cabin> findByCapacityGreaterThanEqual(int capacity); 
     List<Cabin> findByPricePerNightBetween(double minPrice, double maxPrice);
-
     Optional<Cabin> findById(int cabinId);
 }

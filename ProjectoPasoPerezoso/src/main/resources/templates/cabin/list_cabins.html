@@ -66,13 +66,11 @@
                     </tr>
                 </thead>
                 <tbody id="cabinTableBody">
-                    <!-- Los datos se cargarán via AJAX -->
                 </tbody>
             </table>
             
             <div class="pagination-container">
                 <ul class="pagination" id="paginationControls">
-                    <!-- Los controles se generarán aquí -->
                 </ul>
             </div>
         </div>
@@ -87,8 +85,7 @@
     let currentPage = 0;
     
     loadCabins(0);
-    
-    // Filtrado al presionar Enter
+
     $('#name, #location').on('keypress', function(e) {
         if (e.which === 13) {
             loadCabins(0);

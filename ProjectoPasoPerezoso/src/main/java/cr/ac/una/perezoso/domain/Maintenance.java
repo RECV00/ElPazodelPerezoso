@@ -21,13 +21,13 @@ public class Maintenance {
      @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    private LocalDate maintenanceDate;//(selector de fecha)
-    private String maintenanceType;//(Preventivo o correctivo)
-    private String description;//(Area de texto)
-    private String priorities;//(alta,media,baja)combo
-    private String state;//(Pendiente, en proceso, terminada) combo
-    private String assignedPersonal;//(combo usuario o tecnico)
-    private String location;//texto
+    private LocalDate maintenanceDate;
+    private String maintenanceType;
+    private String description;
+    private String priorities;
+    private String state;
+    private String assignedPersonal;
+    private String location;
 
     public Maintenance() {
     }

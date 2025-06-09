@@ -24,11 +24,9 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     public User authenticate(String identification, String plainPassword) throws AuthException {
-        // 1. Buscar usuario (case-insensitive)
         User user = userRepository.findByIdentificationIgnoreCase(identification)
             .orElseThrow(() -> new AuthException("Usuario no encontrado"));
         
-        // 2. Verificar contraseña
         if (!passwordEncoder.matches(plainPassword, user.getPassword())) {
             throw new AuthException("Contraseña incorrecta");
         }

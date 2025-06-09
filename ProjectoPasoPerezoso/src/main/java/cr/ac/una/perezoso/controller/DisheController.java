@@ -50,7 +50,7 @@ public class DisheController {
         this.disheService = disheService;
     }
     
-     // Versión completa de la página (puede ser útil para SSR)
+     // Versión completa de la página
     @GetMapping("/ListFood")
     public String listDishes(@RequestParam(value = "name", required = false) String name,
                           @RequestParam(value = "disheID", required = false) Integer dishId,

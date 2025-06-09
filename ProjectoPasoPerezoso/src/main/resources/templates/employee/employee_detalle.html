@@ -140,7 +140,6 @@
                 
                 <!-- Contenido principal -->
                 <div th:if="${employee != null}">
-                    <!-- Cabecera con foto de perfil -->
                     <div class="profile-header d-flex align-items-center">
                         <div class="profile-picture-container">
                             <img th:src="${employee.profile_picture ?: 'https://ui-avatars.com/api/?name=' + employee.name + '+' + employee.last_name + '&size=200&background=random'}"
@@ -161,8 +160,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Información personal y laboral en pestañas -->
                     <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">
@@ -177,7 +174,6 @@
                     </ul>
                     
                     <div class="tab-content" id="profileTabsContent">
-                        <!-- Pestaña de información personal -->
                         <div class="tab-pane fade show active" id="personal" role="tabpanel">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -206,8 +202,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Pestaña de información laboral -->
                         <div class="tab-pane fade" id="work" role="tabpanel">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -222,10 +216,6 @@
                                     <p class="mb-1"><span class="info-label">Número de cuenta:</span></p>
                                     <p class="info-value" th:text="${employee.account_number}"></p>
                                 </div>
-<!--                                <div class="col-md-6 mb-3">
-                                    <p class="mb-1"><span class="info-label">Fecha de contratación:</span></p>
-                                    <p class="info-value" th:text="${#temporals.format(employee.hire_date, 'dd/MM/yyyy')}"></p>
-                                </div>-->
                             </div>
                         </div>
                     </div>

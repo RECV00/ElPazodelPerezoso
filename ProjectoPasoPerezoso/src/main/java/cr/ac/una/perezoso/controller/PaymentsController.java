@@ -77,8 +77,6 @@ public class PaymentsController {
         try {
             // Obtener el nombre del archivo
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            
-            // Crear el directorio de uploads en la raíz del proyecto si no existe
             String uploadDir = "uploads";
             Path uploadPath = Paths.get(uploadDir);
             
@@ -143,13 +141,10 @@ public class PaymentsController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePayment(@PathVariable Integer id) {
         try {
-            // Obtener el pago antes de eliminarlo para acceder al archivo
             PaymentManagement payment = paymentsService.getById(id);
             if (payment == null) {
                 return ResponseEntity.notFound().build();
             }
-
-            // Eliminar el archivo si existe
             if (payment.getProof() != null && !payment.getProof().isEmpty()) {
                 try {
                     ClassPathResource resource = new ClassPathResource("static/uploads");
@@ -163,7 +158,6 @@ public class PaymentsController {
                 }
             }
 
-            // Eliminar el pago de la base de datos
             paymentsService.delete(id);
             return ResponseEntity.ok("Pago eliminado exitosamente");
         } catch (Exception e) {

@@ -24,19 +24,13 @@ import org.springframework.stereotype.Repository;
 public interface TourRepository extends JpaRepository<Tour, Integer>,JpaSpecificationExecutor<Tour>{
      
     List<Tour> findByNameTourContainingIgnoreCase(String name);
-    
     Page<Tour> findByNameTourContainingIgnoreCase(String name,Pageable pageable);
-    
     List<Tour> findByDate(LocalDate date);
-    
     List<Tour> findByPriceBetween(Double minPrice, Double maxPrice);
-    
     List<Tour> findByStartingPointContainingIgnoreCase(String location);
     @Query("SELECT t FROM Tour t WHERE t.id IN :ids")
     List<Tour> findByIdIn(@Param("ids") List<Integer> ids);
-//    public boolean existsById(int tourId);
     Optional<Tour> findById(int tourId);
-
     Page<Tour> findByStartingPointContainingIgnoreCase(String location, Pageable pageable);
 
 }

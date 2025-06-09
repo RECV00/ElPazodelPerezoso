@@ -43,7 +43,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <div class="form-group">
             <label for="image">Imagen:</label>
                 <input type="file" id="image" name="image" accept="image/*">
-                <!-- Mostrar la imagen actual si existe -->
                 <div th:if="${cabin.image != null}">
                 <img th:src="@{'/'+ ${cabin.image}}" alt="Imagen actual" style="width: 100px; height: auto;">
                 </div>

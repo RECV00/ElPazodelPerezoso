@@ -62,13 +62,11 @@
                     </tr>
                 </thead>
                 <tbody id="articleTableBody">
-                    <!-- Los datos se cargarán via AJAX -->
                 </tbody>
             </table>
             
             <div class="pagination-container">
                 <ul class="pagination" id="paginationControls">
-                    <!-- Los controles se generarán aquí -->
                 </ul>
             </div>
         </div>
@@ -84,8 +82,6 @@
             let currentPage = 0;
             
             loadArticles(0);
-            
-            // Filtrado al presionar Enter
             $('#productName, #supplier').on('keypress', function(e) {
                 if (e.which === 13) {
                     loadArticles(0);
@@ -237,8 +233,6 @@
                 </a>
             </li>`;
             pagination.append(prevBtn);
-
-            // Números de página
             const startPage = Math.max(0, currentPage - 2);
             const endPage = Math.min(totalPages - 1, currentPage + 2);
             
@@ -265,7 +259,7 @@
                 pagination.append(`<li class="page-item"><a class="page-link" href="#" onclick="loadArticles(${totalPages - 1}); return false;">${totalPages}</a></li>`);
             }
 
-            // Botón Siguiente
+     
             const nextBtn = `<li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
                 <a class="page-link" href="#" onclick="${currentPage === totalPages - 1 ? 'return false;' : `loadArticles(${currentPage + 1}); return false;`}">
                     &raquo;

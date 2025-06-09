@@ -90,8 +90,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         function confirmAdd() {
             return confirm("¿Estás seguro de que deseas agregar este plato?");
         }
-        
-        // Validación adicional para el tiempo de preparación
         document.querySelector('form').addEventListener('submit', function(e) {
             const timeInput = document.getElementById('preparationTime');
             if(timeInput.value === '00:00') {

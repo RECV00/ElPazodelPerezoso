@@ -28,50 +28,38 @@ public class TransportationService implements CRUD<Transportation, Integer>{
     public TransportationService(TransportationRepository transportationRepository) {
         this.transportationRepository = transportationRepository;
     }
-
     @Override
     public void save(Transportation transportation) {
         transportationRepository.save(transportation);
     }
-
     @Override
     public void delete(Integer id) {
         transportationRepository.deleteById(id);
     }
-
     @Override
     public List<Transportation> getAll() {
         return transportationRepository.findAll();
     }
-   
     public Optional<Transportation> findById(int transportationId) {
     return transportationRepository.findById(transportationId);
     }
     public Transportation getByPlate(String plate) {
         return transportationRepository.findByPlate(plate);
     }
-
     public Page<Transportation> findByPlateContaining(String plate,Pageable pageable) {
         return transportationRepository.findByPlateContaining(plate,pageable);
     }
-
     public Page<Transportation> findByStatus(String status,Pageable pageable) {
         return transportationRepository.findByServiceStatus(status,pageable);
     }
-
     @Override
     public Page<Transportation> getAll(Pageable pageable) {
         return transportationRepository.findAll(pageable);
-    }
-
-//     public Page<Transportation> findByNameContaining(String name, Pageable pageable) {
-//    return transportationRepository.findByNameContainingIgnoreCase(name, pageable);
-//}    
+    }  
      @Override
     public boolean existsById(Integer id) {
         return transportationRepository.existsById(id);
     }
-
     @Override
     public Transportation getById(Integer id) {
         return transportationRepository.findById(id).orElse(null);

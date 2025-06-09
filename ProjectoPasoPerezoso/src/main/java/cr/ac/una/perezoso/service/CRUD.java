@@ -16,7 +16,7 @@ public interface CRUD<T, ID> {//clase generica
     
     public T getById(ID id);
     
-    // Nuevos métodos para paginación
+    //  para paginación
     Page<T> getAll(Pageable pageable);
     boolean existsById(ID id);
     

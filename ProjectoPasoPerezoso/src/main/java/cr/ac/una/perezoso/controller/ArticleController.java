@@ -150,15 +150,6 @@ public class ArticleController {
     if (article == null) {
             return "redirect:/Article/list?error=Articulo no encontrado";
         }
-    // Validación modificada para fecha opcional
-//    if (!logic.validateNumbers(id_article) || !logic.validateWord(productName) || 
-//        !logic.checkStrings(description) || !logic.validateNumbers(productQuantity) || 
-//        !logic.validateWord(unitOfMeasurement) || !logic.validateWord(supplier) || 
-//        !logic.validateNumbers(unitPrice) || 
-//        (expirationDate != null && !logic.validateLocalDate(expirationDate))) {
-//        
-//        return "redirect:/Article/list?error=Datos inválidos";
-//    }
     
     article.setProductName(productName);
     article.setDescription(description);

@@ -9,15 +9,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <title>Agregar Transporte</title>
     <link th:href="@{/css/stylesAddTransportation.css}" rel="stylesheet" type="text/css">
     <script>
-        // Función para establecer la fecha/hora mínima como la actual
         function setMinDateTime() {
             const now = new Date();
-            // Ajustar a formato YYYY-MM-DDTHH:MM
             const today = now.toISOString().slice(0, 16);
             document.getElementById('dataTimeService').setAttribute('min', today);
         }
-
-        // Función para confirmar la adición
         function confirmAdd() {
             return confirm("¿Estás seguro de que deseas agregar este transporte?");
         }

@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author natal
  */
 public interface PaymentsRepository extends JpaRepository<PaymentManagement, Integer> {
-    PaymentManagement findTopByOrderByIdPaymentDesc(); // Obtener el último registro por ID en orden descendente
+    PaymentManagement findTopByOrderByIdPaymentDesc(); 
     
 }
 

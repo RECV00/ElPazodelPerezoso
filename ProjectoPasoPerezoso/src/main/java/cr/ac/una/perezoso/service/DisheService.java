@@ -23,58 +23,45 @@ import org.springframework.stereotype.Service;
 public  class DisheService implements CRUD<Dishe, Integer>{
     
     private final DisheRepository disheRepository;
-
     @Autowired
     public DisheService(DisheRepository disheRepository) {
         this.disheRepository = disheRepository;
     }
-
     @Override
     public void save(Dishe dishe) {
         disheRepository.save(dishe);
     }
-
     @Override
     public void delete(Integer id) {
         disheRepository.deleteById(id);
     }
-
     @Override
     public List<Dishe> getAll() {
         return disheRepository.findAll();
     }
-
     @Override
     public Dishe getById(Integer id) {
         return disheRepository.findById(id).orElse(null);
     }
-    
-    // Métodos adicionales específicos para Dishe
     public Page<Dishe> findByCategory(String category,Pageable pageable) {
         return disheRepository.findByCategory(category,pageable);
     }
-    
     public List<Dishe> getAvailableDishes() {
         return disheRepository.findByAvailable(true);
     }
-    
     public List<Dishe> searchByName(String name) {
         return disheRepository.findByNameContainingIgnoreCase(name);
     }
-    
     public List<Dishe> getByPriceRange(Double minPrice, Double maxPrice) {
         return disheRepository.findByPriceBetween(minPrice, maxPrice);
     }
-    
     @Override
     public Page<Dishe> getAll(Pageable pageable) {
         return disheRepository.findAll(pageable);
     }
-
      public Page<Dishe> findByNameContaining(String name, Pageable pageable) {
     return disheRepository.findByNameContainingIgnoreCase(name, pageable);
-}
-     
+    }
      @Override
     public boolean existsById(Integer id) {
         return disheRepository.existsById(id);

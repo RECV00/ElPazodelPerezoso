@@ -90,7 +90,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         </div>
 
         <script>
-        // Validación del formulario
         (function() {
             'use strict';
             const form = document.getElementById('editDishForm');
@@ -104,8 +103,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 form.classList.add('was-validated');
             }, false);
         })();
-        
-        // Validación de tamaño de imagen
         document.getElementById('editImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const maxSize = 5 * 1024 * 1024; // 5MB
@@ -118,14 +115,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 e.target.setCustomValidity('');
             }
         });
-
-        // Script para manejar la carga de datos en el modal de edición
         document.addEventListener('DOMContentLoaded', function() {
             $('#editDishModal').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var modal = $(this);
-                
-                // Cargar datos en los campos del formulario
                 modal.find('#editDishId').val(button.data('dish-id'));
                 modal.find('#editName').val(button.data('dish-name'));
                 modal.find('#editDescription').val(button.data('dish-description'));
@@ -139,8 +132,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 } else {
                     modal.find('#editAvailableFalse').prop('checked', true);
                 }
-                
-                // Manejar la imagen actual
                 var imagePath = button.data('dish-image');
                 var currentImage = modal.find('#currentImage');
                 if(imagePath && imagePath.trim() !== '') {

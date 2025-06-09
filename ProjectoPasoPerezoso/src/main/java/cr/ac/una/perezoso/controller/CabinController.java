@@ -117,7 +117,6 @@ public class CabinController {
                            @RequestParam("includedServices") String includedServices,
                            RedirectAttributes redirectAttributes) throws IOException {
    
-//        logger.debug("CabinID recibido: {}", cabinID);
         Cabin cabin = cabinService.getById(cabinID);
         
         if (cabin == null) {

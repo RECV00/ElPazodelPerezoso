@@ -85,7 +85,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         </div>
 
         <script>
-        // Validación del formulario
         (function() {
             'use strict';
             const form = document.getElementById('addDishForm');
@@ -99,8 +98,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 form.classList.add('was-validated');
             }, false);
         })();
-        
-        // Validación de tamaño de imagen
         document.getElementById('addImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const maxSize = 5 * 1024 * 1024; // 5MB
@@ -113,8 +110,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 e.target.setCustomValidity('');
             }
         });
-        
-        // Validación adicional para el tiempo de preparación
         document.getElementById('addDishForm').addEventListener('submit', function(e) {
             const timeInput = document.getElementById('addPreparationTime');
             if(timeInput.value === '00:00') {

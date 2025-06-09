@@ -170,19 +170,7 @@ public String showReservationForm(
             
             // Obtener cabaña
             Cabin cabin = cabinService.getById(cabinId);
-            
-//            // Crear y guardar la reserva
-//            Booking booking = new Booking();
-//            booking.setClient(client);
-//            booking.setCabin(cabin);
-//            booking.setCheckInDate(checkInDate);
-//            booking.setCheckOutDate(checkOutDate);
-//            booking.setGuests(guests);
-//            booking.setSpecialRequests(specialRequests);
-//            booking.setStatus("CONFIRMED"); // Estado por defecto
-//            
-//            userService.saveBooking(booking);
-//            
+          
             return "redirect:/client/detalle";
             
         } catch (RuntimeException e) {
@@ -198,9 +186,7 @@ public String showReservationForm(
         
          Client client = userService.getClientByIdentification(email);  
         List<Booking> bookings = bookingService.findByClient(client);
-                 
-//        List<Booking> bookings = userService.getClientBookings(client.getId_user()); 
-            
+    
         model.addAttribute("bookings", bookings);
         model.addAttribute("client", client);
         

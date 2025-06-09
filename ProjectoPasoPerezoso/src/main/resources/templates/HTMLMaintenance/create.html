@@ -78,7 +78,6 @@
     </header>
 
     <form method="post" action="/maintenance/createMaintenance">
-         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label for="maintenanceDate">Fecha de Mantenimiento:</label>
         <input type="date" id="maintenanceDate" name="maintenanceDate" required/>
 
@@ -122,18 +121,10 @@
         <input type="button" value="Salir" onclick="window.location.href='/maintenance/list'">
     </form>
 
-    <footer>
-        <p>© 2025 Mantenimiento. Todos los derechos reservados.</p>
-    </footer>
-
-    <!-- SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Mostrar alertas basadas en los mensajes del Model -->
     <script th:inline="javascript">
-        /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
-            // Mensaje de éxito
+
             const successMessage = /*[[${message}]]*/ null;
             if (successMessage) {
                 Swal.fire({
@@ -142,12 +133,9 @@
                     icon: 'success',
                     confirmButtonText: 'Aceptar'
                 }).then(() => {
-                    // Limpiar formulario después de mostrar el mensaje
                     document.querySelector('form').reset();
                 });
             }
-
-            // Mensaje de error
             const errorMessage = /*[[${error}]]*/ null;
             if (errorMessage) {
                 Swal.fire({

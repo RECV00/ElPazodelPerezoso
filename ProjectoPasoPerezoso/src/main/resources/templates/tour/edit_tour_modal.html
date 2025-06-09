@@ -12,8 +12,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <h5 class="modal-title" id="editTourModalLabel">Editar Tour</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="editTourForm"  method="post" th:action="@{/tours/update}" enctype="multipart/form-data" onsubmit="return confirmEdit()">
-                    <input type="hidden" name="id_Tour" id="editTourId">
+                <form id="editTourForm"  method="post" th:action="@{/tours/update}" enctype="multipart/form-data">
+                    <input type="hidden" name="id_tour" id="editTourId">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -76,18 +76,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </div>
     
     <script>
-        // Función para establecer la fecha mínima como la fecha actual
         function setMinDate() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('editDate').setAttribute('min', today);
         }
-
-        // Función para confirmar la edición
-        function confirmEdit() {
-            return confirm("¿Estás seguro de que deseas guardar los cambios?");
-        }
-
-        // Ejecutar cuando el modal se muestre
         $('#editTourModal').on('shown.bs.modal', function() {
             setMinDate();
         });

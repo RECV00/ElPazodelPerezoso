@@ -9,19 +9,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <title>Editar Transporte</title>
     <link th:href="@{/css/stylesEditTransportation.css}" rel="stylesheet" type="text/css">
     <script>
-        // Función para establecer la fecha/hora mínima como la actual
         function setMinDateTime() {
             const now = new Date();
             const today = now.toISOString().slice(0, 16);
             document.getElementById('dataTimeService').setAttribute('min', today);
         }
-
-        // Función para confirmar la edición
         function confirmEdit() {
             return confirm("¿Estás seguro de que deseas guardar los cambios en este transporte?");
         }
-
-        // Ejecuta la función cuando la página se cargue
         window.onload = setMinDateTime;
     </script>
 </head>

@@ -145,7 +145,6 @@ public class BookingService {
         return bookingRepository.findByCheckInDateBetween(startDate, endDate, pageable);
     }
     public boolean isCabinAvailable(Integer cabinId, LocalDate checkIn, LocalDate checkOut) {
-        // Implementación que verifica si no hay reservas conflictivas
         List<Booking> conflictingBookings = bookingRepository.findConflictingBookings(
             cabinId, checkIn, checkOut);
         return conflictingBookings.isEmpty();

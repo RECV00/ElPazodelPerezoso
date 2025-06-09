@@ -74,8 +74,8 @@ public class TransportationController {
   
    
 //--------------------------------ANADIR------------------------------------------------------------------------
-    // Mostrar formulario para agregar un nuevo transporte
-      // Métodos para modales
+
+      // Métodos para modales transporte
     @GetMapping("/add-form")
     public String getAddModal(Model model) {
         model.addAttribute("transportation", new Transportation());

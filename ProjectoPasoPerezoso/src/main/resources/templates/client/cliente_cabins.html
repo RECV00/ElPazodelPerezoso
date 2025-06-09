@@ -212,7 +212,6 @@
             <div class="row">
                 <div class="col-md-4" th:each="cabin : ${cabins}">
                         <div class="card cabin-card">
-                            <!-- Badge de disponibilidad usando el Map -->
                             <span class="badge bg-success availability-badge" 
                                   th:if="${availabilityMap.get(cabin.cabinID)}">Disponible</span>
                             <span class="badge bg-danger availability-badge" 
@@ -275,7 +274,6 @@
         <div th:if="${reservationMode and cabin != null}">
             <div class="row mb-4">
                 <div class="col-12">
-                    <!-- Fixed link expression -->
                     <a th:href="@{/client/cabins(checkIn=${checkIn},checkOut=${checkOut})}" 
                        th:if="${checkIn != null and checkOut != null}"
                        class="btn btn-outline-secondary mb-3">
@@ -330,7 +328,7 @@
                     <div class="reservation-section">
                         <h4 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Completa tus datos de reserva</h4>
                         
-                        <!-- Mostrar mensaje de error si existe -->
+
                         <div th:if="${error}" class="alert alert-danger mb-4">
                             <i class="bi bi-exclamation-triangle-fill"></i> 
                             <span th:text="${error}"></span>
@@ -415,8 +413,6 @@
                     } else {
                         checkInError.textContent = '';
                     }
-                    
-                    // Validar fecha de salida
                     if (checkOut <= checkIn) {
                         checkOutError.textContent = 'La fecha de salida debe ser posterior a la de entrada';
                         isValid = false;
@@ -439,8 +435,6 @@
                     estimatedTotal.textContent = '$0.00';
                 }
             }
-            
-            // Configurar fecha mínima (hoy)
             const today = formatDate(new Date());
             if (checkInInput) {
                 checkInInput.min = today;
@@ -460,8 +454,6 @@
             if (checkOutInput) {
                 checkOutInput.addEventListener('change', calculateTotal);
             }
-            
-            // Calcular total al cargar si hay fechas
             if (checkInInput && checkInInput.value && checkOutInput && checkOutInput.value) {
                 calculateTotal();
             }

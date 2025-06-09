@@ -27,15 +27,10 @@ public interface TransportationRepository extends JpaRepository<Transportation, 
            "LOWER(t.plate) LIKE LOWER(CONCAT('%', :filter, '%')) OR " +
            "LOWER(t.driver) LIKE LOWER(CONCAT('%', :filter, '%'))")
     List<Transportation> searchByPlateOrDriver(@Param("filter") String filter);
-    
     Page<Transportation> findByPlateContaining(String plate, Pageable pageable);
     Page<Transportation> findByServiceStatus(String status,Pageable pageable);
-    
     List<Transportation> findByDataTimeServiceBetween(LocalDateTime start, LocalDateTime end);
-    
     Transportation findByPlate(String plate);
-    
     Optional<Transportation> findById(Integer id);
-//    Page<Transportation> findByNameContainingIgnoreCase(String name,Pageable pageable);
 }
 

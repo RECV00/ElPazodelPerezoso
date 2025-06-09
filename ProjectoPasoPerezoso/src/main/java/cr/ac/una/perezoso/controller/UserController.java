@@ -135,7 +135,7 @@ public class UserController {
         }
     }
 
-   // Método para procesar actualización (compatible con AJAX)
+   // Método para procesar actualización
     @PostMapping("/actualizar/{id}")
     public String actualizarUsuario(
             @PathVariable int id,

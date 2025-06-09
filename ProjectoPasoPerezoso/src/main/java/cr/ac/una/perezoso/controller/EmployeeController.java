@@ -27,17 +27,13 @@ public class EmployeeController {
     @GetMapping("/detalle")
 public String employeeDetail(Model model, Authentication authentication) {
     try {
-        // 1. Obtener el empleado autenticado
         String username = authentication.getName();
         User user = userService.findByIdentification(username);
-        
-        // 2. Verificar que es un empleado
         if (!(user instanceof Employee)) {
             throw new RuntimeException("El usuario no es un empleado");
         }
      
         Employee employee = (Employee) user;
-        // 3. Agregar datos al modelo
         model.addAttribute("employee", employee);
         
         return "/employee/employee_detalle";

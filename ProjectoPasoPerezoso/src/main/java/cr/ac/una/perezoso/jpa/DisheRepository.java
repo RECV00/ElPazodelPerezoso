@@ -21,13 +21,9 @@ import org.springframework.stereotype.Repository;
 public interface DisheRepository extends JpaRepository<Dishe, Integer>,JpaSpecificationExecutor<Dishe>{
     
     Page<Dishe> findByCategory(String category,Pageable pageable);
-    
     List<Dishe> findByAvailable(Boolean available);
-    
     List<Dishe> findByNameContainingIgnoreCase(String name);
-    
     Page<Dishe> findByNameContainingIgnoreCase(String name,Pageable pageable);
-    
     List<Dishe> findByPriceBetween(Double minPrice, Double maxPrice);
     Optional<Dishe> findById(Integer id);
 }

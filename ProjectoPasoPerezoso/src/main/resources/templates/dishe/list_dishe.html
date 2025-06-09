@@ -67,13 +67,11 @@
                     </tr>
                 </thead>
                 <tbody id="dishTableBody">
-                    <!-- Los datos se cargarán via AJAX -->
                 </tbody>
             </table>
             
             <div class="pagination-container">
                 <ul class="pagination" id="paginationControls">
-                    <!-- Los controles se generarán aquí -->
                 </ul>
             </div>
             
@@ -93,8 +91,6 @@
             let currentPage = 0;
             
             loadDishes(0);
-            
-            // Filtrado al presionar Enter o cambiar categoría
             $('#name').on('keypress', function(e) {
                 if (e.which === 13) {
                     loadDishes(0);
@@ -238,8 +234,6 @@
                 </a>
             </li>`;
             pagination.append(prevBtn);
-
-            // Números de página
             const startPage = Math.max(0, currentPage - 2);
             const endPage = Math.min(totalPages - 1, currentPage + 2);
             
