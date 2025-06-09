@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Mantenimiento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('/img/imag.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .detalles {
+            max-width: 600px;
+            margin: 40px auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .campo {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .campo strong {
+            display: inline-block;
+            width: 160px;
+        }
+
+        .btn-regresar {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn-regresar:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .campo strong {
+                width: 100%;
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="detalles">
+        <h2>Detalles del Mantenimiento</h2>
+
+        <div class="campo">
+            <strong>ID:</strong> <span th:text="${maintenance.id}"></span>
+        </div>
+        <div class="campo">
+            <strong>Fecha:</strong> <span th:text="${maintenance.maintenanceDate}"></span>
+        </div>
+        <div class="campo">
+            <strong>Tipo:</strong> <span th:text="${maintenance.maintenanceType}"></span>
+        </div>
+        <div class="campo">
+            <strong>Descripción:</strong> <span th:text="${maintenance.description}"></span>
+        </div>
+        <div class="campo">
+            <strong>Prioridad:</strong> <span th:text="${maintenance.priorities}"></span>
+        </div>
+        <div class="campo">
+            <strong>Estado:</strong> <span th:text="${maintenance.state}"></span>
+        </div>
+        <div class="campo">
+            <strong>Personal Asignado:</strong> <span th:text="${maintenance.assignedPersonal}"></span>
+        </div>
+        <div class="campo">
+            <strong>Ubicación:</strong> <span th:text="${maintenance.location}"></span>
+        </div>
+
+        <a href="maintenance" class="btn-regresar">Regresar a la lista</a>
+    </div>
+
+</body>
+</html>
+

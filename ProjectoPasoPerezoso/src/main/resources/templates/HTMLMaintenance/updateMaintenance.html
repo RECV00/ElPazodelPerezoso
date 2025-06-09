@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Mantenimiento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('/imag.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        form {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid white;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border: none;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .exit-button {
+            background-color: #dc3545;
+        }
+
+        .exit-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Estilos del modal externo para coherencia visual */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            color: white;
+            position: relative;
+        }
+
+        .cerrar {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 20px;
+            }
+
+            input, select, textarea {
+                font-size: 14px;
+            }
+
+            .button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Actualizar Mantenimiento</h1>
+
+    <form id="updateForm" th:object="${maintenance}" th:action="@{/maintenance/updateM}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+        <label for="maintenanceDate">Fecha de Mantenimiento:</label>
+        <input type="date" th:field="*{maintenanceDate}" required />
+
+        <label for="maintenanceType">Tipo de Mantenimiento:</label>
+        <select th:field="*{maintenanceType}" required>
+            <option value="">Seleccione</option>
+            <option value="Preventivo">Preventivo</option>
+            <option value="Correctivo">Correctivo</option>
+        </select>
+
+        <label for="description">Descripción:</label>
+        <textarea th:field="*{description}" rows="3" required></textarea>
+
+        <label for="priorities">Prioridad:</label>
+        <select th:field="*{priorities}" required>
+            <option value="">Seleccione</option>
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+        </select>
+
+        <label for="state">Estado:</label>
+        <select th:field="*{state}" required>
+            <option value="">Seleccione</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Terminada">Terminada</option>
+        </select>
+
+        <label for="assignedPersonal">Personal Asignado:</label>
+        <select th:field="*{assignedPersonal}" required>
+            <option value="">Seleccione</option>
+            <option value="Técnico">Técnico</option>
+            <option value="Usuario">Usuario</option>
+        </select>
+
+        <label for="location">Ubicación:</label>
+        <input type="text" th:field="*{location}" required />
+
+      <div class="button-group">
+        <button type="submit" class="button save-button">Guardar</button>
+        <button type="button" class="button exit-button cerrar">X</button>
+    </div>
+</form>
+</body>
+</html>
+

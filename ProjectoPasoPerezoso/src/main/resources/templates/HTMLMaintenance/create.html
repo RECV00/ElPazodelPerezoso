@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Mantenimiento</title>
+   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+             background: url('/img/imag.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        header {
+            background-color: rgba(52, 58, 64, 0.8);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(52, 58, 64, 0.8);
+        }
+
+        form {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        input[type="submit"] {
+            background-color: rgba(40, 167, 69, 0.8);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: rgba(40, 167, 69, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Formulario de Mantenimiento</h1>
+    </header>
+
+    <form method="post" action="/maintenance/createMaintenance">
+         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <label for="maintenanceDate">Fecha de Mantenimiento:</label>
+        <input type="date" id="maintenanceDate" name="maintenanceDate" required/>
+
+        <label for="maintenanceType">Tipo de Mantenimiento:</label>
+        <select id="maintenanceType" name="maintenanceType" required>
+            <option value="">Seleccione</option>
+            <option value="Preventivo">Preventivo</option>
+            <option value="Correctivo">Correctivo</option>
+        </select>
+
+        <label for="description">Descripción:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <label for="priorities">Prioridad:</label>
+        <select id="priorities" name="priorities" required>
+            <option value="">Seleccione</option>
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+        </select>
+
+        <label for="state">Estado:</label>
+        <select id="state" name="state" required>
+            <option value="">Seleccione</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Terminada">Terminada</option>
+        </select>
+
+        <label for="assignedPersonal">Personal Asignado:</label>
+        <select id="assignedPersonal" name="assignedPersonal" required>
+            <option value="">Seleccione</option>
+            <option value="Técnico">Técnico</option>
+            <option value="Usuario">Usuario</option>
+        </select>
+
+        <label for="location">Ubicación:</label>
+        <input type="text" id="location" name="location" required/>
+
+        <input type="submit" value="Guardar">
+        <input type="button" value="Salir" onclick="window.location.href='/maintenance/list'">
+    </form>
+
+    <footer>
+        <p>© 2025 Mantenimiento. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Mostrar alertas basadas en los mensajes del Model -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mensaje de éxito
+            const successMessage = /*[[${message}]]*/ null;
+            if (successMessage) {
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: successMessage,
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Limpiar formulario después de mostrar el mensaje
+                    document.querySelector('form').reset();
+                });
+            }
+
+            // Mensaje de error
+            const errorMessage = /*[[${error}]]*/ null;
+            if (errorMessage) {
+                Swal.fire({
+                    title: 'Error',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>
