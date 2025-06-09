@@ -1,0 +1,11 @@
+{
+    "vscode-pets.petType": "mod",
+    "vscode-pets.position": "panel",
+    "vscode-pets.theme": "winter",
+    "vscode-pets.throwBallWithMouse": true,
+    "vscode-pets.petSize": "large",
+    "vscode-pets.petColor": "white",
+    "vscode-pets.disableEffects": true,
+    "window.density.editorTabHeight": "compact",
+    "java.compile.nullAnalysis.mode": "disabled"
+}

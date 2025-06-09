@@ -301,7 +301,7 @@
     </div>
 
     <script>
-        // Buscar cliente (existente)
+        // Buscar cliente
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('clientIdentification').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -309,7 +309,7 @@
                 }
             });
             
-            // Configurar fechas mínimas
+            // fechas minimas
             setupDates();
         });
 
@@ -386,7 +386,7 @@
             
             container.style.display = checkbox.checked ? 'block' : 'none';
             
-            // Si se desmarca, deseleccionar cualquier opción seleccionada
+            // si se desmarca deseleccionado cualquier opción seleccionada
             if (!checkbox.checked) {
                 const selectedInput = document.querySelector(`input[name="selected${serviceType.charAt(0).toUpperCase() + serviceType.slice(1)}Id"]:checked`);
                 if (selectedInput) {
@@ -434,7 +434,7 @@
             document.getElementById('paymentAmount').value = total.toFixed(2);
         }
 
-        // Agregar event listeners para recalcular el total cuando cambien los elementos
+        // escuahr cuando los elementons cambien 
         document.getElementById('checkInDate').addEventListener('change', calculateTotal);
         document.getElementById('checkOutDate').addEventListener('change', calculateTotal);
         document.querySelectorAll('input[name="selectedCabinId"]').forEach(radio => {
@@ -454,7 +454,7 @@
         });
         function validateForm() {
             
-            // Validar selección de cabaña (siempre requerida)
+            // Validar selección de cabaña
             const cabinSelected = document.querySelector('input[name="selectedCabinId"]:checked') !== null;
             if (!cabinSelected) {
                 alert('Por favor seleccione una cabaña para continuar');
@@ -507,7 +507,6 @@
 
             return confirm("¿Estás seguro de que deseas agregar esta Reserva y Registrar el Pago?");
 
-//            return confirm("¿Estás seguro de que deseas agregar esta Reserva?");
         }
     </script>
     

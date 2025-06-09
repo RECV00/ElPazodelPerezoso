@@ -31,53 +31,41 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>{
            "LEFT JOIN FETCH b.payment " +
            "WHERE b.id_booking = :id")
     Optional<Booking> findByIdWithDetails(@Param("id") int id);
-    
     @Query("SELECT b FROM Booking b JOIN b.client c WHERE c.identification = :identification")
     Page<Booking> findByClientIdentification(@Param("identification") String identification, Pageable pageable);
     List<Booking> findByClient(Client client);
     List<Booking> findByReserveStatus(String status);
     @Query("SELECT b FROM Booking b WHERE b.client.id_user = :clientId")
     List<Booking> findByClientId(@Param("clientId") Integer clientId);
-    
     @Query("SELECT b FROM Booking b WHERE b.client.id_user = :clientId")
     Page<Booking> findByClientId(@Param("clientId") Integer clientId, Pageable pageable);
-    
-
     @Query("SELECT b FROM Booking b JOIN b.client c WHERE " +
            "LOWER(CONCAT(c.name, ' ', c.last_name)) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<Booking> findByClientNameContaining(@Param("name") String name, Pageable pageable);
-    
     Page<Booking> findByBookingTypeContainingIgnoreCase(String bookingType, Pageable pageable);
     @Query("SELECT b FROM Booking b WHERE CURRENT_DATE BETWEEN b.checkInDate AND b.checkOutDate")
     List<Booking> findActiveReservations();
-    
-  
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     List<Booking> findByCabinId(@Param("cabinId") Integer cabinId);
     @Query("SELECT b FROM Booking b WHERE b.cabin.cabinID = :cabinId")
     Page<Booking> findByCabinId(@Param("cabinId") Integer cabinId, Pageable pageable);
-@Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
-Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
+    @Query("SELECT b FROM Booking b WHERE b.tour.id_tour = :tourId")
+    Page<Booking> findByTourId(@Param("tourId") Integer tourId, Pageable pageable);
 
-@Query("SELECT b FROM Booking b WHERE b.transportation.id_transportation = :vehicleId")
-Page<Booking> findByVehicleId(@Param("vehicleId") Integer vehicleId, Pageable pageable);
-    @Query("SELECT b FROM Booking b WHERE b.dishe.disheID = :disheId")
-    Page<Booking> findByDisheId(@Param("disheId") Integer disheId, Pageable pageable);
-// For filtering by status
-Page<Booking> findByReserveStatus(String status, Pageable pageable);
+    @Query("SELECT b FROM Booking b WHERE b.transportation.id_transportation = :vehicleId")
+    Page<Booking> findByVehicleId(@Param("vehicleId") Integer vehicleId, Pageable pageable);
+        @Query("SELECT b FROM Booking b WHERE b.dishe.disheID = :disheId")
+        Page<Booking> findByDisheId(@Param("disheId") Integer disheId, Pageable pageable);
+    Page<Booking> findByReserveStatus(String status, Pageable pageable);
+    Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identification, Pageable pageable);
+    Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
-// For filtering by client identification
-Page<Booking> findByClient_IdentificationContainingIgnoreCase(String identification, Pageable pageable);
-
-// For filtering by date range
-Page<Booking> findByCheckInDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
-
-@Query("SELECT b FROM Booking b WHERE " +
-           "b.cabin.cabinID = :cabinId AND " +
-           "b.reserveStatus <> 'Cancelada' AND " +  // Usando el valor exacto
-           "((b.checkInDate < :checkOut AND b.checkOutDate > :checkIn))")
+    @Query("SELECT b FROM Booking b WHERE " +
+               "b.cabin.cabinID = :cabinId AND " +
+               "b.reserveStatus <> 'Cancelada' AND " +  // Usando el valor exacto
+               "((b.checkInDate < :checkOut AND b.checkOutDate > :checkIn))")
     List<Booking> findConflictingBookings(
-            @Param("cabinId") Integer cabinId,
-            @Param("checkIn") LocalDate checkIn,
-            @Param("checkOut") LocalDate checkOut);
+        @Param("cabinId") Integer cabinId,
+        @Param("checkIn") LocalDate checkIn,
+        @Param("checkOut") LocalDate checkOut);
 }
