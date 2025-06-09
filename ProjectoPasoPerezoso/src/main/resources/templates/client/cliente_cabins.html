@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -12,64 +8,163 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .cabin-card {
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        :root {
+            --primary-color: #a0b320;
+            --secondary-color: #6f7e14;
+            --light-green: #e9f0c5;
+            --dark-green: #4a5413;
         }
-        .cabin-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-        .cabin-img {
-            height: 200px;
-            object-fit: cover;
-            width: 100%;
-        }
-        .cabin-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        .amenity-icon {
-            font-size: 1.2rem;
-            margin-right: 5px;
-            color: #17a2b8;
-        }
-        .filter-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        .availability-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1;
-        }
-        .reservation-section {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 30px;
-        }
-        .location-icon {
-            color: #6c757d;
-        }
+        
+        body  {
+        background-image: url('/img/fondo2.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        margin: -9;
+        padding: -1;
+    }
+    
+    .container {
+        max-width: 1264px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 52px;
+        padding: 7px;
+        margin: 9 auto 12px auto;
+    }
+    
+    .navbar-brand span,
+    .nav-link,
+    .navbar-dark .navbar-brand
+    .nav-link i {
+        color: black !important;
+    }
+    
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    }
+    
+    .dropdown-toggle::after {
+        border-top-color: black !important;
+    }
+    
+    .cabin-card {
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-left: 3px solid var(--primary-color);
+    }
+    
+    .cabin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        border-left: 3px solid var(--secondary-color);
+    }
+    
+    .cabin-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+    
+    .cabin-price {
+         font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--secondary-color);
+    }
+    
+    .amenity-icon {
+        font-size: 1.2rem;
+        margin-right: 5px;
+        color: var(--primary-color);
+    }
+    
+    .filter-section {
+        background-color: rgba(233, 240, 197, 0.7);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border: 1px solid var(--light-green);
+    }
+    
+    .availability-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+    }
+    
+    .reservation-section {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 10px;
+        margin-top: 30px;
+        border-left: 4px solid var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .location-icon {
+        color: var(--secondary-color);
+    }
+    
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875em;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+    
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+    
+    .badge.bg-success {
+        background-color: var(--secondary-color) !important;
+    }
+    
+    h2, h4, h5, h6 {
+        color: var(--dark-green);
+    }
+    
+    .alert-info {
+        background-color: var(--light-green);
+        border-color: var(--primary-color);
+        color: var(--dark-green);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(160, 179, 32, 0.25);
+    }
     </style>
 </head>
 <body>
-<!--    <nav th:replace="~{/fragments/navbar :: navbar-client}"></nav>-->
+    
+    <th:block th:replace="~{/fragments/navbarUser :: navbar-client}"></th:block>
     
     <div class="container py-4">
         <!-- Sección de búsqueda -->
         <div th:unless="${reservationMode}">
             <div class="row mb-4">
                 <div class="col-12">
-                    <h2>Reservar Cabaña</h2>
+                    <h2><i class="bi bi-house-door me-2"></i>Reservar Cabaña</h2>
                     <p class="text-muted">Selecciona la cabaña que mejor se adapte a tus necesidades</p>
                 </div>
             </div>
@@ -80,28 +175,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="checkIn" class="form-label">Fecha de entrada</label>
-                            <input type="date" class="form-control" id="checkIn" name="checkIn">
+                            <input type="date" class="form-control" id="checkIn" name="checkIn" th:value="${checkIn}">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="checkOut" class="form-label">Fecha de salida</label>
-                            <input type="date" class="form-control" id="checkOut" name="checkOut">
+                            <input type="date" class="form-control" id="checkOut" name="checkOut" th:value="${checkOut}">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label for="capacity" class="form-label">Personas</label>
                             <select class="form-select" id="capacity" name="capacity">
                                 <option value="">Cualquiera</option>
-                                <option value="2">2</option>
-                                <option value="4">4</option>
-                                <option value="6">6+</option>
+                                <option value="2" th:selected="${capacity == 2}">2</option>
+                                <option value="4" th:selected="${capacity == 4}">4</option>
+                                <option value="6" th:selected="${capacity == 6}">6+</option>
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">
                             <label for="priceRange" class="form-label">Precio máximo</label>
-                            <select class="form-select" id="priceRange" name="priceRange">
+                            <select class="form-select" id="priceRange" name="maxPrice">
                                 <option value="">Cualquiera</option>
-                                <option value="100">$100</option>
-                                <option value="200">$200</option>
-                                <option value="300">$300</option>
+                                <option value="100" th:selected="${maxPrice == 100}">$100</option>
+                                <option value="200" th:selected="${maxPrice == 200}">$200</option>
+                                <option value="300" th:selected="${maxPrice == 300}">$300</option>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex align-items-end mb-3">
@@ -116,14 +211,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <!-- Listado de cabañas -->
             <div class="row">
                 <div class="col-md-4" th:each="cabin : ${cabins}">
-                    <div class="card cabin-card">
-                        <span class="badge bg-success availability-badge" th:if="${cabin.available}">Disponible</span>
-                        <span class="badge bg-danger availability-badge" th:unless="${cabin.available}">No disponible</span>
-                        
-                        <img th:src="${cabin.image ?: '/images/default-cabin.jpg'}" 
-                             class="cabin-img" alt="Imagen de la cabaña">
-                        
-                        <div class="card-body">
+                        <div class="card cabin-card">
+                            <!-- Badge de disponibilidad usando el Map -->
+                            <span class="badge bg-success availability-badge" 
+                                  th:if="${availabilityMap.get(cabin.cabinID)}">Disponible</span>
+                            <span class="badge bg-danger availability-badge" 
+                                  th:unless="${availabilityMap.get(cabin.cabinID)}">No disponible</span>
+
+                            <img th:src="@{'/' + ${cabin.image}}" class="cabin-img" alt="Imagen de la cabaña">
+                            
+                            <div class="card-body">
                             <h5 class="card-title" th:text="${cabin.name}">Nombre de la cabaña</h5>
                             
                             <div class="d-flex align-items-center mb-2">
@@ -148,11 +245,19 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <p th:text="${cabin.includedServices} ?: 'No se especificaron servicios'">Servicios incluidos</p>
                             </div>
                             
-                            <a th:href="@{'/client/cabins/reserve/' + ${cabin.cabinID}}" 
-                               class="btn btn-outline-primary w-100"
-                               th:disabled="${!cabin.available}">
-                                <i class="bi bi-calendar-plus"></i> Reservar
-                            </a>
+                                 <a th:if="${checkIn != null and checkOut != null}"
+                                th:href="@{'/client/cabins/reserve/' + ${cabin.cabinID} + '?checkIn=' + ${checkIn} + '&amp;checkOut=' + ${checkOut}}"
+                                class="btn btn-outline-primary w-100"
+                                th:disabled="${not availabilityMap[cabin.cabinID]}">
+                                 <i class="bi bi-calendar-plus"></i> Reservar
+                             </a>
+
+                             <a th:unless="${checkIn != null and checkOut != null}"
+                                th:href="@{'/client/cabins/reserve/' + ${cabin.cabinID}}"
+                                class="btn btn-outline-primary w-100"
+                                th:disabled="${not availabilityMap[cabin.cabinID]}">
+                                 <i class="bi bi-calendar-plus"></i> Reservar
+                             </a>
                         </div>
                     </div>
                 </div>
@@ -160,28 +265,37 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <!-- Mensaje si no hay cabañas -->
                 <div th:if="${#lists.isEmpty(cabins)}" class="col-12">
                     <div class="alert alert-info">
-                        No se encontraron cabañas con los filtros seleccionados. Intenta con otros parámetros.
+                        <i class="bi bi-info-circle"></i> No se encontraron cabañas con los filtros seleccionados. Intenta con otros parámetros.
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Sección de reserva (aparece cuando se selecciona una cabaña) -->
+        <!-- Sección de reserva -->
         <div th:if="${reservationMode and cabin != null}">
             <div class="row mb-4">
                 <div class="col-12">
-                    <a href="/client/cabins" class="btn btn-outline-secondary mb-3">
+                    <!-- Fixed link expression -->
+                    <a th:href="@{/client/cabins(checkIn=${checkIn},checkOut=${checkOut})}" 
+                       th:if="${checkIn != null and checkOut != null}"
+                       class="btn btn-outline-secondary mb-3">
                         <i class="bi bi-arrow-left"></i> Volver a la lista
                     </a>
-                    <h2>Reservar: <span th:text="${cabin.name}">Nombre de la cabaña</span></h2>
+                    <a th:href="@{/client/cabins}" 
+                       th:unless="${checkIn != null and checkOut != null}"
+                       class="btn btn-outline-secondary mb-3">
+                        <i class="bi bi-arrow-left"></i> Volver a la lista
+                    </a>
+                    
+                    <h2><i class="bi bi-calendar-check me-2"></i>Reservar: <span th:text="${cabin.name}">Nombre de la cabaña</span></h2>
                 </div>
             </div>
             
             <div class="row">
                 <div class="col-md-6">
                     <div class="card">
-                        <img th:src="${cabin.image ?: '/images/default-cabin.jpg'}" 
-                             class="img-fluid rounded-top" alt="Imagen de la cabaña">
+                        <img th:src="@{'/' + ${cabin.image}}" class="img-fluid rounded-top" alt="Imagen de la cabaña">
+                        
                         <div class="card-body">
                             <h5 th:text="${cabin.name}">Nombre de la cabaña</h5>
                             
@@ -214,19 +328,29 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 
                 <div class="col-md-6">
                     <div class="reservation-section">
-                        <h4 class="mb-4">Completa tus datos de reserva</h4>
+                        <h4 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Completa tus datos de reserva</h4>
                         
-                        <form th:action="@{/client/bookings/create}" method="post">
+                        <!-- Mostrar mensaje de error si existe -->
+                        <div th:if="${error}" class="alert alert-danger mb-4">
+                            <i class="bi bi-exclamation-triangle-fill"></i> 
+                            <span th:text="${error}"></span>
+                        </div>
+                        
+                        <form th:action="@{/client/cabins/book}" method="post">
                             <input type="hidden" name="cabinId" th:value="${cabin.cabinID}">
                             
                             <div class="mb-3">
                                 <label for="checkInDate" class="form-label">Fecha de entrada</label>
-                                <input type="date" class="form-control" id="checkInDate" name="checkInDate" required>
+                                <input type="date" class="form-control" id="checkInDate" name="checkInDate" 
+                                       th:value="${checkIn}" required>
+                                <div class="error-message" id="checkInError"></div>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="checkOutDate" class="form-label">Fecha de salida</label>
-                                <input type="date" class="form-control" id="checkOutDate" name="checkOutDate" required>
+                                <input type="date" class="form-control" id="checkOutDate" name="checkOutDate"
+                                       th:value="${checkOut}" required>
+                                <div class="error-message" id="checkOutError"></div>
                             </div>
                             
                             <div class="mb-3">
@@ -258,34 +382,88 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         </div>
     </div>
     
-<!--    <th:block th:replace="~{/fragments/footer :: footer}"></th:block>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Cálculo del total estimado
         document.addEventListener('DOMContentLoaded', function() {
             const pricePerNight = [[${cabin != null ? cabin.pricePerNight : 0}]];
             const checkInInput = document.getElementById('checkInDate');
             const checkOutInput = document.getElementById('checkOutDate');
             const estimatedTotal = document.getElementById('estimatedTotal');
+            const checkInError = document.getElementById('checkInError');
+            const checkOutError = document.getElementById('checkOutError');
             
-            function calculateTotal() {
-                if (checkInInput && checkOutInput && checkInInput.value && checkOutInput.value) {
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            function validateDates() {
+                let isValid = true;
+                
+                if (checkInInput.value && checkOutInput.value) {
                     const checkIn = new Date(checkInInput.value);
                     const checkOut = new Date(checkOutInput.value);
-                    const nights = (checkOut - checkIn) / (1000 * 60 * 60 * 24);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
                     
-                    if (nights > 0) {
-                        const total = nights * pricePerNight;
-                        estimatedTotal.textContent = '$' + total.toFixed(2);
+                    // Validar fecha de entrada
+                    if (checkIn < today) {
+                        checkInError.textContent = 'La fecha de entrada no puede ser en el pasado';
+                        isValid = false;
                     } else {
-                        estimatedTotal.textContent = '$0.00';
+                        checkInError.textContent = '';
                     }
+                    
+                    // Validar fecha de salida
+                    if (checkOut <= checkIn) {
+                        checkOutError.textContent = 'La fecha de salida debe ser posterior a la de entrada';
+                        isValid = false;
+                    } else {
+                        checkOutError.textContent = '';
+                    }
+                }
+                
+                return isValid;
+            }
+            
+            function calculateTotal() {
+                if (validateDates() && checkInInput.value && checkOutInput.value) {
+                    const checkIn = new Date(checkInInput.value);
+                    const checkOut = new Date(checkOutInput.value);
+                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                    const total = nights * pricePerNight;
+                    estimatedTotal.textContent = '$' + total.toFixed(2);
+                } else {
+                    estimatedTotal.textContent = '$0.00';
                 }
             }
             
-            if (checkInInput && checkOutInput) {
-                checkInInput.addEventListener('change', calculateTotal);
+            // Configurar fecha mínima (hoy)
+            const today = formatDate(new Date());
+            if (checkInInput) {
+                checkInInput.min = today;
+                checkInInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const nextDay = new Date(this.value);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        checkOutInput.min = formatDate(nextDay);
+                        if (checkOutInput.value && new Date(checkOutInput.value) <= new Date(this.value)) {
+                            checkOutInput.value = '';
+                        }
+                    }
+                    calculateTotal();
+                });
+            }
+            
+            if (checkOutInput) {
                 checkOutInput.addEventListener('change', calculateTotal);
+            }
+            
+            // Calcular total al cargar si hay fechas
+            if (checkInInput && checkInInput.value && checkOutInput && checkOutInput.value) {
+                calculateTotal();
             }
         });
     </script>
